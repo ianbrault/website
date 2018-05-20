@@ -14,4 +14,4 @@ async def get(req):
 
 app = web.Application()
 app.router.add_routes([ web.get('/', get)])
-web.run_app(app)
+web.run_app(app, port=80)
