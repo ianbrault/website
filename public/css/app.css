@@ -5,5 +5,6 @@ body {
     width: 100vw;
     height: 100vh;
     background-color: hsl(211, 30%, 19%);
-    color: white;
+    font-family: "Source Code Pro";
+    color: hsl(205, 100%, 94%);
 }
