@@ -4,11 +4,6 @@
  */
 
 import m from "mithril";
+import Layout from "./views/Layout";
 
-let component = {
-    view: function() {
-        return m("div", "hello, world!");
-    }
-}
-
-m.mount(document.body, component);
+m.mount(document.body, Layout);
