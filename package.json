@@ -3,14 +3,18 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "build-prod": "webpack src/index.js --output public/dist/app.js -p --mode production",
+    "build-dev":  "webpack src/index.js --output public/dist/app.js -d",
+    "start": "npm run build-dev && node app"
   },
   "dependencies": {
     "express": "^4.16.3",
-    "http-errors": "^1.6.3",
-    "jade": "^1.11.0"
+    "jade": "^1.11.0",
+    "mithril": "^1.1.6"
   },
   "devDependencies": {
-    "eslint": "^4.19.1"
+    "eslint": "^4.19.1",
+    "webpack": "^4.10.1",
+    "webpack-cli": "^2.1.4"
   }
 }

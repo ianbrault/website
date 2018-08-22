@@ -3,42 +3,31 @@
  * main Express app file
  */
 
-var httpError = require('http-errors')
-var express = require('express')
-var path = require('path')
+var express = require("express");
+var path    = require("path");
 
-
-var app = express()
+var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'jade')
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "jade");
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "public")));
 
-
-app.get('/', (req, res) => {
+// routing
+app.get("/", (req, res) => {
     console.log("GET /");
-    res.render('index');
-})
+    res.render("index");
+});
 
-
-// catch 404 errors
-app.use((req, res, next) => next(httpError(404)))
+// error handler
 app.use((err, req, res, next) => {
-    console.log("ERROR [" + (err.status || 500) + "]", err.message)
+    let emsg = `Error [${err.status || 500}]: ${err.message}`;
+    console.error(emsg);
+    res.status(err.status || 500).send(emsg);
+});
 
-    // only provide error in development
-    res.locals.status = err.status;
-    res.locals.message = err.message;
-    res.locals.error = (req.app.get('env') === 'development') ? err : {};
-
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error');
-})
-
-
-app.listen(3000, () => console.log("server running on localhost:3000"))
+app.listen(3000, () => 
+    console.log("\n===== Ian's Website\nserver running on localhost:3000"));
