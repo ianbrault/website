@@ -3,18 +3,20 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build-prod": "webpack src/index.js --output public/dist/app.js -p --mode production",
-    "build-dev":  "webpack src/index.js --output public/dist/app.js -d",
-    "start": "npm run build-dev && node app"
+    "dev": "NODE_ENV='development' node app",
+    "prod": "NODE_ENV='production' node app",
+    "start": "node app"
   },
   "dependencies": {
+    "@babel/core": "^7.0.1",
+    "@babel/preset-env": "^7.0.0",
+    "babelify": "^10.0.0",
+    "browserify-middleware": "^8.1.1",
     "express": "^4.16.3",
     "jade": "^1.11.0",
     "mithril": "^1.1.6"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "webpack": "^4.10.1",
-    "webpack-cli": "^2.1.4"
+    "eslint": "^4.19.1"
   }
 }
