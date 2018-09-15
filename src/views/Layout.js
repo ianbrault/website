@@ -8,13 +8,13 @@ import m from "mithril";
 import Home   from "../components/Home";
 import Navbar from "../components/Navbar";
 
-let Layout = {
-    view: function() {
+class Layout {
+    view() {
         return m("main.layout", [
             m(Navbar),
             m(Home),
         ]);
     }
-};
+}
 
 export default Layout;

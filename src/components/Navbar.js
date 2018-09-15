@@ -5,9 +5,20 @@
 
 import m from "mithril";
 
-let Navbar = {
-    view: function() {
-        return m("nav", "navbar goes here");
+class NavItem {
+    view() {
+        return m("div", "navbar item");
+    }
+}
+
+class Navbar {
+    view() {
+        return m("nav", 
+            m(NavItem, {title: "Home"}),
+            m(NavItem, {title: "About"}),
+            m(NavItem, {title: "Websites"}),
+            m(NavItem, {title: "Software"}),
+        );
     }
 }
 

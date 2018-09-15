@@ -5,8 +5,8 @@
 
 import m from "mithril";
 
-let Home = {
-    view: function() {
+class Home {
+    view() {
         return m("div.home", "home goes here");
     }
 }
