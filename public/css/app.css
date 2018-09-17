@@ -21,7 +21,6 @@ nav {
 
 .nav-item--active, .nav-item--inactive {
     cursor: pointer;
-    user-select: none;
     display: flex;
     justify-content: center;
     width: 132px;
@@ -30,6 +29,12 @@ nav {
     font-size: 24px;
     font-weight: 700;
     transition: border-top 0.2s;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 } .nav-item--inactive {
     border-top: 10px solid hsl(0, 93%, 66%);
 } .nav-item--inactive:hover {

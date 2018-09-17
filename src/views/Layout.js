@@ -5,24 +5,27 @@
 
 import m from "mithril";
 
-import Home   from "../components/Home";
+import Home from "../components/Home";
 import Navbar from "../components/Navbar";
 
-class Layout {
-    constructor(vnode) {
-        this.active = "home";
-    }
+let Layout = {
+    oninit: function(vnode) {
+        vnode.state.active = "home";
+    },
 
-    nav(newPage) {
-        this.active = newPage;
-    }
+    nav: function(vnode, event) {
+        vnode.state.active = event.target.innerHTML;
+    },
 
-    view() {
+    view: function(vnode) {
         return m("main.layout", [
-            m(Navbar, {active: this.active, nav: this.nav}),
+            m(Navbar, {
+                active: vnode.state.active,
+                nav: this.nav.bind(this, vnode)
+            }),
             m(Home),
         ]);
     }
-}
+};
 
 export default Layout;

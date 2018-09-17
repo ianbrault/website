@@ -5,10 +5,10 @@
 
 import m from "mithril";
 
-class Home {
-    view() {
+let Home = {
+    view: function() {
         return m(".content");
     }
-}
+};
 
 export default Home;

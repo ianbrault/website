@@ -5,25 +5,26 @@
 
 import m from "mithril";
 
-class NavItem {
-    view(vnode) {
-        let [active, title] = [vnode.attrs.active, vnode.attrs.title];
-        let className = `.nav-item--${active === title ? "active" : "inactive"}`;
+let NavItem = {
+    view: function(vnode) {
+        let className = ".nav-item--"
+            + (vnode.attrs.active === vnode.attrs.title ? "active" : "inactive");
 
-        return m(className, {onclick: () => vnode.attrs.nav(title)}, title);
+        return m(className, {onclick: vnode.attrs.nav}, vnode.attrs.title);
     }
-}
+};
 
-class Navbar {
-    view(vnode) {
+let Navbar = {
+    view: function(vnode) {
+        let props = {active: vnode.attrs.active, nav: vnode.attrs.nav};
         return m("nav",
-            m(NavItem, {title: "home", active: vnode.attrs.active, nav: vnode.attrs.nav}),
+            m(NavItem, Object.assign({title: "home"}, props)),
             m(".nav--spacer"),
-            m(NavItem, {title: "about", active: vnode.attrs.active, nav: vnode.attrs.nav}),
-            m(NavItem, {title: "websites", active: vnode.attrs.active, nav: vnode.attrs.nav}),
-            m(NavItem, {title: "software", active: vnode.attrs.active, nav: vnode.attrs.nav}),
+            m(NavItem, Object.assign({title: "about"}, props)),
+            m(NavItem, Object.assign({title: "websites"}, props)),
+            m(NavItem, Object.assign({title: "software"}, props)),
         );
     }
-}
+};
 
 export default Navbar;
