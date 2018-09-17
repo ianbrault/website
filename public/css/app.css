@@ -8,3 +8,34 @@ body {
     font-family: "Source Code Pro";
     color: hsl(205, 100%, 94%);
 }
+
+nav {
+    display: flex;
+    font-family: "Work Sans";
+    padding: 0 20px 0 20px;
+}
+
+.nav--spacer {
+    flex-grow: 1;
+}
+
+.nav-item--active, .nav-item--inactive {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    width: 132px;
+    margin: 0 40px 0 40px;
+    padding-top: 12px;
+    font-size: 24px;
+    font-weight: 700;
+    transition: border-top 0.2s;
+} .nav-item--inactive {
+    border-top: 10px solid hsl(0, 93%, 66%);
+} .nav-item--inactive:hover {
+    border-top: 16px solid hsl(0, 93%, 66%);
+} .nav-item--active {
+    border-top: 10px solid hsla(0, 93%, 66%, 0.6);
+} .nav-item--active:hover {
+    border-top: 16px solid hsla(0, 93%, 66%, 0.6);
+}

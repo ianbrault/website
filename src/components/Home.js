@@ -7,7 +7,7 @@ import m from "mithril";
 
 class Home {
     view() {
-        return m("div.home", "home goes here");
+        return m(".content");
     }
 }
 
