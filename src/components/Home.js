@@ -15,7 +15,7 @@ let Home = {
     },
 
     view: function(vnode) {
-        return m(".content.home--container",
+        return m(".content#home--container",
             m(".home--image-wrapper",
                 m(".home--back-border"),
                 m("img.home--image", {src: "/img/home.jpg"}),
