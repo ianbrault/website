@@ -122,3 +122,31 @@ nav {
     margin: 0;
     padding-left: 16px;
 }
+
+.home--icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 240px;
+    margin: 20px 0 20px 0;
+    padding-left: 16px;
+}
+
+.home--icon-wrapper {
+    cursor: pointer;
+    border-radius: 50%;
+    border: 3px solid hsl(205, 100%, 94%);
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+} .home--icon-wrapper:hover {
+    background-color: hsl(205, 100%, 94%);
+}
+
+.home--icon {
+    width: 36px;
+    height: 36px;
+}
