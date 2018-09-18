@@ -9,6 +9,8 @@ let NavItem = {
     view: function(vnode) {
         let className = ".nav-item--"
             + (vnode.attrs.active === vnode.attrs.title ? "active" : "inactive");
+        if (vnode.attrs.title === "home")
+            className += ".nav-item--home";
 
         return m(className, {onclick: vnode.attrs.nav}, vnode.attrs.title);
     }
