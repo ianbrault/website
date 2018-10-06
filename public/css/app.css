@@ -43,9 +43,9 @@ nav {
 } .nav-item--inactive:hover {
     border-top: 16px solid hsl(0, 93%, 66%);
 } .nav-item--active {
-    border-top: 10px solid hsla(0, 93%, 66%, 0.6);
+    border-top: 10px solid hsl(0, 90%, 80%);
 } .nav-item--active:hover {
-    border-top: 16px solid hsla(0, 93%, 66%, 0.6);
+    border-top: 16px solid hsl(0, 90%, 80%);
 } .nav-item--home {
     margin: 0 0 0 8%;
 }
@@ -173,7 +173,7 @@ nav {
 }
 
 .about--title {
-    margin: 20px 0 0 6%;
+    margin: 0 0 20px 0;
     font-family: "Source Code Pro";
     font-size: 64px;
 }
@@ -194,6 +194,7 @@ nav {
     font-size: 24px;
     line-height: 34px;
     margin: 0;
+    padding-top: 16px;
 }
 
 .about--link {

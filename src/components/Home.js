@@ -23,7 +23,7 @@ let Home = {
             ),
             m("div",
                 m("p.home--title", "ian brault"),
-                m("p.home--subtitle", "junior developer"),
+                m("p.home--subtitle", "software developer"),
                 m("p.home--subtitle", "UCLA student"),
                 m(".home--icon-container",
                     m("a.home--icon-wrapper", {
