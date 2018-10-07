@@ -58,5 +58,4 @@ app.use((req, res) => {
 });
 
 let port = process.env.NODE_ENV === "production" ? 80 : 3000;
-let portStr = port !== 80 ? ":" + port : "";
-app.listen(port, () => log(`server running on port ${portStr}`));
+app.listen(port, () => log(`server running on port ${port}`));
