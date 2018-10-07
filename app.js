@@ -45,7 +45,7 @@ app.use((req, res) => {
     res.type("txt").send(emsg);
 });
 
-let port = process.env.NODE_ENV === "production" ? 80 : 3000;
+let port = process.env.NODE_ENV === "production" ? 443 : 3000;
 Log.log(`server running on port ${port}`);
 
 let certificate = fs.readFileSync("ianbrault.pem");
