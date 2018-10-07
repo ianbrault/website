@@ -14,5 +14,5 @@ if [[ $# -gt 0 ]]; then
         done
     fi
 else
-    ssh $USER@$IPADDR:~/website
+    ssh $USER@$IPADDR
 fi
