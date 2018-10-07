@@ -57,5 +57,5 @@ app.use((req, res) => {
     res.type("txt").send(emsg);
 });
 
-let port = process.env.NODE_ENV === "production" ? 80 : 3000;
+let port = process.env.NODE_ENV === "production" ? 443 : 3000;
 app.listen(port, () => log(`server running on port ${port}`));
