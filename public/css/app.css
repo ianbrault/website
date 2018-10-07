@@ -168,7 +168,7 @@ nav {
 .container--shown, .container--hidden {
     position: absolute;
     left: -4px;
-    transition: top 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: top 0.65s;
 } .container--shown {
     top: -4px;
 } .container--hidden {
