@@ -7,11 +7,7 @@ import m from "mithril";
 
 let About = {
     view: function(vnode) {
-        let className = ".content#about--container";
-        if (vnode.attrs.active === "about") className += ".container--shown";
-        else className += ".container--hidden";
-
-        return m(className,
+        return m(".content",
             m(".about--content-wrapper",
                 m("div",
                     m("p.about--title", "about me"),

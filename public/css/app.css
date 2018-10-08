@@ -165,22 +165,10 @@ nav {
     height: 36px;
 }
 
-.container--shown, .container--hidden {
-    position: absolute;
-    left: -4px;
-    transition: top 0.65s;
-} .container--shown {
-    top: -4px;
-} .container--hidden {
-    top: 100vh;
-}
-
 #about--container {
     display: flex;
     flex-direction: column;
     background-color: var(--dark-blue);
-    border: 4px solid var(--light-blue);
-    padding-top: 64px;
 }
 
 .about--title {
@@ -190,7 +178,7 @@ nav {
 }
 
 .about--content-wrapper {
-    margin: 32px 6% 0 6%;
+    margin: 100px 6% 0 6%;
     display: flex;
 }
 
@@ -215,7 +203,6 @@ nav {
 #websites--container {
     overflow: scroll;
     background-color: var(--dark-blue);
-    border: 4px solid var(--light-blue);
 }
 
 .page--title-container {
@@ -234,7 +221,6 @@ nav {
 
 #software--container {
     background-color: var(--dark-blue);
-    border: 4px solid var(--light-blue);
 }
 
 .coming-soon {

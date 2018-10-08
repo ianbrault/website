@@ -21,15 +21,18 @@ let Layout = {
     },
 
     view: function(vnode) {
+        let page = null;
+        if (vnode.state.active === "home") page = m(Home);
+        else if (vnode.state.active === "about") page = m(About);
+        else if (vnode.state.active === "websites") page = m(Websites);
+        else if (vnode.state.active === "software") page = m(Software);
+
         return m("main.layout", [
             m(Navbar, {
                 active: vnode.state.active,
                 nav: this.nav.bind(this, vnode)
             }),
-            m(Home),
-            m(About, {active: vnode.state.active}),
-            m(Websites, {active: vnode.state.active}),
-            m(Software, {active: vnode.state.active}),
+            page
         ]);
     }
 };
