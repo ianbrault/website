@@ -10,6 +10,13 @@ let Home = {
         vnode.state.hovered = -1;
     },
 
+    onbeforeremove: function(vnode) {
+        vnode.dom.classList.add("fade-slide-out");
+        return new Promise(function(resolve) {
+            setTimeout(resolve, 200);
+        });
+    },
+
     hover: function(vnode, i) {
         vnode.state.hovered = i;
     },

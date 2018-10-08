@@ -6,8 +6,17 @@
 import m from "mithril";
 
 let About = {
+    oncreate: function(vnode) {
+        setTimeout(() => this.fadeIn(vnode), 200);
+    },
+
+    fadeIn: function(vnode) {
+        vnode.dom.classList.add("fade-in");
+        vnode.dom.classList.remove("prefade");
+    },
+
     view: function(vnode) {
-        return m(".content",
+        return m("#about--container.content.prefade",
             m(".about--content-wrapper",
                 m("div",
                     m("p.about--title", "about me"),
