@@ -14,16 +14,17 @@ exports = module.exports = function(req, res) {
         if (msg === "show me the skaktis") {
             let post_body = {
                 json: {
-                    bot_id: process.env.BOT_ID,
-                    text: "I am Skaktis",
+                    bot_id: "0776e81e17083d03af04351603",
+                    "attachments" : [{
+                        "type": "image",
+                        "url": "https://i.groupme.com/568x771.png.84c4f1dd3f634ef5a44841951137f8a2",
+                    }],
                 }
             };
-            console.log(post_body);
 
             request.post(msg_post_url, post_body, (err, res, body) => {
                 if (err)
                     console.error(err);
-                console.log(body);
             });
         }
     }
