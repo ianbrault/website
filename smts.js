@@ -16,15 +16,14 @@ exports = module.exports = function(req, res) {
         console.log(msg);
         if (msg === "show me the skaktis") {
             let post_body = {
-                bot_id: process.env.BOT_ID,
+                bot_id: "" + process.env.BOT_ID,
                 text: "SKAKTIS",
             };
             console.log(post_body);
 
-            request.post(msg_post_url, post_body, (err, res, body) => {
+            request.post(msg_post_url, JSON.stringify(post_body), (err, res, body) => {
                 if (err)
                     console.error(err);
-                console.log(res);
                 console.log(body);
             });
         }
