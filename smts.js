@@ -21,12 +21,14 @@ exports = module.exports = function(req, res) {
             };
             console.log(post_body);
 
-            request.post(msg_post_url, post_body, (err) => {
+            request.post(msg_post_url, post_body, (err, res, body) => {
                 if (err)
                     console.error(err);
+                console.log(res);
+                console.log(body);
             });
         }
     }
 
-    return res.status(200).send("message received");
+    res.status(200).send("message received");
 }
