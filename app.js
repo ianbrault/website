@@ -10,6 +10,7 @@ const fs = require("fs");
 const https = require("https");
 
 const Log = require("./log");
+const smts = require("./smts");
 
 const app = express();
 
@@ -32,6 +33,8 @@ app.get("/", (req, res) => {
     Log.log("GET /");
     res.render("index");
 });
+
+app.post("/groupme/smts", (req, res) => smts(req, res));
 
 app.use((req, res) => {
     let emsg = `page "${req.originalUrl}" not found`;
