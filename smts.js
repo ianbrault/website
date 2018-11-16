@@ -9,19 +9,18 @@ require("dotenv").config();
 const msg_post_url = "https://api.groupme.com/v3/bots/post";
 
 exports = module.exports = function(req, res) {
-    console.log(req.body);
     if (req.body && req.body.text) {
-        console.log("skaktis message received");
         let msg = req.body.text.replace(/^\s+|\s+$/g, "").toLowerCase();
-        console.log(msg);
         if (msg === "show me the skaktis") {
             let post_body = {
-                bot_id: "" + process.env.BOT_ID,
-                text: "SKAKTIS",
+                json: {
+                    bot_id: process.env.BOT_ID,
+                    text: "I am Skaktis",
+                }
             };
             console.log(post_body);
 
-            request.post(msg_post_url, JSON.stringify(post_body), (err, res, body) => {
+            request.post(msg_post_url, post_body, (err, res, body) => {
                 if (err)
                     console.error(err);
                 console.log(body);
