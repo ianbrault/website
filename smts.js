@@ -18,6 +18,7 @@ const images = [
 const getRandom = (max) => Math.floor(Math.random() * Math.floor(max));
 
 exports = module.exports = function(req, res) {
+    return;
     if (req.body && req.body.text) {
         let msg = req.body.text.replace(/^\s+|\s+$/g, "").toLowerCase();
         if (msg === "show me the skaktis") {
