@@ -22,10 +22,10 @@ exports = module.exports = function(req, res) {
     if (req.body && req.body.text) {
         let msg = req.body.text.replace(/^\s+|\s+$/g, "").toLowerCase();
         if (msg === "show me the skaktis") {
-            let image = images[getRandom(3)];
+            let image = images[getRandom(4)];
             let post_body = {
                 json: {
-                    bot_id: "0776e81e17083d03af04351603",
+                    bot_id: "ab74d9f6558f3956564dd04106",
                     "attachments" : [{
                         "type": "image",
                         "url": image,
