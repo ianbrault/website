@@ -11,7 +11,8 @@ const https = require("https");
 
 const Log = require("./log");
 const smts = require("./smts");
-const smtsmts = require("./smts");
+
+const archive = require("./routes/archive");
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(express.static("public"));
 
 // set up routing
 
+app.use("/archive", archive);
+
 app.use("/js", browserify(__dirname + "/src", {
     transform: [babelify.configure({
         presets: ["@babel/preset-env"]
@@ -32,11 +35,11 @@ app.use("/js", browserify(__dirname + "/src", {
 
 app.get("/", (req, res) => {
     Log.log("GET /");
-    res.render("index");
+    res.send("coming soon...");
+    // res.render("index");
 });
 
 app.post("/groupme/smts", (req, res) => smts(req, res));
-app.post("/groupme/smtsmts", (req, res) => smtsmts(req, res));
 
 app.use((req, res) => {
     let emsg = `page "${req.originalUrl}" not found`;
@@ -52,6 +55,8 @@ app.use((req, res) => {
 
 let port = process.env.NODE_ENV === "production" ? 443 : 3000;
 Log.log(`server running on port ${port}`);
+
+// set up HTTPS server
 
 let certificate = fs.readFileSync("ianbrault.pem");
 let private_key = fs.readFileSync("ianbrault.key");
