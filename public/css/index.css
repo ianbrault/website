@@ -21,6 +21,7 @@ body {
     width: 10px;
     height: 10px;
     background-color: white;
+    mix-blend-mode: difference;
     border-radius: 50%;
     transition: top 80ms cubic-bezier(.19,1,.22,1), left 80ms cubic-bezier(.19,1,.22,1);
 }
