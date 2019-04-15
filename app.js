@@ -1,10 +1,7 @@
 /*
  * app.js
- * main Express app file
  */
 
-const babelify = require("babelify");
-const browserify = require("browserify-middleware");
 const express = require("express");
 const fs = require("fs");
 const https = require("https");
@@ -12,7 +9,7 @@ const https = require("https");
 const Log = require("./log");
 const smts = require("./smts");
 
-const archive = require("./routes/archive");
+const router = require("./routes/index.js");
 
 const app = express();
 
@@ -25,35 +22,10 @@ app.use(express.static("public"));
 
 // set up routing
 
-app.use("/archive", archive);
-
-app.use("/js", browserify(__dirname + "/src", {
-    transform: [babelify.configure({
-        presets: ["@babel/preset-env"]
-    })]
-}));
-
-app.get("/", (req, res) => {
-    Log.log("GET /");
-    res.render("index");
-});
-
-app.post("/groupme/smts", (req, res) => smts(req, res));
-
-app.use((req, res) => {
-    let emsg = `page "${req.originalUrl}" not found`;
-    Log.log_error(emsg);
-    res.status(404);
-
-    if (req.accepts("html"))
-        return res.send(emsg); // TODO
-    else if (req.accepts("json"))
-        return res.send({ error: emsg });
-    res.type("txt").send(emsg);
-});
+app.use("/", router);
 
 let port = process.env.NODE_ENV === "production" ? 443 : 3000;
-Log.log(`server running on port ${port} (HTTPS)`);
+Log.log(`HTTPS server running on port ${port}`);
 
 // set up HTTPS server
 

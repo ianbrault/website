@@ -1,6 +1,6 @@
 /*
  * routes/archive.js
- * Express routes for archived sites
+ * routes for archived sites
  */
 
 const express = require("express");
