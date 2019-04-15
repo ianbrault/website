@@ -35,8 +35,7 @@ app.use("/js", browserify(__dirname + "/src", {
 
 app.get("/", (req, res) => {
     Log.log("GET /");
-    res.send("coming soon...");
-    // res.render("index");
+    res.render("index");
 });
 
 app.post("/groupme/smts", (req, res) => smts(req, res));
@@ -54,7 +53,7 @@ app.use((req, res) => {
 });
 
 let port = process.env.NODE_ENV === "production" ? 443 : 3000;
-Log.log(`server running on port ${port}`);
+Log.log(`server running on port ${port} (HTTPS)`);
 
 // set up HTTPS server
 
