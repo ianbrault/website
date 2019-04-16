@@ -23,8 +23,6 @@ document.addEventListener("click", (event) => {
     const halo = createClickHalo(event);
     document.body.appendChild(halo);
     setTimeout(() => {
-        const halos = document.getElementsByClassName("click-halo");
-        for (let i = 0; i < halos.length; i++)
-            document.body.removeChild(halos[i]);
+        document.body.removeChild(halo);
     }, 720);
 })
