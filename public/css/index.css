@@ -21,9 +21,36 @@ body {
     width: 10px;
     height: 10px;
     background-color: white;
-    mix-blend-mode: difference;
     border-radius: 50%;
     transition: top 80ms cubic-bezier(.19,1,.22,1), left 80ms cubic-bezier(.19,1,.22,1);
+    transform: translate3d(-50%, -50%, 0);
+    -moz-transform: translate3d(-50%, -50%, 0);
+    -webkit-transform: translate3d(-50%, -50%, 0);
+}
+
+@keyframes click-halo-grow {
+    0% {
+        border: 1px solid #ffffff;
+        width: 4px;
+        height: 4px;
+    } 50% {
+        border: 1px solid #ffffff;
+        width: 32px;
+        height: 32px;
+    } 100% {
+        border: 1px solid #ffffff00;
+        width: 64px;
+        height: 64px;
+    }
+}
+
+.click-halo {
+    position: fixed;
+    border-radius: 50%;
+    animation: click-halo-grow 640ms linear;
+    transform: translate3d(-50%, -50%, 0);
+    -moz-transform: translate3d(-50%, -50%, 0);
+    -webkit-transform: translate3d(-50%, -50%, 0);
 }
 
 svg {
