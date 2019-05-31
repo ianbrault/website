@@ -43,8 +43,7 @@ exports = module.exports = function(req, res) {
                     console.error(err);
             });
         } else {
-            if (req.body.name !== "iMessage")
-                prev_message = text;
+            prev_message = text;
         }
     }
 
