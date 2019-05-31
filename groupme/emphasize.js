@@ -4,20 +4,26 @@
  */
 
 const request = require("request");
-require("dotenv").config();
+
+const Log = require("../log");
 
 let prev_message = undefined;
 
 exports = module.exports = function(req, res) {
+    Log.log("POST /groupme/emphasize");
+
     if (req.body && req.body.text) {
+        Log.log("text found in message");
+
         let text = req.body.text;
         let text_clean = text.replace(/^\s+|\s+$/g, "").toLowerCase();
 
         if (text_clean === "!emphasize" && prev_message != undefined) {
+            Log.log("'!emphasize' message detected");
             let response_text = `@${req.body.name} emphasized "${prev_message}"`;
             let res_body = {
                 json: {
-                  bot_id: "j5abcdefg",
+                  bot_id: "0941280baccc5b344ee6a88980",
                   text: response_text,
                 }
             };
