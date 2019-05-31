@@ -17,18 +17,28 @@ exports = module.exports = function(req, res) {
         let text_clean = text.replace(/^\s+|\s+$/g, "").toLowerCase();
 
         if (text_clean === "!emphasize" && prev_message != undefined) {
-            let response_text = `@${req.body.name} emphasized "${prev_message}"`;
+            let user_name = req.body.name;
+            let user_id = req.body.user_id;
+            Log.log(`!emphasize command from user ${user_name} (${user_id})`);
+
+            let response_text = `@${user_name} emphasized "${prev_message}"`;
             let res_body = {
                 json: {
                     bot_id: "0941280baccc5b344ee6a88980",
                     text: response_text,
-                    attachments: {
-                        type: "mentions",
-                        user_ids: [req.body.user_id],
-                        loci: [0, 1 + req.body.name.length]
-                    }
+                    attachments: [
+                        {
+                            type: "mentions",
+                            user_ids: [user_id],
+                            loci: [
+                                [0, 1 + user_name.length]
+                            ]
+                        }
+                    ]
                 }
             };
+
+            console.log(JSON.stringify(res_body));
 
             request.post("https://api.groupme.com/v3/bots/post", res_body, (err, res, body) => {
                 if (err)
