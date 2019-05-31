@@ -13,18 +13,20 @@ exports = module.exports = function(req, res) {
     Log.log("POST /groupme/emphasize");
 
     if (req.body && req.body.text) {
-        Log.log("text found in message");
-
         let text = req.body.text;
         let text_clean = text.replace(/^\s+|\s+$/g, "").toLowerCase();
 
         if (text_clean === "!emphasize" && prev_message != undefined) {
-            Log.log("'!emphasize' message detected");
             let response_text = `@${req.body.name} emphasized "${prev_message}"`;
             let res_body = {
                 json: {
-                  bot_id: "0941280baccc5b344ee6a88980",
-                  text: response_text,
+                    bot_id: "0941280baccc5b344ee6a88980",
+                    text: response_text,
+                    attachments: {
+                        type: "mentions",
+                        user_ids: [req.body.user_id],
+                        loci: [0, 1 + req.body.name.length]
+                    }
                 }
             };
 
@@ -33,7 +35,8 @@ exports = module.exports = function(req, res) {
                     console.error(err);
             });
         } else {
-            prev_message = text;
+            if (req.body.name !== "iMessage")
+                prev_message = text;
         }
     }
 
