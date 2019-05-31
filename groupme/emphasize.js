@@ -17,10 +17,8 @@ exports = module.exports = function(req, res) {
             let response_text = `@${req.body.name} emphasized "${prev_message}"`;
             let res_body = {
                 json: {
-                    {
-                      bot_id: "j5abcdefg",
-                      text: response_text,
-                    }
+                  bot_id: "j5abcdefg",
+                  text: response_text,
                 }
             };
 
