@@ -38,8 +38,6 @@ exports = module.exports = function(req, res) {
                 }
             };
 
-            console.log(JSON.stringify(res_body));
-
             request.post("https://api.groupme.com/v3/bots/post", res_body, (err, res, body) => {
                 if (err)
                     console.error(err);
