@@ -1,6 +1,6 @@
 /*
- * smts.js
- * callback URL for the "show me the Skaktis" GroupMe bot
+ * groupme/smts.js
+ * callback URL for the "show me the Skaktis" bot
  */
 
 const request = require("request");
