@@ -8,7 +8,6 @@ const http = require("http");
 const https = require("https");
 
 const Log = require("./log");
-const smts = require("./smts");
 
 const router = require("./routes/index.js");
 
@@ -20,8 +19,6 @@ app.set("view engine", "jade");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
-
-// set up routing
 
 app.use("/", router);
 
