@@ -24,7 +24,7 @@ exports = module.exports = function(req, res) {
             let response_text = `@${user_name} emphasized "${prev_message}"`;
             let res_body = {
                 json: {
-                    bot_id: "0941280baccc5b344ee6a88980",
+                    bot_id: "f94e5b0ab0e0b1f1c265aaa60f",
                     text: response_text,
                     attachments: [
                         {
