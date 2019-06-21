@@ -4,13 +4,6 @@
 
 // CURSOR EFFECTS
 
-const cursor = document.querySelector("#cursor");
-
-document.addEventListener("mousemove", (event) => {
-    cursor.style.top = event.pageY + "px";
-    cursor.style.left = event.pageX + "px";
-});
-
 const createClickHalo = (event) => {
     const halo = document.createElement("div");
     halo.className = "click-halo";
@@ -25,4 +18,4 @@ document.addEventListener("click", (event) => {
     setTimeout(() => {
         document.body.removeChild(halo);
     }, 720);
-})
+});
