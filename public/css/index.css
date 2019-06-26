@@ -86,6 +86,25 @@ text {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    text-anchor: end;
+}
+
+#line2--bp2 {
+    display: none;
+}
+
+@media screen and (max-width: 1000px) {
+    #line1 {
+        font-size: 16px;
+    }
+
+    #line2--bp1 {
+        display: none;
+    }
+
+    #line2--bp2 {
+        display: inherit;
+    }
 }
 
 /*** CLICK EFFECTS ***/
