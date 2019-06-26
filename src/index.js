@@ -1,5 +1,6 @@
 /*
  * src/index.js
+ * author: Ian Brault <ianbrault@ucla.edu>
  */
 
 // CURSOR EFFECTS

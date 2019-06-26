@@ -1,3 +1,8 @@
+/*
+ * public/css/index.css
+ * author: Ian Brault <ianbrault@ucla.edu>
+ */
+
 body {
     width: 100vw;
     height: 100vh;
@@ -5,16 +10,85 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: flex-start;
     overflow: hidden;
     background-color: #fff;
     color: #000;
-    font-family: sans-serif;
+    font-family: acumin-pro, sans-serif;
 }
 
-.logo-wrapper {
+/*** NAVBAR ***/
+
+nav {
     width: 100vw;
+    position: fixed;
+    top: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 10px 0;
+}
+
+.nav-item {
+    list-style: none;
+    text-transform: uppercase;
+    font-size: 20px;
+    margin: 0 12px;
+    padding: 4px 6px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+@media screen and (min-width: 1000px) {
+    .nav-item {
+        font-size: 21px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .nav-item {
+        font-size: 22px;
+    }
+}
+
+.nav-item:last-child {
+    margin-right: 32px;
+}
+
+.nav-item--portfolio {
+    padding: 4px 2px;
+}
+
+.nav-item--active {
+    opacity: 0.5;
+}
+
+.nav-item:hover,
+.nav-item--active {
+    display: flex;
+    flex-direction: column;
+    background-image: url("data:image/svg+xml;utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='2'><circle cx='1' cy='1' r='1'/></svg>");
+    background-position: bottom;
+    background-repeat: repeat-x;
+}
+
+/*** HOME ***/
+
+.logo-wrapper {
     margin-top: -100px;
 }
+
+text {
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/*** CLICK EFFECTS ***/
 
 @keyframes click-halo-grow {
     0% {
