@@ -17,6 +17,10 @@ body {
     font-family: acumin-pro, sans-serif;
 }
 
+a {
+    color: #d1a7fc;
+}
+
 /*** NAVBAR ***/
 
 nav {
@@ -76,8 +80,16 @@ nav {
 
 /*** HOME ***/
 
+.icon-wrapper {
+    position: fixed;
+    top: 0;
+    left: 16px;
+    width: 50px;
+    height: 50px;
+}
+
 .logo-wrapper {
-    padding-top: 64px;
+    padding-top: 80px;
 }
 
 text {
@@ -112,6 +124,15 @@ text {
     .text--mobile {
         display: inherit;
     }
+}
+
+.credit {
+    position: fixed;
+    bottom: 4px;
+    right: 8px;
+    margin: 0;
+    font-size: 12px;
+    font-weight: 300;
 }
 
 /*** CLICK EFFECTS ***/
