@@ -77,10 +77,12 @@ nav {
 /*** HOME ***/
 
 .logo-wrapper {
-    margin-top: -100px;
+    padding-top: 64px;
 }
 
 text {
+    font-weight: 300;
+    font-style: italic;
     cursor: default;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -89,20 +91,25 @@ text {
     text-anchor: end;
 }
 
-#line2--bp2 {
+.text--desktop {
+    display: inherit;
+}
+
+.text--mobile {
     display: none;
 }
 
-@media screen and (max-width: 1000px) {
-    #line1 {
-        font-size: 16px;
+@media screen and (max-width: 812px), (max-device-width: 812px) {
+    .logo-wrapper {
+        width: 134vw;
+        padding-top: 0;
     }
 
-    #line2--bp1 {
+    .text--desktop {
         display: none;
     }
 
-    #line2--bp2 {
+    .text--mobile {
         display: inherit;
     }
 }
