@@ -92,6 +92,12 @@ nav {
     padding-top: 80px;
 }
 
+polyline.wire {
+    stroke-linecap: round;
+    stroke-dasharray: 3 100%;
+    stroke-width: 3;
+}
+
 text {
     font-weight: 300;
     font-style: italic;
