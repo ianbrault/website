@@ -9,16 +9,18 @@ html
         link(rel="stylesheet", href="/css/index.css")
     body
         nav
-            li.nav-item.nav-item--active home
-            li.nav-item about
-            li.nav-item.nav-item--portfolio portfolio
-        a(href="/")
-            div.icon-wrapper
-                include icon.html
-        div.logo-wrapper
-            include logo.html
-        p.credit logo inspired by &nbsp;
-            a(href="https://blog.johnnovak.net/") john novak
+            a.nav-item.nav-item--active(href="#") home
+            a.nav-item(href="#about") about
+            a.nav-item(href="#portfolio") portfolio
+        a#icon-link(href="#")
+            include icon.html
+        section#home
+            div.logo-wrapper
+                include logo.html
+            p.credit logo inspired by &nbsp;
+                a(href="https://blog.johnnovak.net/") john novak
+        section#about
+        section#portfolio
 
         script(src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js")
         script(src="/js/index.js")
