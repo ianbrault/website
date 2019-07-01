@@ -63,7 +63,7 @@ for (let i = 0; i < navLinks.length; i++)
 
 // handle any initial target in page load
 updateNavLinks(window.location.href);
-getSectionFromHref(window.location.href).style.display = "flex";
+pageIn(window.location.href);
 
 // CLICK EFFECTS
 
@@ -103,6 +103,6 @@ setInterval(() => {
     let wire = logo.select(getRandomWire());
     Snap.animate(0, 80, (offset) => {
         wire.attr({ "stroke": wireColor, "stroke-dashoffset": "-" + offset });
-    }, 600);
+    }, 500);
 }, 800);
 
