@@ -12,14 +12,23 @@ html
             a.nav-item.nav-item--active(href="#") home
             a.nav-item(href="#about") about
             a.nav-item(href="#portfolio") portfolio
-        a#icon-link(href="#")
-            include icon.html
+        header
+            a#icon-link(href="#")
+                include icon.html
         section#home
             div.logo-wrapper
                 include logo.html
-            p.credit logo inspired by &nbsp;
+            p.credit logo inspired by&nbsp;
                 a(href="https://blog.johnnovak.net/") john novak
         section#about
+            svg#about-header(viewBox="0 0 200 32")
+                polyline#wire1
+                polyline#wire2
+                polyline#wire3
+                rect(x="58", y="0", width="56", height="20", fill="#fff")
+                rect(x="57", y="0", width="5", height="20", transform="rotate(24 58 0)", fill="#fff")
+                rect(x="105", y="0", width="8", height="20", transform="rotate(20 114 20)", fill="#fff")
+                text(x="60", y="12", font-size="16") about
         section#portfolio
 
         script(src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js")

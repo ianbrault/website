@@ -26,9 +26,13 @@ section {
     justify-content: center;
 }
 
-#home {
-    overflow: hidden;
-    align-items: flex-start;
+text {
+    font-style: italic;
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 /*** PAGE TRANSITIONS ***/
@@ -116,18 +120,36 @@ nav {
     background-repeat: repeat-x;
 }
 
-/*** HOME ***/
+/*** HEADER ***/
 
-#icon-link {
+header {
     position: fixed;
     top: 0;
-    left: 16px;
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 2px 0 0 12px;
+}
+
+#icon-link {
+    display: inline-block;
     width: 50px;
     height: 50px;
 }
 
 #icon-link svg {
+    width: 50px;
+    height: 50px;
     pointer-events: none;
+}
+
+/*** HOME ***/
+
+#home {
+    overflow: hidden;
+    align-items: flex-start;
 }
 
 .logo-wrapper {
@@ -140,14 +162,8 @@ polyline.wire {
     stroke-width: 3;
 }
 
-text {
+.logo-wrapper text {
     font-weight: 300;
-    font-style: italic;
-    cursor: default;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
     text-anchor: end;
 }
 
@@ -181,6 +197,30 @@ text {
     margin: 0;
     font-size: 12px;
     font-weight: 300;
+}
+
+/*** ABOUT ***/
+
+#about {
+    justify-content: flex-start;
+    height: auto;
+    padding-top: 80px;
+}
+
+#about-header {
+    width: 500px;
+}
+
+#about-header text {
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+#about-header circle,
+#about-header polyline {
+    fill: none;
+    stroke: #646464;
+    stroke-width: 0.6px;
 }
 
 /*** CLICK EFFECTS ***/
