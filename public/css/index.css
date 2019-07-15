@@ -199,28 +199,37 @@ polyline.wire {
     font-weight: 300;
 }
 
-/*** ABOUT ***/
+/*** ABOUT/PORTFOLIO ***/
 
-#about {
+#about,
+#portfolio {
     justify-content: flex-start;
     height: auto;
     padding-top: 80px;
 }
 
-#about-header {
-    width: 500px;
-}
-
-#about-header text {
+.section-header text {
     font-weight: 500;
     text-transform: uppercase;
 }
 
-#about-header circle,
-#about-header polyline {
+.section-header circle,
+.section-header polyline {
     fill: none;
     stroke: #646464;
     stroke-width: 0.6px;
+}
+
+/*** ABOUT ***/
+
+#about-header {
+    width: 500px;
+}
+
+/*** PORTFOLIO ***/
+
+#portfolio-header {
+    width: 500px;
 }
 
 /*** CLICK EFFECTS ***/

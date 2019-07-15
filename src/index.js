@@ -50,7 +50,9 @@ const pageIn = (href) => {
     setTimeout(() => section.classList.remove("page-in"), pageTime * 2);
 
     if (href.endsWith("#about"))
-        setTimeout(() => onAboutLoad(), pageTime * 1.72);
+        setTimeout(() => onSectionLoad("about"), pageTime * 1.6);
+    else if (href.endsWith("#portfolio"))
+        setTimeout(() => onSectionLoad("portfolio"), pageTime * 1.6);
 };
 
 const navigate = (href) => {
@@ -112,38 +114,43 @@ setInterval(() => {
     }, 500);
 }, 800);
 
-// ABOUT PAGE EFFECTS
+// SECTION HEADER EFFECTS
 
-const aboutHeader = Snap("#about-header");
+// wires break downward at 45 degrees
 const diag = 4 * Math.sin(Math.PI / 4);
 const r = 1.2;
 const rDiag = r * Math.sin(Math.PI / 4);
 
-const animateWire = (polyline, duration, endX, endY) => {
-    Snap.animate(0, 180, (length) => {
-        polyline.attr({ "stroke-dasharray": length + " 200" });
-    }, duration, mina.easeout);
-
-    setTimeout(() => aboutHeader.circle(endX + rDiag, endY + rDiag, r), duration);
+const getWires = (header) => {
+    return [
+        header.select("#wire1"),
+        header.select("#wire2"),
+        header.select("#wire3")
+    ];
 };
 
-const onAboutLoad = () => {
+const animateWire = (header, polyline, lineLength, duration, endX, endY) => {
+    Snap.animate(0, lineLength, (length) => {
+        polyline.attr({ "stroke-dasharray": length + " 400" });
+    }, duration, mina.easeout);
+
+    setTimeout(() => header.circle(endX + rDiag, endY + rDiag, r), duration);
+};
+
+const onSectionLoad = (name) => {
+    const header = Snap(`#${name}-header`);
+    const wires = getWires(header);
+
     const y = [2, 6, 10];
+    const baseBp = (name === "about") ? 140 : 168;
+    const bp1 = baseBp, bp2 = bp1 - diag, bp3 = bp2 - diag;
 
-    // wires break downward at 45 degrees
-    // viewBox: 0 0 232 30
-    const wires = [
-        aboutHeader.select("#wire1"),
-        aboutHeader.select("#wire2"),
-        aboutHeader.select("#wire3")
-    ];
-
-    const bp1 = 140, bp2 = bp1 - diag, bp3 = bp2 - diag;
     wires[0].attr({ points: [0, y[0], bp1, y[0], bp1 + 12, y[0] + 12] });
     wires[1].attr({ points: [0, y[1], bp2, y[1], bp2 + 12 + rDiag, y[1] + 12 + rDiag, bp2 + 32, y[1] + 12 + rDiag] });
     wires[2].attr({ points: [0, y[2], bp3, y[2], bp3 + 12, y[2] + 12] });
 
-    animateWire(wires[0], 640, bp1 + 12, y[0] + 12);
-    animateWire(wires[1], 400, bp2 + 32, y[1] + 12);
-    animateWire(wires[2], 520, bp3 + 12, y[2] + 12);
+    const length = (name === "about") ? 180 : 208;
+    animateWire(header, wires[0], length, 640, bp1 + 12, y[0] + 12);
+    animateWire(header, wires[1], length, 400, bp2 + 32, y[1] + 12);
+    animateWire(header, wires[2], length, 520, bp3 + 12, y[2] + 12);
 };
