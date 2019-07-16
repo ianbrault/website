@@ -129,6 +129,11 @@ header {
     stroke-width: 0.6px;
 }
 
+.section-header polyline.text-bg {
+    fill: #fff;
+    stroke: none;
+}
+
 /*** CLICK EFFECTS ***/
 
 @keyframes click-halo-grow {
