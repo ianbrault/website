@@ -19,6 +19,8 @@ app.set("view engine", "jade");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
+// TODO: REMOVE LATER, ONLY FOR TEMPORARY CSS
+app.use(express.static("src"));
 
 app.use("/", router);
 

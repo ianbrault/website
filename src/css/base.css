@@ -1,5 +1,5 @@
 /*
- * public/css/index.css
+ * src/css/base.css
  * author: Ian Brault <ianbrault@ucla.edu>
  */
 
@@ -21,9 +21,9 @@ section {
     width: 100%;
     height: 100%;
     margin: 0;
-    display: none;
+    display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 text {
@@ -33,36 +33,6 @@ text {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-}
-
-/*** PAGE TRANSITIONS ***/
-
-@keyframes fade-out {
-    from {
-        opacity: 1;
-    }
-
-    to {
-        opacity: 0;
-    }
-}
-
-@keyframes fade-in {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-.page-out {
-    animation: fade-out 0.32s ease-out;
-}
-
-.page-in {
-    animation: fade-in 0.32s ease-out;
 }
 
 /*** NAVBAR ***/
@@ -145,68 +115,7 @@ header {
     pointer-events: none;
 }
 
-/*** HOME ***/
-
-#home {
-    overflow: hidden;
-    align-items: flex-start;
-}
-
-.logo-wrapper {
-    padding-top: 80px;
-}
-
-polyline.wire {
-    stroke-linecap: round;
-    stroke-dasharray: 3 100%;
-    stroke-width: 3;
-}
-
-.logo-wrapper text {
-    font-weight: 300;
-    text-anchor: end;
-}
-
-.text--desktop {
-    display: inherit;
-}
-
-.text--mobile {
-    display: none;
-}
-
-@media screen and (max-width: 812px), (max-device-width: 812px) {
-    .logo-wrapper {
-        width: 134vw;
-        padding-top: 0;
-    }
-
-    .text--desktop {
-        display: none;
-    }
-
-    .text--mobile {
-        display: inherit;
-    }
-}
-
-.credit {
-    position: fixed;
-    bottom: 4px;
-    right: 8px;
-    margin: 0;
-    font-size: 12px;
-    font-weight: 300;
-}
-
-/*** ABOUT/PORTFOLIO ***/
-
-#about,
-#portfolio {
-    justify-content: flex-start;
-    height: auto;
-    padding-top: 80px;
-}
+/*** SECTION HEADERS ***/
 
 .section-header text {
     font-weight: 500;
@@ -218,18 +127,6 @@ polyline.wire {
     fill: none;
     stroke: #646464;
     stroke-width: 0.6px;
-}
-
-/*** ABOUT ***/
-
-#about-header {
-    width: 500px;
-}
-
-/*** PORTFOLIO ***/
-
-#portfolio-header {
-    width: 500px;
 }
 
 /*** CLICK EFFECTS ***/

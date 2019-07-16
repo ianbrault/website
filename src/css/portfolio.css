@@ -1,0 +1,14 @@
+/*
+ * src/css/portfolio.css
+ * author: Ian Brault <ianbrault@ucla.edu>
+ */
+
+#portfolio {
+    justify-content: flex-start;
+    height: auto;
+    padding-top: 80px;
+}
+
+#portfolio-header {
+    width: 500px;
+}

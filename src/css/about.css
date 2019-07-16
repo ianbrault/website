@@ -1,0 +1,13 @@
+/*
+ * src/css/about.css
+ * author: Ian Brault <ianbrault@ucla.edu>
+ */
+
+#about {
+    height: auto;
+    padding-top: 80px;
+}
+
+#about-header {
+    width: 500px;
+}

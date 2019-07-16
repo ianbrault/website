@@ -1,0 +1,56 @@
+/*
+ * src/css/home.css
+ * author: Ian Brault <ianbrault@ucla.edu>
+ */
+
+#home {
+    overflow: hidden;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+polyline.wire {
+    stroke-linecap: round;
+    stroke-dasharray: 3 100%;
+    stroke-width: 2;
+}
+
+.logo-wrapper {
+    width: 100vw;
+}
+
+.logo-wrapper text {
+    font-weight: 300;
+    text-anchor: end;
+}
+
+.text--desktop {
+    display: inherit;
+}
+
+.text--mobile {
+    display: none;
+}
+
+@media screen and (max-width: 812px), (max-device-width: 812px) {
+    .logo-wrapper {
+        width: 134vw;
+    }
+
+    .text--desktop {
+        display: none;
+    }
+
+    .text--mobile {
+        display: inherit;
+    }
+}
+
+.credit {
+    position: fixed;
+    bottom: 4px;
+    right: 8px;
+    margin: 0;
+    font-size: 12px;
+    font-weight: 300;
+}
