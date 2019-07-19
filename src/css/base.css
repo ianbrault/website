@@ -10,6 +10,7 @@ body {
     background-color: #fff;
     color: #000;
     font-family: acumin-pro, sans-serif;
+    font-style: italic;
 }
 
 a {
@@ -27,7 +28,6 @@ section {
 }
 
 text {
-    font-style: italic;
     cursor: default;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -74,7 +74,7 @@ nav {
 }
 
 .nav-item:last-child {
-    margin-right: 32px;
+    margin-right: 45px;
 }
 
 .nav-item--active {
@@ -100,7 +100,7 @@ header {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    padding: 2px 0 0 12px;
+    padding: 12px 20px;
 }
 
 #icon-link {

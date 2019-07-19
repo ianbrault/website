@@ -8,7 +8,51 @@ block content
             polyline#wire3
             polyline.text-bg(points="59 0 118 0 114 16 50 16")
             text(x="60", y="12", font-size="16") about
+        div.content
+            div.about-img-border-wrapper
+                div.about-img-border-left
+                div.about-img-border-right
+                div.about-img-border-top
+                div.about-img-border-bottom
+                img.about-img(src="/img/about.jpg")
+            p.about-copy
+                | I currently work as a Flight Software Engineer at NASA’s Jet Propulsion
+                | Laboratory (JPL) in Pasadena, CA. I graduated from UCLA in 2019 with a B.S. in
+                | Computer Science & Engineering. I work primarily with C, C++, and Rust (see my
+                | work here) but also experiment with web programming and design on the side (see my work
+                | here). For more information see my resume. I can be reached at&nbsp;
+                a(href="mailto://ian.brault@engineering.ucla.edu") ian.brault@engineering.ucla.edu
+        div#links
+            svg.link-wrapper#github(viewBox="0 0 24 24")
+                path#icon-text-path(fill="none", d="m0,11 a12,12 0 0 0 24,0")
+                text(font-size="4")
+                    textPath(startOffset="50%", xlink:href="#icon-text-path") g i t h u b
+                a(href="/about")
+                    circle.link(r="8", cx="12", cy="10", fill="#fff", transform="translate(0, 20) scale(1, -1)")
+                    image.icon(x="7", y="5", width="10", height="10", xlink:href="/img/github.svg")
+            svg.link-wrapper#linkedin(viewBox="0 0 24 24")
+                path#icon-text-path(fill="none", d="m0,11 a12,12 0 0 0 24,0")
+                text(font-size="4")
+                    textPath(startOffset="50%", xlink:href="#icon-text-path") l i n k e d i n
+                a(href="/about")
+                    circle.link(r="8", cx="12", cy="10", fill="#fff", transform="translate(0, 20) scale(1, -1)")
+                    image.icon(x="8", y="6", width="8", height="8", xlink:href="/img/linkedin.svg")
+            svg.link-wrapper#resume(viewBox="0 0 24 24")
+                path#icon-text-path(fill="none", d="m0,11 a12,12 0 0 0 24,0")
+                text(font-size="4")
+                    textPath(startOffset="50%", xlink:href="#icon-text-path") r e s u m e
+                a(href="/about")
+                    circle.link(r="8", cx="12", cy="10", fill="#fff", transform="translate(0, 20) scale(1, -1)")
+                    image.icon(x="7", y="5", width="10", height="10", xlink:href="/img/resume.svg")
+            svg.link-wrapper#email(viewBox="0 0 24 24")
+                path#icon-text-path(fill="none", d="m0,11 a12,12 0 0 0 24,0")
+                text(font-size="4")
+                    textPath(startOffset="50%", xlink:href="#icon-text-path") e m a i l
+                a(href="/about")
+                    circle.link(r="8", cx="12", cy="10", fill="#fff", transform="translate(0, 20) scale(1, -1)")
+                    image.icon(x="7", y="5", width="10", height="10", xlink:href="/img/email.svg")
 
 block scripts
     script(src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js")
     script(src="/js/sectionHeader.js")
+    script(src="/js/about.js")

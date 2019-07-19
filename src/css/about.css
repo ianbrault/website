@@ -3,11 +3,100 @@
  * author: Ian Brault <ianbrault@ucla.edu>
  */
 
-#about {
-    height: auto;
+#about-header {
     padding-top: 80px;
+    width: 500px;
 }
 
-#about-header {
-    width: 500px;
+.content {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    padding: 4% 140px;
+}
+
+.about-img-border-wrapper {
+    position: relative;
+    height: 56vh;
+}
+
+.about-img-border-top,
+.about-img-border-bottom {
+    position: absolute;
+    width: 100%;
+    height: 6px;
+    background-image: url("data:image/svg+xml;utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='2'><circle cx='1' cy='1' r='1'/></svg>");
+    background-repeat: repeat-x;
+}
+
+.about-img-border-left,
+.about-img-border-right {
+    position: absolute;
+    width: 6px;
+    height: 100%;
+    background-image: url("data:image/svg+xml;utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='2' height='6'><circle cx='1' cy='1' r='1'/></svg>");
+    background-repeat: repeat-y;
+}
+
+.about-img-border-left {
+    left: 0;
+    background-position: left;
+}
+
+.about-img-border-right {
+    right: 0;
+    background-position: right;
+}
+
+.about-img-border-top {
+    top: 0;
+    background-position: top;
+}
+
+.about-img-border-bottom {
+    bottom: 0;
+    background-position: bottom;
+}
+
+.about-img {
+    height: calc(56vh - 40px);
+    margin: 20px;
+}
+
+.about-copy {
+    cursor: default;
+    max-width: 60%;
+    font-size: 22px;
+    font-style: normal;
+    line-height: 1.6;
+    margin-left: 64px;
+}
+
+#links {
+    position: fixed;
+    bottom: 20px;
+    right: 40px;
+}
+
+.link-wrapper {
+    width: 80px;
+    height: 80px;
+    margin: 0 4px;
+}
+
+.link-wrapper text {
+    text-anchor: middle;
+    font-style: normal;
+    opacity: 0;
+    transition: opacity 200ms;
+}
+
+.link-wrapper:hover text {
+    opacity: 1;
+}
+
+.link {
+    stroke: #000;
+    stroke-width: 1;
+    stroke-dasharray: 0 202;
 }
