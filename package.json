@@ -17,7 +17,7 @@
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "jade": "^1.11.0",
-    "mithril": "^1.1.6",
+    "mithril": "^1.1.7",
     "request": "^2.88.0",
     "uglify-js": "^2.6.0"
   },
