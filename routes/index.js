@@ -28,14 +28,4 @@ router.get("/", (req, res) => {
     res.render("home", { title: "ianbrault", page: "home" });
 });
 
-router.get("/about", (req, res) => {
-    Log.log("GET /about");
-    res.render("about", { title: "about", page: "about" });
-});
-
-router.get("/portfolio", (req, res) => {
-    Log.log("GET /portfolio");
-    res.render("portfolio", { title: "portfolio", page: "portfolio" });
-});
-
 module.exports = router;

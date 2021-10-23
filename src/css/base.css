@@ -1,6 +1,5 @@
 /*
  * src/css/base.css
- * author: Ian Brault <ianbrault@ucla.edu>
  */
 
 body {
@@ -8,159 +7,37 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #fff;
-    color: #000;
-    font-family: acumin-pro, sans-serif;
-    font-style: italic;
+    font-family: "Source Code Pro", monospace;
 }
-
-a {
-    color: #d1a7fc;
-    text-decoration: none;
-}
-
-section {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
-
-text {
-    cursor: default;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-/*** NAVBAR ***/
-
-nav {
-    width: 100vw;
-    position: fixed;
-    top: 0;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    padding: 10px 0;
-}
-
-.nav-item {
-    color: #000;
-    list-style: none;
-    text-transform: uppercase;
-    font-size: 20px;
-    margin: 0 12px;
-    padding: 4px 6px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    transition: opacity 0.2s;
-}
-
-@media screen and (min-width: 1000px) {
-    .nav-item {
-        font-size: 21px;
-    }
-}
-
-@media screen and (min-width: 1200px) {
-    .nav-item {
-        font-size: 22px;
-    }
-}
-
-.nav-item:last-child {
-    margin-right: 45px;
-}
-
-.nav-item--active {
-    opacity: 0.5;
-}
-
-.nav-item:hover,
-.nav-item--active {
-    display: flex;
-    flex-direction: column;
-    background-image: url("data:image/svg+xml;utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='2'><circle cx='1' cy='1' r='1'/></svg>");
-    background-position: bottom;
-    background-repeat: repeat-x;
-}
-
-/*** HEADER ***/
 
 header {
+    box-sizing: border-box;
+    display: flex;
     position: fixed;
     top: 0;
     left: 0;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 12px 20px;
+    width: 100%;
+    height: 104px;
+    padding: 20px 64px;
 }
 
-#icon-link {
-    display: inline-block;
-    width: 50px;
-    height: 50px;
+#header-icon svg {
+    max-height: 100%;
 }
 
-#icon-link svg {
-    width: 50px;
-    height: 50px;
-    pointer-events: none;
+.nav-item {
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 600;
+    color: #646464;
+    margin: auto 32px;
 }
 
-/*** SECTION HEADERS ***/
-
-.section-header text {
-    font-weight: 500;
-    text-transform: uppercase;
+.nav-item:last-child {
+    margin-right: 0;
 }
 
-.section-header circle,
-.section-header polyline {
-    fill: none;
-    stroke: #646464;
-    stroke-width: 0.6px;
-}
-
-.section-header polyline.text-bg {
-    fill: #fff;
-    stroke: none;
-}
-
-/*** CLICK EFFECTS ***/
-
-@keyframes click-halo-grow {
-    0% {
-        border: 1px solid #000;
-        width: 4px;
-        height: 4px;
-    }
-
-    50% {
-        border: 1px solid #000;
-        width: 32px;
-        height: 32px;
-    }
-
-    100% {
-        border: 1px solid #0000;
-        width: 64px;
-        height: 64px;
-    }
-}
-
-.click-halo {
-    position: fixed;
-    border-radius: 50%;
-    animation: click-halo-grow 640ms linear;
-    transform: translate3d(-50%, -50%, 0);
-    -moz-transform: translate3d(-50%, -50%, 0);
-    -webkit-transform: translate3d(-50%, -50%, 0);
+.drip {
+    font-size: 20px;
+    color: #64646450;
 }

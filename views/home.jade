@@ -2,11 +2,26 @@ extends base.jade
 
 block content
     section#home
-        div.logo-wrapper
-            include svg/logo.html
-        p.credit logo inspired by&nbsp;
-            a(href="https://blog.johnnovak.net/") john novak
+        p.home-text
+            span.pre 0x
+            span.scramble i
+            span.scramble a
+            span.scramble n
+            br
+            span.pre &nbsp;&nbsp;
+            span &nbsp;
+            span.scramble b
+            span.scramble r
+            span.scramble a
+            span.scramble u
+            span.scramble l
+            span.scramble t
+        .ascii-art-wrapper
+            include rocket_ascii.html
+        p.job-title
+            | flight software engineer
+            br
+            span.job-title-subline flight software integration & testing @ NASA JPL&nbsp;&nbsp;&nbsp;
 
 block scripts
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js")
-    script(src="/js/home.js")
+    script(src='/js/home.js')

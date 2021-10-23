@@ -22,18 +22,17 @@ html
         meta(name="msapplication-TileImage", content="/ms-icon-144x144.png")
         meta(name="theme-color", content="#ffffff")
         //- STYLESHEETS
-        link(rel="stylesheet", href="https://use.typekit.net/czm8qtu.css")
+        link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,600&display=swap")
         link(rel="stylesheet", href="/css/base.css")
         link(rel="stylesheet", href="/css/#{page}.css")
         title #{title}
     body
-        nav
-            a.nav-item(href="/") home
-            a.nav-item(href="/about") about
-            a.nav-item(href="/portfolio") portfolio
         header
-            a#icon-link(href="/")
+            a#header-icon(href="/")
                 include svg/icon.html
-        script(src="/js/onPageLoad.js")
+            div(style="flex-grow:1;")
+            a.nav-item#active(href="/") home
+            a.nav-item(href="/") about
+            a.nav-item(href="/") projects
         block content
         block scripts
