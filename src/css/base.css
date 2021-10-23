@@ -1,43 +1,10 @@
 /*
- * src/css/base.css
- */
+** src/css/base.css
+*/
 
 body {
     width: 100vw;
     height: 100vh;
     margin: 0;
     background-color: #fff;
-    font-family: "Source Code Pro", monospace;
-}
-
-header {
-    box-sizing: border-box;
-    display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 104px;
-    padding: 20px 64px;
-}
-
-#header-icon svg {
-    max-height: 100%;
-}
-
-.nav-item {
-    text-decoration: none;
-    font-size: 20px;
-    font-weight: 600;
-    color: #646464;
-    margin: auto 32px;
-}
-
-.nav-item:last-child {
-    margin-right: 0;
-}
-
-.drip {
-    font-size: 20px;
-    color: #64646450;
 }

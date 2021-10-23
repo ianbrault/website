@@ -1,14 +1,14 @@
 /*
- * popups.js
- * create the popups for the page
- */
+** bbash18_teaser.js
+** create the popups for the Bruin Bash 2018 teaser page
+**/
 
 const GENE_BLOCK  = 0;
 const NTH_VISITOR = 1;
 const SCUSE_ME    = 2;
 const EASY_TRICK  = 3;
-const DUO_MFA     = 4; // TODO
-const N_POPUPS    = 4; // 5;
+const DUO_MFA     = 4;  // TODO
+const N_POPUPS    = 4;  // 5;
 
 const POPUP_WIDTH  = [450, 300, 300, 400];
 const POPUP_HEIGHT = [300, 420, 350, 280];

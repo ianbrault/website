@@ -1,30 +1,20 @@
 {
-  "name": "website",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "dev": "NODE_ENV='development' node app",
-    "prod": "NODE_ENV='production' node app",
-    "start": "node app"
-  },
-  "dependencies": {
-    "@babel/core": "^7.4.3",
-    "@babel/preset-env": "^7.4.3",
-    "acorn": "^6.1.1",
-    "babelify": "^10.0.0",
-    "browserify-middleware": "^8.1.1",
-    "clean-css": "^4.1.11",
-    "dotenv": "^6.2.0",
-    "express": "^4.16.4",
-    "jade": "^1.11.0",
-    "mithril": "^1.1.6",
-    "request": "^2.88.0",
-    "uglify-js": "^2.6.0"
-  },
-  "devDependencies": {
-    "eslint": "^5.16.0",
-    "stylelint": "^10.1.0",
-    "stylelint-config-standard": "^18.3.0",
-    "tern": "^0.24.0"
-  }
+    "name": "website",
+    "version": "0.1.0",
+    "description": "",
+    "private": true,
+    "scripts": {
+        "build-dev": "webpack --mode=development",
+        "build-prod": "webpack --mode=production",
+        "dev": "yarn run build-dev && NODE_ENV='development' node app",
+        "prod": "yarn run build-prod && NODE_ENV='production' node app"
+    },
+    "dependencies": {
+        "express": "^4.17.1"
+    },
+    "devDependencies": {
+        "eslint": "^5.16.0",
+        "webpack": "^5.59.1",
+        "webpack-cli": "^4.9.1"
+    }
 }

@@ -1,7 +1,7 @@
 /*
- * log.js
- * contains logging utilities
- */
+** log.js
+** contains logging utilities
+**/
 
 const logfmt = () => {
     let dateObj = new Date();
