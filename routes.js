@@ -22,6 +22,11 @@ router.get("/", (req, res) => {
     sendHTML(res, "home.html");
 });
 
+router.get("/sports/console", (req, res) => {
+    log.log("GET /sports/console");
+    sendHTML(res, "sports_console.html");
+});
+
 /* archived sites */
 
 router.get("/archive/bbash18-teaser", (req, res) => {
