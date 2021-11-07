@@ -6,11 +6,14 @@
     "scripts": {
         "build-dev": "webpack --mode=development",
         "build-prod": "webpack --mode=production",
+        "db": "mongod --dbpath ~/data/dp --logpath .mongodb.log --fork",
         "dev": "yarn run build-dev && NODE_ENV='development' node app",
-        "prod": "yarn run build-prod && NODE_ENV='production' node app"
+        "prod": "yarn run build-prod && NODE_ENV='production' node app",
+        "droplet": "ssh ian@138.68.3.149"
     },
     "dependencies": {
-        "express": "^4.17.1"
+        "express": "^4.17.1",
+        "mongoose": "^6.0.12"
     },
     "devDependencies": {
         "css-loader": "^6.4.0",

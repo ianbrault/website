@@ -27,6 +27,8 @@ router.get("/sports/console", (req, res) => {
     sendHTML(res, "sports_console.html");
 });
 
+/* POST routes */
+
 /* archived sites */
 
 router.get("/archive/bbash18-teaser", (req, res) => {
