@@ -1,0 +1,19 @@
+* {
+    box-sizing: border-box;
+}
+
+.bordered-round {
+    border: 1px solid #888888;
+    border-radius: 4px;
+}
+
+.vflex {
+    display: flex;
+    flex-direction: column;
+}
+
+.hflex {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
