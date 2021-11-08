@@ -6,6 +6,9 @@
 <script>
     import "./common.css";
 
+    export let logged_in;
+    export let bets;
+
     let username;
     let password;
     let login_error = "";
@@ -31,12 +34,15 @@
         let body = {
             "username": username,
             "password": password,
+            "includeBets": true,
         };
         let res = await post(url, body);
         if (res.status == 200) {
             // clear any existing error
             login_error = "";
-            // TODO: more handling will be needed here
+            // grab the bets for the user
+            bets.set(await res.json());
+            logged_in.set(true);
         } else {
             login_error = await res.text();
         }

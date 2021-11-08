@@ -4,17 +4,20 @@
 -->
 
 <script>
+    import { writable} from "svelte/store";
+
     import BetForm from "./BetForm.svelte";
     import LoginForm from "./LoginForm.svelte";
 
-    let user_logged_in = false;
+    let user_logged_in = writable(false);
+    let user_bets = writable({});
 </script>
 
 <main>
-    {#if !user_logged_in}
-        <LoginForm/>
+    {#if !$user_logged_in}
+        <LoginForm logged_in={user_logged_in} bets={user_bets}/>
     {:else}
-        <BetForm/>
+        <BetForm bets={$user_bets}/>
     {/if}
 </main>
 

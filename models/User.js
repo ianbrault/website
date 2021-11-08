@@ -5,7 +5,7 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
-const log = require("../log.js");
+const NBABet = require("./NBABet.js");
 
 var UserSchema = new mongoose.Schema({
     name: String,
@@ -13,29 +13,29 @@ var UserSchema = new mongoose.Schema({
 });
 
 // create a new user
-UserSchema.statics.createUser = function(username, password_plaintext, cb) {
+UserSchema.statics.createUser = async function(username, password_plaintext) {
     // encrypt the password
-    bcrypt.hash(password_plaintext, 10, (err, hash) => {
-        if (err) {
-            err = `failed to encrypt password: ${err}`;
-            log.log_error(err);
-            cb(err);
-        } else {
-            // create and save the user model
-            let model = this.model("User");
-            let user = new model({
-                username: username,
-                password: hash,
-            });
-            user.save((err) => {
-                if (err) {
-                    err = `failed to save new user: ${err}`;
-                    log.log_error(err);
-                }
-                cb(err);
-            });
-        }
+    let hash = await bcrypt.hash(password_plaintext, 10);
+    // create and save the user model
+    let model = this.model("User");
+    let user = new model({
+        username: username,
+        password: hash,
     });
+    await user.save();
+    return user;
 };
+
+// get all NBA bets for the user
+UserSchema.methods.getNBABets = async function() {
+    return await NBABet.find({user: this._id});
+}
+
+// get all bets for all sports for the user
+UserSchema.methods.getBets = async function() {
+    return {
+        "NBA": await this.getNBABets(),
+    }
+}
 
 module.exports = mongoose.model("User", UserSchema);

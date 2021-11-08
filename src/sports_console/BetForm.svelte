@@ -9,6 +9,8 @@
 
     import "./common.css";
 
+    export let bets;
+
     // NOTE: add supported sports here
     let sports = [
         "NBA",
