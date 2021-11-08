@@ -75,7 +75,7 @@
 
     <!-- wager -->
     <Labeled text="wager">
-        <input bind:value={wager}>
+        <input bind:value={wager} placeholder="$0.00">
     </Labeled>
 </div>
 

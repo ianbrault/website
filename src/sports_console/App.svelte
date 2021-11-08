@@ -5,10 +5,17 @@
 
 <script>
     import BetForm from "./BetForm.svelte";
+    import LoginForm from "./LoginForm.svelte";
+
+    let user_logged_in = false;
 </script>
 
 <main>
-    <BetForm/>
+    {#if !user_logged_in}
+        <LoginForm/>
+    {:else}
+        <BetForm/>
+    {/if}
 </main>
 
 <style>

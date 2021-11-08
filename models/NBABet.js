@@ -13,6 +13,10 @@ var NBABetSchema = new mongoose.Schema({
     odds: Number,
     wager: Number,
     result: Number,
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
 });
 
 module.exports = mongoose.model("NBABet", NBABetSchema);

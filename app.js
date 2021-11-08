@@ -17,7 +17,7 @@ const router = require("./routes.js");
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.resolve(__dirname, "public")));
 app.use(express.static(path.resolve(__dirname, "dist")));
 // TODO: REMOVE LATER, ONLY FOR TEMPORARY CSS
