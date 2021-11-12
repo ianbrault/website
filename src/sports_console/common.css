@@ -1,5 +1,6 @@
 * {
     box-sizing: border-box;
+    font-family: "Source Code Pro", monospace;
 }
 
 .bordered-round {
@@ -24,7 +25,7 @@
     flex-direction: row;
 }
 
-.hflex {
+.hflex-center {
     display: flex;
     flex-direction: row;
     justify-content: center;

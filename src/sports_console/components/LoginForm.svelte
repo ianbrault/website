@@ -28,7 +28,8 @@
             user_bets.set(body["bets"]);
             user_logged_in.set(body["user"]);
         } else {
-            login_error = await res.text();
+            let err = await res.text();
+            login_error = `error: ${err}`;
         }
     }
 
@@ -45,7 +46,7 @@
     <input bind:value={username} placeholder="username">
     <input type="password" bind:value={password} placeholder="password">
 
-    <div class="hflex-center">
+    <div id="login-button-wrapper" class="hflex-center">
         <button on:click={loginUser}>Login</button>
         <button on:click={registerUser}>Register</button>
     </div>
@@ -57,9 +58,29 @@
     #login-wrapper {
         width: 100%;
         height: 100%;
+        gap: 8px;
+    }
+
+    input {
+        width: 200px;
+        font-size: 14px;
+    }
+
+    #login-button-wrapper {
+        width: 200px;
+        gap: 4px;
+    }
+
+    button {
+        flex: 1 1 0px;
+        /* flex-grow: 1; */
+        padding: 2px;
+        font-size: 13px;
     }
 
     #login-error {
         color: red;
+        font-size: 13px;
+        font-weight: bold;
     }
 </style>
