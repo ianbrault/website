@@ -8,6 +8,7 @@ const path = require("path");
 
 const log = require("./log");
 
+const NBABet = require("./models/NBABet");
 const User = require("./models/User");
 
 let router = express.Router();
@@ -61,12 +62,12 @@ router.post("/user/register", async (req, res) => {
             if (req.body["includeBets"]) {
                 try {
                     let bets = await user.getBets();
-                    res.status(200).json(bets);
-                } catch(err) {
+                    res.status(200).json({user: user._id, bets: bets});
+                } catch (err) {
                     res_error(res, 500, `failed to query bets: ${err}`);
                 }
             } else {
-                res.sendStatus(200);
+                res.status(200).send(user._id);
             }
         } catch (err) {
             res_error(res, 500, err);
@@ -101,14 +102,41 @@ router.post("/user/login", async (req, res) => {
             if (req.body["includeBets"]) {
                 try {
                     let bets = await user.getBets();
-                    res.status(200).json(bets);
-                } catch(err) {
+                    res.status(200).json({user: user._id, bets: bets});
+                } catch (err) {
                     res_error(res, 500, `failed to query bets: ${err}`);
                 }
             } else {
-                res.sendStatus(200);
+                res.status(200).send(user._id);
             }
         }
+    }
+});
+
+router.post("/bets/nba/add", async (req, res) => {
+    log.log("POST /bets/nba/add");
+
+    let date = req.body["date"];
+    let bet_type = req.body["bet_type"];
+    let team = req.body["team"];
+    let opponent = req.body["opponent"];
+    let line = req.body["line"];
+    let odds = req.body["odds"];
+    let wager = req.body["wager"];
+    let user = req.body["user"];
+
+    if (line == "ML") {
+        line = 0;
+    }
+
+    // create and save the bet model
+    try {
+        let bet = await NBABet.createBet(
+            date, bet_type, team, opponent, line, odds, wager, user);
+        log.log(`added NBA bet for user ${user}`);
+        res.status(200).json(bet);
+    } catch(err) {
+        res_error(res, 500, `failed to save bet: ${err}`);
     }
 });
 

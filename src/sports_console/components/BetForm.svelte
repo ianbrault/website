@@ -7,9 +7,9 @@
     import Labeled from "./Labeled.svelte";
     import NBABetForm from "./NBABetForm.svelte";
 
-    import "./common.css";
+    import "../common.css";
 
-    export let bets;
+    let selected_sport;
 
     // NOTE: add supported sports here
     let sports = [
@@ -18,13 +18,12 @@
         "NCAAF",
         "Formula 1",
     ];
-
-    let selected_sport;
 </script>
 
 <form class="bordered-round hflex">
     <!-- select the sport to populate the rest of the form -->
     <Labeled text="select a sport">
+        <!-- clear the query body when the sport is changed -->
         <select bind:value={selected_sport}>
             <option disabled selected value>&nbsp;</option>
             {#each sports as sport}
@@ -35,21 +34,15 @@
 
     {#if selected_sport == "NBA"}
         <NBABetForm/>
+    {:else}
+        <div class="spacer"/>
     {/if}
-
-    <div class="spacer"/>
-
-    <!-- TODO: un-disable -->
-    <button disabled>submit</button>
 </form>
 
 <style>
     form {
+        width: 100%;
         padding: 8px;
         align-items: center;
-    }
-
-    .spacer {
-        flex-grow: 1;
     }
 </style>

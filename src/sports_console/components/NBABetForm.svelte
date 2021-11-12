@@ -4,8 +4,15 @@
 -->
 
 <script>
+    import { get } from "svelte/store";
+
     import Labeled from "./Labeled.svelte";
-    import { TeamCodes, TeamNames, TeamLocations } from "./nba.js";
+
+    import { TeamCodes, TeamNames, TeamLocations } from "../nba.js";
+    import { user_logged_in, user_bets } from "../stores.js";
+    import { post } from "../utils.js";
+
+    import "../common.css";
 
     // default the date to today
     let now = new Date();
@@ -22,9 +29,45 @@
     let line;
     let odds;
     let wager;
+
+    function betTypeOnChange() {
+        if (bet_type == "ML") {
+            line = "ML";
+        }
+    }
+
+    function submitButtonEnabled(inputs) {
+        let ena = true;
+        inputs.forEach((x) => {
+            ena = ena && x != undefined && x.length > 0;
+        });
+        return ena;
+    }
+
+    async function onSubmit() {
+        let body = {
+            date: date,
+            bet_type: bet_type,
+            team: team,
+            opponent: opponent,
+            line: line,
+            odds: odds,
+            wager: wager,
+            user: get(user_logged_in),
+        };
+        let res = await post("/bets/nba/add", body);
+        // TODO: handle failure
+        if (res.status == 200) {
+            let bet = await res.json();
+            user_bets.update((b) => {
+                b["NBA"].push(bet);
+                return b;
+            });
+        }
+    }
 </script>
 
-<div class="hflex">
+<div class="hflex spacer">
     <!-- date -->
     <Labeled text="date">
         <input type="date" bind:value={date}>
@@ -33,11 +76,11 @@
     <!-- bet type: spread vs. money line -->
     <div id="bet-type" class="vflex">
         <label>
-            <input type=radio bind:group={bet_type} name="bet_type" value={"spread"}>
+            <input type=radio bind:group={bet_type} name="bet_type" value={"spread"} on:change={betTypeOnChange}>
             spread
         </label>
         <label>
-            <input type=radio bind:group={bet_type} name="bet_type" value={"ML"}>
+            <input type=radio bind:group={bet_type} name="bet_type" value={"ML"} on:change={betTypeOnChange}>
             money line
         </label>
     </div>
@@ -77,6 +120,12 @@
     <Labeled text="wager">
         <input bind:value={wager} placeholder="$0.00">
     </Labeled>
+
+    <div class="spacer"/>
+
+    <button disabled={!submitButtonEnabled([bet_type, team, opponent, line, odds, wager])} on:click|preventDefault={onSubmit}>
+        submit
+    </button>
 </div>
 
 <style>

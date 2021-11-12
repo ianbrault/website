@@ -4,30 +4,13 @@
 -->
 
 <script>
-    import "./common.css";
-
-    export let logged_in;
-    export let bets;
+    import "../common.css";
+    import { user_logged_in, user_bets } from "../stores.js";
+    import { post } from "../utils.js";
 
     let username;
     let password;
     let login_error = "";
-
-    async function post(url, body) {
-        // encode the request body
-        let bodyEncoded = new URLSearchParams();
-        Object.keys(body).forEach((k) => {
-            bodyEncoded.append(k, body[k]);
-        });
-
-        return await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            },
-            body: bodyEncoded,
-        });
-    }
 
     // common logic between login/register buttons
     async function handler(url) {
@@ -38,11 +21,12 @@
         };
         let res = await post(url, body);
         if (res.status == 200) {
+            body = await res.json();
             // clear any existing error
             login_error = "";
-            // grab the bets for the user
-            bets.set(await res.json());
-            logged_in.set(true);
+            // grab the user ID and bets
+            user_bets.set(body["bets"]);
+            user_logged_in.set(body["user"]);
         } else {
             login_error = await res.text();
         }
