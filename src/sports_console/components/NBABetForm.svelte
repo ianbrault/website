@@ -8,7 +8,7 @@
 
     import Labeled from "./Labeled.svelte";
 
-    import { TeamCodes, TeamNames, TeamLocations } from "../nba.js";
+    import { teamFullName, TeamCodes } from "../nba.js";
     import { user_logged_in, user_bets } from "../stores.js";
     import { post } from "../utils.js";
 
@@ -90,7 +90,7 @@
         <select bind:value={team}>
             <option disabled selected value>&nbsp;</option>
             {#each TeamCodes as team}
-                <option value={team}>{TeamLocations[team]} {TeamNames[team]}</option>
+                <option value={team}>{teamFullName(team)}</option>
             {/each}
         </select>
     </Labeled>
@@ -100,7 +100,7 @@
         <select bind:value={opponent}>
             <option disabled selected value>&nbsp;</option>
             {#each TeamCodes as team}
-                <option value={team}>{TeamLocations[team]} {TeamNames[team]}</option>
+                <option value={team}>{teamFullName(team)}</option>
             {/each}
         </select>
     </Labeled>

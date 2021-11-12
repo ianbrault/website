@@ -4,11 +4,17 @@
 -->
 
 <script>
+    import { teamFullName } from "../nba.js";
     import { user_bets } from "../stores.js";
 
     let columns = [
-        "Date", "Sport", "Team", "Opponent", "Line", "Odds", "Wager", "Result",
+        "Date", "Sport", "Team", "Opponent", "Line", "Odds", "Result", "Wager", "Net",
     ];
+
+    let money_formatter = new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency: "USD",
+    });
 
     function dateToString(d) {
         let date = new Date(d);
@@ -18,20 +24,31 @@
         return `${month}/${day}/${date.getFullYear()}`;
     }
 
+    function formatLineOdds(value) {
+        if (value > 0) {
+            return `+${value}`;
+        } else {
+            return value.toString();
+        }
+    }
+
     function betsToTable(bets) {
         let all_bets = [];
 
         // add NBA bets
         bets["NBA"].forEach((b) => {
+            console.log(`bet: ${JSON.stringify(b)}`);
+            let result = (b["result"] == undefined) ? "N/A" : b["result"];
             all_bets.push({
                 "Date": dateToString(b["date"]),
                 "Sport": "NBA",
-                "Team": b["team"],
-                "Opponent": b["opponent"],
-                "Line": b["line"],
-                "Odds": b["odds"],
-                "Wager": b["wager"],
-                "Result": b["result"],
+                "Team": teamFullName(b["team"]),
+                "Opponent": teamFullName(b["opponent"]),
+                "Line": formatLineOdds(b["line"]),
+                "Odds": formatLineOdds(b["odds"]),
+                "Result": result,
+                "Wager": money_formatter.format(b["wager"]),
+                "Net": "N/A",  // TODO
             });
         });
 
@@ -51,7 +68,7 @@
     }
 </script>
 
-<div id="bet-view-container" class="bordered-round">
+<div id="bet-view-container">
     <table>
         <thead>
             <tr>
@@ -75,12 +92,49 @@
 <style>
     #bet-view-container {
         width: 100%;
-        flex-grow: 1;
+        height: 100%;
+        overflow: auto;
+        border: 1px solid #888888;
+        border-radius: 4px;
     }
 
     table {
-        table-layout: auto;
         width: 100%;
+        table-layout: auto;
+        border-spacing: 0;
+        font-size: 14px;
+        text-align: right;
+    }
+
+
+    table td, table th {
+        border-bottom: 1px solid #aaaaaa;
+    }
+
+    table tr:last-child > td {
+        border-bottom: none;
+    }
+
+    thead {
+        background-color: #e0e0e0;
+    }
+
+    tbody > tr:hover {
+        background-color: #eeeeee;
+    }
+
+    td, th {
+        padding: 4px 12px;
+    }
+
+    th {
+        font-weight: 600;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    tr > th:first-child, tr > td:first-child {
+        text-align: left;
     }
 </style>
 

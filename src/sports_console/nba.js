@@ -100,3 +100,7 @@ export let TeamLocations = {
     "UTA": "Utah",
     "WAS": "Washington",
 }
+
+export function teamFullName(teamCode) {
+    return `${TeamLocations[teamCode]} ${TeamNames[teamCode]}`;
+}
