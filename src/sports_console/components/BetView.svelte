@@ -23,7 +23,6 @@
 
         // add NBA bets
         bets["NBA"].forEach((b) => {
-            console.log(`bet: ${JSON.stringify(b)}`);
             all_bets.push({
                 "Date": dateToString(b["date"]),
                 "Sport": "NBA",

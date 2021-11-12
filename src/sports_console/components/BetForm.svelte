@@ -42,7 +42,8 @@
 <style>
     form {
         width: 100%;
-        padding: 8px;
+        padding: 16px;
         align-items: center;
+        gap: 16px;
     }
 </style>

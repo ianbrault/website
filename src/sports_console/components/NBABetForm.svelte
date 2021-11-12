@@ -67,7 +67,7 @@
     }
 </script>
 
-<div class="hflex spacer">
+<div id="nba-bet-wrapper" class="hflex-center spacer">
     <!-- date -->
     <Labeled text="date">
         <input type="date" bind:value={date}>
@@ -108,17 +108,17 @@
     <!-- line -->
     <Labeled text="line">
         <!-- note: no line for money line bets -->
-        <input bind:value={line} disabled={bet_type == "ML"}>
+        <input class="text-input" bind:value={line} disabled={bet_type == "ML"}>
     </Labeled>
 
     <!-- odds -->
     <Labeled text="odds">
-        <input bind:value={odds}>
+        <input class="text-input" bind:value={odds}>
     </Labeled>
 
     <!-- wager -->
     <Labeled text="wager">
-        <input bind:value={wager} placeholder="$0.00">
+        <input class="text-input" bind:value={wager} placeholder="$0.00">
     </Labeled>
 
     <div class="spacer"/>
@@ -129,7 +129,23 @@
 </div>
 
 <style>
+    #nba-bet-wrapper {
+        gap: 16px;
+    }
+
     #bet-type {
+        font-size: 13px;
         align-items: flex-start;
+        align-self: flex-start;
+        margin-right: 8px;
+    }
+
+    .text-input {
+        text-align: right;
+        width: 120px;
+    }
+
+    button {
+        padding: 4px 20px;
     }
 </style>

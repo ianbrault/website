@@ -27,6 +27,7 @@
             // grab the user ID and bets
             user_bets.set(body["bets"]);
             user_logged_in.set(body["user"]);
+            console.log(`logged in user ${body["user"]}`);
         } else {
             let err = await res.text();
             login_error = `error: ${err}`;
@@ -63,12 +64,13 @@
 
     input {
         width: 200px;
+        padding: 2px;
         font-size: 14px;
     }
 
     #login-button-wrapper {
         width: 200px;
-        gap: 4px;
+        gap: 8px;
     }
 
     button {

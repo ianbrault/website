@@ -9,8 +9,8 @@
 </script>
 
 <div id="bet-container" class="vflex-center">
-    <BetView/>
     <BetForm/>
+    <BetView/>
 </div>
 
 <style>
