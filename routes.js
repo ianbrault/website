@@ -47,7 +47,7 @@ router.post("/user/register", async (req, res) => {
     // check if the user already exists
     try {
         user = await User.findOne({username: username});
-    } catch (err) {
+    } catch(err) {
         res_error(res, 500, `failed to query users: ${err}`);
     }
 
@@ -57,19 +57,19 @@ router.post("/user/register", async (req, res) => {
         // create and save the user model
         try {
             let user = await User.createUser(username, password_plaintext);
-            log.log(`created new user ${username}`);
+            log.log(`created new user ${username} ${user["_id"]}`);
             // check for a request to include bets
             if (req.body["includeBets"]) {
                 try {
                     let bets = await user.getBets();
                     res.status(200).json({user: user._id, bets: bets});
-                } catch (err) {
+                } catch(err) {
                     res_error(res, 500, `failed to query bets: ${err}`);
                 }
             } else {
                 res.status(200).send(user._id);
             }
-        } catch (err) {
+        } catch(err) {
             res_error(res, 500, err);
         }
     }
@@ -85,7 +85,7 @@ router.post("/user/login", async (req, res) => {
     // find the user by username
     try {
         user = await User.findOne({username: username});
-    } catch (err) {
+    } catch(err) {
         res_error(res, 500, `failed to query users: ${err}`);
     }
 
@@ -97,13 +97,13 @@ router.post("/user/login", async (req, res) => {
         if (!match) {
             res_error(res, 400, "passwords do not match");
         } else {
-            log.log(`logged in user ${username}`);
+            log.log(`logged in user ${username} ${user["_id"]}`);
             // check for a request to include bets
             if (req.body["includeBets"]) {
                 try {
                     let bets = await user.getBets();
                     res.status(200).json({user: user._id, bets: bets});
-                } catch (err) {
+                } catch(err) {
                     res_error(res, 500, `failed to query bets: ${err}`);
                 }
             } else {
@@ -133,10 +133,24 @@ router.post("/bets/nba/add", async (req, res) => {
     try {
         let bet = await NBABet.createBet(
             date, bet_type, team, opponent, line, odds, wager, user);
-        log.log(`added NBA bet for user ${user}`);
+        log.log(`added NBA bet ${bet["_id"]} for user ${user}`);
         res.status(200).json(bet);
     } catch(err) {
         res_error(res, 500, `failed to save bet: ${err}`);
+    }
+});
+
+router.post("/bets/nba/delete", async (req, res) => {
+    log.log("POST /bets/nba/delete");
+
+    let bet_id = req.body["bet_id"];
+    // delete the bet model
+    try {
+        await NBABet.deleteOne({_id: bet_id});
+        log.log(`deleted NBA bet ${bet_id}`);
+        res.sendStatus(200);
+    } catch(err) {
+        res_error(res, 500, `failed to delete bet: ${err}`);
     }
 });
 

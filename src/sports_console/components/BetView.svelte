@@ -4,8 +4,11 @@
 -->
 
 <script>
+    import Dropdown from "./Dropdown.svelte";
+
     import { teamFullName } from "../nba.js";
     import { user_bets } from "../stores.js";
+    import { post } from "../utils.js";
 
     let columns = [
         "Date", "Sport", "Team", "Opponent", "Line", "Odds", "Result", "Wager", "Net",
@@ -37,9 +40,10 @@
 
         // add NBA bets
         bets["NBA"].forEach((b) => {
-            console.log(`bet: ${JSON.stringify(b)}`);
             let result = (b["result"] == undefined) ? "N/A" : b["result"];
             all_bets.push({
+                // include the ID for actions
+                "id": b["_id"],
                 "Date": dateToString(b["date"]),
                 "Sport": "NBA",
                 "Team": teamFullName(b["team"]),
@@ -66,15 +70,43 @@
         });
         return all_bets
     }
+
+    function editBet(bet_id) {
+        // TODO: implement
+        console.log(`edit bet ${bet_id}`);
+    }
+
+    async function deleteBet(sport, bet_id) {
+        console.log(`delete bet ${bet_id}`);
+        let res = await post("/bets/nba/delete", {bet_id: bet_id});
+        if (res.status == 200) {
+            // remove the bet from the store
+            user_bets.update((bets) => {
+                bets[sport] = bets[sport].filter((b) => b["_id"] != bet_id);
+                return bets;
+            })
+        } else {
+            alert(await res.text());
+        }
+    }
+
+    async function betDropdownHandler(sport, bet_id, action) {
+        if (action == "edit") {
+            editBet(bet_id);
+        } else if (action == "delete") {
+            await deleteBet(sport, bet_id);
+        }
+    }
 </script>
 
-<div id="bet-view-container">
+<div id="bet-view-container" class="bordered-round">
     <table>
         <thead>
             <tr>
                 {#each columns as column}
                     <th>{column}</th>
                 {/each}
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -83,6 +115,9 @@
                     {#each columns as column}
                         <td>{bet[column]}</td>
                     {/each}
+                    <td>
+                        <Dropdown text="..." onClick={(action) => betDropdownHandler(bet["Sport"], bet["id"], action)}/>
+                    </td>
                 </tr>
             {/each}
         </tbody>
@@ -94,7 +129,6 @@
         width: 100%;
         height: 100%;
         overflow: auto;
-        border: 1px solid #888888;
         border-radius: 4px;
     }
 
