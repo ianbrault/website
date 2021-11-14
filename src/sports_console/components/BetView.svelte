@@ -48,7 +48,7 @@
                 "Sport": "NBA",
                 "Team": teamFullName(b["team"]),
                 "Opponent": teamFullName(b["opponent"]),
-                "Line": formatLineOdds(b["line"]),
+                "Line": b["bet_type"] == "ML" ? "ML" : formatLineOdds(b["line"]),
                 "Odds": formatLineOdds(b["odds"]),
                 "Result": result,
                 "Wager": money_formatter.format(b["wager"]),
@@ -169,6 +169,8 @@
 
     tr > th:first-child, tr > td:first-child {
         text-align: left;
+    } tr > th:last-child, tr > td:last-child {
+        text-align: center;
     }
 </style>
 

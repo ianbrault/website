@@ -64,6 +64,13 @@
                 return b;
             });
         }
+        // clear the form input
+        bet_type = "";
+        team = "";
+        opponent = "";
+        line = "";
+        odds = "";
+        wager = "";
     }
 </script>
 

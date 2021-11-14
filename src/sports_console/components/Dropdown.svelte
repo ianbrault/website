@@ -19,9 +19,9 @@
 </script>
 
 <div class="dropdown-wrapper">
-    <button class="dropdown-button" on:click={toggle}>
+    <p class="dropdown-button" on:click={toggle}>
         {text}
-    </button>
+    </p>
     <div class="bordered-round" class:dropdown-menu-shown={shown} class:dropdown-menu-hidden={!shown} on:mouseleave={toggle}>
         {#each menu_items as item}
             <p class="dropdown-item" on:click={() => onClick(item)}>{item}</p>
@@ -37,8 +37,11 @@
     }
 
     .dropdown-button {
-        font-size: 10px;
+        cursor: pointer;
+        margin: 0;
+        font-size: 12px;
         font-weight: bold;
+        user-select: none;
     }
 
     .dropdown-menu-hidden, .dropdown-menu-shown {

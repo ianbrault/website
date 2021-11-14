@@ -43,17 +43,17 @@
     }
 </script>
 
-<div id="login-wrapper" class="vflex-center">
+<form id="login-wrapper" class="vflex-center" on:submit|preventDefault={loginUser}>
     <input bind:value={username} placeholder="username">
     <input type="password" bind:value={password} placeholder="password">
 
     <div id="login-button-wrapper" class="hflex-center">
-        <button on:click={loginUser}>Login</button>
+        <button type="submit" on:click={loginUser}>Login</button>
         <button on:click={registerUser}>Register</button>
     </div>
 
     <p id="login-error">{login_error}</p>
-</div>
+</form>
 
 <style>
     #login-wrapper {
