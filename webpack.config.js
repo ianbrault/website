@@ -1,14 +1,22 @@
+/*
+** webpack.config.js
+*/
+
 const path = require("path");
+const webpack = require("webpack");
 
 module.exports = {
+    // TODO: figure out a better way to do this
+    mode: "development",
     entry: {
         // home: "./src/home.js",
         bbash18_teaser: "./src/bbash18_teaser.js",
-        sports_console: "./src/sports_console/sports_console.js"
+        sports_console: "./src/sports_console/sports_console.js",
     },
     output: {
         filename: "[name].js",
-        path: __dirname + "/dist"
+        path: __dirname + "/dist",
+        publicPath: "/",
     },
     optimization: {
         minimize: true,

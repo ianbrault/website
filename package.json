@@ -4,17 +4,20 @@
     "description": "",
     "private": true,
     "scripts": {
+        "droplet": "ssh ian@138.68.3.149",
+        "db": "mongod --dbpath ~/data/dp --logpath .mongodb.log --fork",
         "build-dev": "webpack --mode=development",
         "build-prod": "webpack --mode=production",
-        "db": "mongod --dbpath ~/data/dp --logpath .mongodb.log --fork",
+        "start": "node app",
         "dev": "yarn run build-dev && NODE_ENV='development' node app",
-        "prod": "yarn run build-prod && NODE_ENV='production' node app",
-        "droplet": "ssh ian@138.68.3.149"
+        "prod": "yarn run build-prod && NODE_ENV='production' node app"
     },
     "dependencies": {
         "bcrypt": "^5.0.1",
         "express": "^4.17.1",
-        "mongoose": "^6.0.12"
+        "mongoose": "^6.0.12",
+        "webpack": "^5.59.1",
+        "webpack-dev-middleware": "^5.2.1"
     },
     "devDependencies": {
         "css-loader": "^6.4.0",
@@ -22,7 +25,6 @@
         "style-loader": "^3.3.1",
         "svelte": "^3.44.0",
         "svelte-loader": "^3.1.2",
-        "webpack": "^5.59.1",
         "webpack-cli": "^4.9.1"
     }
 }
