@@ -9,6 +9,7 @@ const path = require("path");
 const log = require("./log");
 
 const NBABet = require("./models/NBABet");
+const NFLBet = require("./models/NFLBet");
 const User = require("./models/User");
 
 let router = express.Router();
@@ -124,10 +125,6 @@ router.post("/bets/nba/add", async (req, res) => {
     let wager = req.body["wager"];
     let user = req.body["user"];
 
-    if (line == "ML") {
-        line = 0;
-    }
-
     // create and save the bet model
     try {
         let bet = await NBABet.createBet(
@@ -147,6 +144,42 @@ router.post("/bets/nba/delete", async (req, res) => {
     try {
         await NBABet.deleteOne({_id: bet_id});
         log.log(`deleted NBA bet ${bet_id}`);
+        res.sendStatus(200);
+    } catch(err) {
+        res_error(res, 500, `failed to delete bet: ${err}`);
+    }
+});
+
+router.post("/bets/nfl/add", async (req, res) => {
+    log.log("POST /bets/nfl/add");
+
+    let date = req.body["date"];
+    let team = req.body["team"];
+    let opponent = req.body["opponent"];
+    let line = req.body["line"];
+    let odds = req.body["odds"];
+    let wager = req.body["wager"];
+    let user = req.body["user"];
+
+    // create and save the bet model
+    try {
+        let bet = await NFLBet.createBet(
+            date, team, opponent, line, odds, wager, user);
+        log.log(`added NFL bet ${bet["_id"]} for user ${user}`);
+        res.status(200).json(bet);
+    } catch(err) {
+        res_error(res, 500, `failed to save bet: ${err}`);
+    }
+});
+
+router.post("/bets/nfl/delete", async (req, res) => {
+    log.log("POST /bets/nfl/delete");
+
+    let bet_id = req.body["bet_id"];
+    // delete the bet model
+    try {
+        await NFLBet.deleteOne({_id: bet_id});
+        log.log(`deleted NFL bet ${bet_id}`);
         res.sendStatus(200);
     } catch(err) {
         res_error(res, 500, `failed to delete bet: ${err}`);

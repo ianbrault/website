@@ -6,7 +6,8 @@
 <script>
     import Dropdown from "./Dropdown.svelte";
 
-    import { teamFullName } from "../nba.js";
+    import { NBATeamFullName } from "../nba.js";
+    import { NFLTeamFullName } from "../nfl.js";
     import { user_bets } from "../stores.js";
     import { post } from "../utils.js";
 
@@ -48,8 +49,8 @@
                 "id": b["_id"],
                 "Date": dateToString(b["date"]),
                 "Sport": "NBA",
-                "Team": teamFullName(b["team"]),
-                "Opponent": teamFullName(b["opponent"]),
+                "Team": NBATeamFullName(b["team"]),
+                "Opponent": NBATeamFullName(b["opponent"]),
                 "Line": formatLineOdds(b["line"]),
                 "Odds": formatLineOdds(b["odds"]),
                 "Result": result,
@@ -58,7 +59,23 @@
             });
         });
 
-        // TODO: add remaining sports
+        // add NFL bets
+        bets["NFL"].forEach((b) => {
+            let result = (b["result"] == undefined) ? "N/A" : b["result"];
+            all_bets.push({
+                // include the ID for actions
+                "id": b["_id"],
+                "Date": dateToString(b["date"]),
+                "Sport": "NFL",
+                "Team": NFLTeamFullName(b["team"]),
+                "Opponent": NFLTeamFullName(b["opponent"]),
+                "Line": formatLineOdds(b["line"]),
+                "Odds": formatLineOdds(b["odds"]),
+                "Result": result,
+                "Wager": money_formatter.format(b["wager"]),
+                "Net": "N/A",  // TODO
+            });
+        });
 
         // sort by date
         all_bets.sort((b1, b2) => {
@@ -73,14 +90,15 @@
         return all_bets
     }
 
-    function editBet(bet_id) {
+    async function editBet(sport, bet_id) {
         // TODO: implement
-        console.log(`edit bet ${bet_id}`);
+        console.log(`edit ${sport} bet ${bet_id}`);
     }
 
     async function deleteBet(sport, bet_id) {
-        console.log(`delete bet ${bet_id}`);
-        let res = await post("/bets/nba/delete", {bet_id: bet_id});
+        console.log(`delete ${sport} bet ${bet_id}`);
+        let url = `/bets/${sport.toLowerCase()}/delete`;
+        let res = await post(url, {bet_id: bet_id});
         if (res.status == 200) {
             // remove the bet from the store
             user_bets.update((bets) => {
@@ -94,7 +112,7 @@
 
     async function betDropdownHandler(sport, bet_id, action) {
         if (action == "edit") {
-            editBet(bet_id);
+            await editBet(sport, bet_id);
         } else if (action == "delete") {
             await deleteBet(sport, bet_id);
         }

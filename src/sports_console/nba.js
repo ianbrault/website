@@ -2,7 +2,7 @@
 ** nba.js
 */
 
-export let TeamCodes = [
+export let NBATeamCodes = [
     "ATL",
     "BKN",
     "BOS",
@@ -33,9 +33,9 @@ export let TeamCodes = [
     "TOR",
     "UTA",
     "WAS",
-]
+];
 
-export let TeamNames = {
+export let NBATeamNames = {
     "ATL": "Hawks",
     "BKN": "Nets",
     "BOS": "Celtics",
@@ -66,9 +66,9 @@ export let TeamNames = {
     "TOR": "Raptors",
     "UTA": "Jazz",
     "WAS": "Wizards",
-}
+};
 
-export let TeamLocations = {
+export let NBATeamLocations = {
     "ATL": "Atlanta",
     "BKN": "Brooklyn",
     "BOS": "Boston",
@@ -99,8 +99,8 @@ export let TeamLocations = {
     "TOR": "Toronto",
     "UTA": "Utah",
     "WAS": "Washington",
-}
+};
 
-export function teamFullName(teamCode) {
-    return `${TeamLocations[teamCode]} ${TeamNames[teamCode]}`;
+export function NBATeamFullName(teamCode) {
+    return `${NBATeamLocations[teamCode]} ${NBATeamNames[teamCode]}`;
 }

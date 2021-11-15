@@ -10,7 +10,8 @@
 
     import Labeled from "./Labeled.svelte";
 
-    import { teamFullName, TeamCodes } from "../nba.js";
+    import { NBATeamFullName, NBATeamCodes } from "../nba.js";
+    import { NFLTeamFullName, NFLTeamCodes } from "../nfl.js";
     import { user_logged_in, user_bets } from "../stores.js";
     import { dateToInputString, post, stripNonNumeric } from "../utils.js";
 
@@ -29,9 +30,28 @@
     let sports = [
         "NBA",
         "NFL",
-        "NCAAF",
-        "Formula 1",
     ];
+
+    function getTeams(sport) {
+        if (sport == "NBA") {
+            return NBATeamCodes;
+        } else if (sport == "NFL") {
+            return NFLTeamCodes;
+        } else {
+            return [];
+        }
+    }
+
+    function getTeamName(sport, team) {
+        if (sport == "NBA") {
+            return NBATeamFullName(team);
+        } else if (sport == "NFL") {
+            return NFLTeamFullName(team);
+        } else {
+            // note: should never be hit
+            return "???";
+        }
+    }
 
     function submitButtonEnabled(inputs) {
         let ena = true;
@@ -100,21 +120,24 @@
     }
 
     async function onSubmit() {
+        // note: strip the dollar sign from the wager
+        let wager_val = wager.value.substring(1, wager.value.length);
         let body = {
             date: date,
             team: team,
             opponent: opponent,
             line: line.value,
             odds: odds.value,
-            wager: wager.value,
+            wager: wager_val,
             user: get(user_logged_in),
         };
-        let res = await post("/bets/nba/add", body);
+        let url = `/bets/${selected_sport.toLowerCase()}/add`;
+        let res = await post(url, body);
         // TODO: handle failure
         if (res.status == 200) {
             let bet = await res.json();
             user_bets.update((b) => {
-                b["NBA"].push(bet);
+                b[selected_sport].push(bet);
                 return b;
             });
         }
@@ -148,8 +171,8 @@
     <Labeled text="team">
         <select bind:value={team}>
             <option disabled selected value>&nbsp;</option>
-            {#each TeamCodes as team}
-                <option value={team}>{teamFullName(team)}</option>
+            {#each getTeams(selected_sport) as team}
+                <option value={team}>{getTeamName(selected_sport, team)}</option>
             {/each}
         </select>
     </Labeled>
@@ -158,8 +181,8 @@
     <Labeled text="opponent">
         <select bind:value={opponent}>
             <option disabled selected value>&nbsp;</option>
-            {#each TeamCodes as team}
-                <option value={team}>{teamFullName(team)}</option>
+            {#each getTeams(selected_sport) as team}
+                <option value={team}>{getTeamName(selected_sport, team)}</option>
             {/each}
         </select>
     </Labeled>
