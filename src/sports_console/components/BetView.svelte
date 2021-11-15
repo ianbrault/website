@@ -59,6 +59,42 @@
             });
         });
 
+        // add NCAAF bets
+        bets["NCAAF"].forEach((b) => {
+            let result = (b["result"] == undefined) ? "N/A" : b["result"];
+            all_bets.push({
+                // include the ID for actions
+                "id": b["_id"],
+                "Date": dateToString(b["date"]),
+                "Sport": "NCAAF",
+                "Team": b["team"],
+                "Opponent": b["opponent"],
+                "Line": formatLineOdds(b["line"]),
+                "Odds": formatLineOdds(b["odds"]),
+                "Result": result,
+                "Wager": money_formatter.format(b["wager"]),
+                "Net": "N/A",  // TODO
+            });
+        });
+
+        // add NCAAMBB bets
+        bets["NCAAMBB"].forEach((b) => {
+            let result = (b["result"] == undefined) ? "N/A" : b["result"];
+            all_bets.push({
+                // include the ID for actions
+                "id": b["_id"],
+                "Date": dateToString(b["date"]),
+                "Sport": "NCAAMBB",
+                "Team": b["team"],
+                "Opponent": b["opponent"],
+                "Line": formatLineOdds(b["line"]),
+                "Odds": formatLineOdds(b["odds"]),
+                "Result": result,
+                "Wager": money_formatter.format(b["wager"]),
+                "Net": "N/A",  // TODO
+            });
+        });
+
         // add NFL bets
         bets["NFL"].forEach((b) => {
             let result = (b["result"] == undefined) ? "N/A" : b["result"];

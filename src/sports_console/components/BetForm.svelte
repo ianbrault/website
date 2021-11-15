@@ -30,6 +30,8 @@
     let sports = [
         "NBA",
         "NFL",
+        "NCAAMBB",
+        "NCAAF",
     ];
 
     function getTeams(sport) {
@@ -48,8 +50,7 @@
         } else if (sport == "NFL") {
             return NFLTeamFullName(team);
         } else {
-            // note: should never be hit
-            return "???";
+            return team;
         }
     }
 
@@ -133,13 +134,14 @@
         };
         let url = `/bets/${selected_sport.toLowerCase()}/add`;
         let res = await post(url, body);
-        // TODO: handle failure
         if (res.status == 200) {
             let bet = await res.json();
             user_bets.update((b) => {
                 b[selected_sport].push(bet);
                 return b;
             });
+        } else {
+            alert(await res.text());
         }
         // clear the form input
         team = "";
@@ -169,38 +171,46 @@
 
     <!-- team (pick to win) -->
     <Labeled text="team">
-        <select bind:value={team}>
-            <option disabled selected value>&nbsp;</option>
-            {#each getTeams(selected_sport) as team}
-                <option value={team}>{getTeamName(selected_sport, team)}</option>
-            {/each}
-        </select>
+        {#if selected_sport == "NCAAMBB" || selected_sport == "NCAAF"}
+            <input class="text-input" bind:value={team}>
+        {:else}
+            <select bind:value={team}>
+                <option disabled selected value>&nbsp;</option>
+                {#each getTeams(selected_sport) as team}
+                    <option value={team}>{getTeamName(selected_sport, team)}</option>
+                {/each}
+            </select>
+        {/if}
     </Labeled>
 
     <!-- opponent -->
     <Labeled text="opponent">
-        <select bind:value={opponent}>
-            <option disabled selected value>&nbsp;</option>
-            {#each getTeams(selected_sport) as team}
-                <option value={team}>{getTeamName(selected_sport, team)}</option>
-            {/each}
-        </select>
+        {#if selected_sport == "NCAAMBB" || selected_sport == "NCAAF"}
+            <input class="text-input" bind:value={opponent}>
+        {:else}
+            <select bind:value={opponent}>
+                <option disabled selected value>&nbsp;</option>
+                {#each getTeams(selected_sport) as team}
+                    <option value={team}>{getTeamName(selected_sport, team)}</option>
+                {/each}
+            </select>
+        {/if}
     </Labeled>
 
     <!-- line -->
     <Labeled text="line (or ML/PK)">
-        <input class="text-input" bind:this={line} on:input={formatLine}>
+        <input class="number-input" bind:this={line} on:input={formatLine}>
     </Labeled>
 
     <!-- odds -->
     <Labeled text="odds">
-        <input class="text-input" bind:this={odds} on:input={formatOdds}>
+        <input class="number-input" bind:this={odds} on:input={formatOdds}>
     </Labeled>
 
     <!-- wager -->
     <Labeled text="wager">
         <input
-            class="text-input" placeholder="$0.00"
+            class="number-input" placeholder="$0.00"
             bind:this={wager} on:input={formatWager}
         >
     </Labeled>
@@ -224,8 +234,12 @@
     }
 
     .text-input {
+        max-width: 120px;
+    }
+
+    .number-input {
         text-align: right;
-        width: 120px;
+        max-width: 120px;
     }
 
     button {

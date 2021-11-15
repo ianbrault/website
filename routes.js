@@ -9,6 +9,8 @@ const path = require("path");
 const log = require("./log");
 
 const NBABet = require("./models/NBABet");
+const NCAAFBet = require("./models/NCAAFBet");
+const NCAAMBBBet = require("./models/NCAAMBBBet");
 const NFLBet = require("./models/NFLBet");
 const User = require("./models/User");
 
@@ -20,7 +22,9 @@ let sendHTML = (res, file) => {
     });
 };
 
-/* GET routes */
+/*
+** GET routes
+*/
 
 router.get("/", (req, res) => {
     log.log("GET /");
@@ -32,7 +36,9 @@ router.get("/sports/console", (req, res) => {
     sendHTML(res, "sports_console.html");
 });
 
-/* POST routes */
+/*
+** POST routes
+*/
 
 let res_error = (res, status, message) => {
     log.log_error(message);
@@ -114,76 +120,87 @@ router.post("/user/login", async (req, res) => {
     }
 });
 
+// create bets
+let generic_bet_keys = [
+    "date", "team", "opponent", "line", "odds", "wager", "user",
+];
+
+function grabKeys(from, keys) {
+    let res = {};
+    keys.forEach((k) => {
+        res[k] = from[k];
+    });
+    return res;
+}
+
+async function createBet(res, sport, model, bet_body) {
+    // FIXME: DEBUG START
+    log.log(`sport=${sport}; body=${JSON.stringify(bet_body)}`);
+    // FIXME: DEBUG END
+    let bet = new model(bet_body);
+    try {
+        await bet.save();
+    } catch(err) {
+        res_error(res, 500, `failed to save ${sport} bet: ${err}`);
+    }
+    log.log(`added ${sport} bet ${bet["_id"]} for user ${bet_body["user"]}`);
+    res.status(200).json(bet);
+}
+
 router.post("/bets/nba/add", async (req, res) => {
     log.log("POST /bets/nba/add");
-
-    let date = req.body["date"];
-    let team = req.body["team"];
-    let opponent = req.body["opponent"];
-    let line = req.body["line"];
-    let odds = req.body["odds"];
-    let wager = req.body["wager"];
-    let user = req.body["user"];
-
-    // create and save the bet model
-    try {
-        let bet = await NBABet.createBet(
-            date, team, opponent, line, odds, wager, user);
-        log.log(`added NBA bet ${bet["_id"]} for user ${user}`);
-        res.status(200).json(bet);
-    } catch(err) {
-        res_error(res, 500, `failed to save bet: ${err}`);
-    }
+    let bet_body = grabKeys(req.body, generic_bet_keys);
+    await createBet(res, "NBA", NBABet, bet_body);
 });
 
-router.post("/bets/nba/delete", async (req, res) => {
-    log.log("POST /bets/nba/delete");
+router.post("/bets/ncaaf/add", async (req, res) => {
+    log.log("POST /bets/ncaaf/add");
+    let bet_body = grabKeys(req.body, generic_bet_keys);
+    await createBet(res, "NCAAF", NCAAFBet, bet_body);
+});
 
-    let bet_id = req.body["bet_id"];
-    // delete the bet model
-    try {
-        await NBABet.deleteOne({_id: bet_id});
-        log.log(`deleted NBA bet ${bet_id}`);
-        res.sendStatus(200);
-    } catch(err) {
-        res_error(res, 500, `failed to delete bet: ${err}`);
-    }
+router.post("/bets/ncaambb/add", async (req, res) => {
+    log.log("POST /bets/ncaambb/add");
+    let bet_body = grabKeys(req.body, generic_bet_keys);
+    await createBet(res, "NCAAMBB", NCAAMBBBet, bet_body);
 });
 
 router.post("/bets/nfl/add", async (req, res) => {
     log.log("POST /bets/nfl/add");
+    let bet_body = grabKeys(req.body, generic_bet_keys);
+    await createBet(res, "NFL", NFLBet, bet_body);
+});
 
-    let date = req.body["date"];
-    let team = req.body["team"];
-    let opponent = req.body["opponent"];
-    let line = req.body["line"];
-    let odds = req.body["odds"];
-    let wager = req.body["wager"];
-    let user = req.body["user"];
+// delete bets
 
-    // create and save the bet model
+async function deleteBet(res, sport, model, bet_id) {
     try {
-        let bet = await NFLBet.createBet(
-            date, team, opponent, line, odds, wager, user);
-        log.log(`added NFL bet ${bet["_id"]} for user ${user}`);
-        res.status(200).json(bet);
+        await model.deleteOne({_id: bet_id});
+        log.log(`deleted ${sport} bet ${bet_id}`);
+        res.sendStatus(200);
     } catch(err) {
-        res_error(res, 500, `failed to save bet: ${err}`);
+        res_error(res, 500, `failed to delete ${sport} bet ${bet_id}: ${err}`);
     }
+}
+
+router.post("/bets/nba/delete", async (req, res) => {
+    log.log("POST /bets/nba/delete");
+    await deleteBet(res, "NBA", NBABet, req.body["bet_id"]);
+});
+
+router.post("/bets/ncaaf/delete", async (req, res) => {
+    log.log("POST /bets/ncaaf/delete");
+    await deleteBet(res, "NCAAF", NCAAFBet, req.body["bet_id"]);
+});
+
+router.post("/bets/ncaambb/delete", async (req, res) => {
+    log.log("POST /bets/ncaambb/delete");
+    await deleteBet(res, "NCAAMBB", NCAAMBBBet, req.body["bet_id"]);
 });
 
 router.post("/bets/nfl/delete", async (req, res) => {
     log.log("POST /bets/nfl/delete");
-
-    let bet_id = req.body["bet_id"];
-    // delete the bet model
-    try {
-        await NFLBet.deleteOne({_id: bet_id});
-        log.log(`deleted NFL bet ${bet_id}`);
-        res.sendStatus(200);
-    } catch(err) {
-        res_error(res, 500, `failed to delete bet: ${err}`);
-    }
+    await deleteBet(res, "NFL", NFLBet, req.body["bet_id"]);
 });
 
 /* archived sites */

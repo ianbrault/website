@@ -1,10 +1,10 @@
 /*
-** models/NFLBet.js
+** models/NCAAMBB.js
 */
 
 const mongoose = require("mongoose");
 
-var NFLBetSchema = new mongoose.Schema({
+var NCAAMBBBetSchema = new mongoose.Schema({
     date: Date,
     team: String,
     opponent: String,
@@ -21,4 +21,4 @@ var NFLBetSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model("NFLBet", NFLBetSchema);
+module.exports = mongoose.model("NCAAMBBBet", NCAAMBBBetSchema);
