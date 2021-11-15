@@ -18,7 +18,6 @@
     let selected_sport;
     // note: default the date to today
     let date = dateToInputString(new Date());
-    let bet_type;
     let team;
     let opponent;
     // note: bind the following to the input elements in order to format
@@ -33,12 +32,6 @@
         "NCAAF",
         "Formula 1",
     ];
-
-    function betTypeOnChange() {
-        if (bet_type == "ML") {
-            line.value = "ML";
-        }
-    }
 
     function submitButtonEnabled(inputs) {
         let ena = true;
@@ -55,13 +48,21 @@
 
     function formatLine(e) {
         let val = e.target.value;
-        // remove non-numeric characters
-        val = stripNonNumeric(val, ['+', '-', '.']);
-        // ensure that the value has a leading sign
-        if (val.length > 0 && val[0] != '+' && val[0] != '-') {
-            val = `+${val}`;
+        let valU = val.toUpperCase()
+        // note: handle "ML" and "PK"
+        if (valU.startsWith("ML") || valU.startsWith("PK")) {
+            line.value = val.toUpperCase().substring(0, 2);
+        } else if (valU.startsWith("M") || valU.startsWith("P")) {
+            line.value = val.toUpperCase().substring(0, 1);
+        } else {
+            // remove non-numeric characters
+            val = stripNonNumeric(val, ['+', '-', '.']);
+            // ensure that the value has a leading sign
+            if (val.length > 0 && val[0] != '+' && val[0] != '-') {
+                val = `+${val}`;
+            }
+            line.value = val;
         }
-        line.value = val;
     }
 
     function formatOdds(e) {
@@ -101,7 +102,6 @@
     async function onSubmit() {
         let body = {
             date: date,
-            bet_type: bet_type,
             team: team,
             opponent: opponent,
             line: line.value,
@@ -119,7 +119,6 @@
             });
         }
         // clear the form input
-        bet_type = "";
         team = "";
         opponent = "";
         line.value = "";
@@ -145,24 +144,6 @@
         <input type="date" bind:value={date}>
     </Labeled>
 
-    <!-- bet type: spread vs. money line -->
-    <div id="bet-type" class="vflex">
-        <label>
-            <input
-                type=radio name="bet_type" value={"spread"}
-                bind:group={bet_type} on:change={betTypeOnChange}
-            >
-            spread
-        </label>
-        <label>
-            <input
-                type=radio name="bet_type" value={"ML"}
-                bind:group={bet_type} on:change={betTypeOnChange}
-            >
-            money line
-        </label>
-    </div>
-
     <!-- team (pick to win) -->
     <Labeled text="team">
         <select bind:value={team}>
@@ -184,12 +165,8 @@
     </Labeled>
 
     <!-- line -->
-    <Labeled text="line">
-        <!-- note: no line for money line bets -->
-        <input
-            class="text-input" disabled={bet_type == "ML"}
-            bind:this={line} on:input={formatLine}
-        >
+    <Labeled text="line (or ML/PK)">
+        <input class="text-input" bind:this={line} on:input={formatLine}>
     </Labeled>
 
     <!-- odds -->
@@ -208,7 +185,7 @@
     <div class="spacer"/>
 
     <button
-        disabled={!submitButtonEnabled([bet_type, team, opponent, line, odds, wager])}
+        disabled={!submitButtonEnabled([team, opponent, line, odds, wager])}
         on:click|preventDefault={onSubmit}
     >
         submit
@@ -221,13 +198,6 @@
         padding: 16px;
         align-items: center;
         gap: 16px;
-    }
-
-    #bet-type {
-        font-size: 13px;
-        align-items: flex-start;
-        align-self: flex-start;
-        margin-right: 8px;
     }
 
     .text-input {

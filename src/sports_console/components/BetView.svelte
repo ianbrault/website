@@ -28,7 +28,9 @@
     }
 
     function formatLineOdds(value) {
-        if (value > 0) {
+        if (value == "ML" || value == "PK") {
+            return value;
+        } else if (value > 0) {
             return `+${value}`;
         } else {
             return value.toString();
@@ -48,7 +50,7 @@
                 "Sport": "NBA",
                 "Team": teamFullName(b["team"]),
                 "Opponent": teamFullName(b["opponent"]),
-                "Line": b["bet_type"] == "ML" ? "ML" : formatLineOdds(b["line"]),
+                "Line": formatLineOdds(b["line"]),
                 "Odds": formatLineOdds(b["odds"]),
                 "Result": result,
                 "Wager": money_formatter.format(b["wager"]),
@@ -116,7 +118,10 @@
                         <td>{bet[column]}</td>
                     {/each}
                     <td>
-                        <Dropdown text="..." onClick={(action) => betDropdownHandler(bet["Sport"], bet["id"], action)}/>
+                        <Dropdown
+                            text="..."
+                            onClick={(action) => betDropdownHandler(bet["Sport"], bet["id"], action)}
+                        />
                     </td>
                 </tr>
             {/each}

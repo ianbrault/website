@@ -117,7 +117,6 @@ router.post("/bets/nba/add", async (req, res) => {
     log.log("POST /bets/nba/add");
 
     let date = req.body["date"];
-    let bet_type = req.body["bet_type"];
     let team = req.body["team"];
     let opponent = req.body["opponent"];
     let line = req.body["line"];
@@ -132,7 +131,7 @@ router.post("/bets/nba/add", async (req, res) => {
     // create and save the bet model
     try {
         let bet = await NBABet.createBet(
-            date, bet_type, team, opponent, line, odds, wager, user);
+            date, team, opponent, line, odds, wager, user);
         log.log(`added NBA bet ${bet["_id"]} for user ${user}`);
         res.status(200).json(bet);
     } catch(err) {

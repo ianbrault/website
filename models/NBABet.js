@@ -6,10 +6,9 @@ const mongoose = require("mongoose");
 
 var NBABetSchema = new mongoose.Schema({
     date: Date,
-    bet_type: String,
     team: String,
     opponent: String,
-    line: Number,
+    line: String,
     odds: Number,
     wager: Number,
     result: {
@@ -23,12 +22,11 @@ var NBABetSchema = new mongoose.Schema({
 });
 
 // create a new bet
-NBABetSchema.statics.createBet = async function(date, bet_type, team, opponent, line, odds, wager, user) {
+NBABetSchema.statics.createBet = async function(date, team, opponent, line, odds, wager, user) {
     // create and save the bet model
     let model = this.model("NBABet");
     let bet = new model({
         date: date,
-        bet_type: bet_type,
         team: team,
         opponent: opponent,
         line: line,
