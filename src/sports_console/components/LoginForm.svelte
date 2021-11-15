@@ -5,6 +5,7 @@
 
 <script>
     import "../common.css";
+
     import { user_logged_in, user_bets } from "../stores.js";
     import { post } from "../utils.js";
 

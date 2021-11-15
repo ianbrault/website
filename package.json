@@ -8,9 +8,9 @@
         "db": "mongod --dbpath ~/data/dp --logpath .mongodb.log --fork",
         "build-dev": "webpack --mode=development",
         "build-prod": "webpack --mode=production",
-        "start": "node app",
-        "dev": "yarn run build-dev && NODE_ENV='development' node app",
-        "prod": "yarn run build-prod && NODE_ENV='production' node app"
+        "start": "rm -rf dist/* && node app",
+        "dev": "NODE_ENV='development' node app",
+        "prod": "NODE_ENV='production' node app"
     },
     "dependencies": {
         "bcrypt": "^5.0.1",
