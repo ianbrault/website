@@ -5,6 +5,7 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
+const F1Bet = require("./F1Bet");
 const NBABet = require("./NBABet");
 const NCAAFBet = require("./NCAAFBet");
 const NCAAMBBBet = require("./NCAAMBBBet");
@@ -29,6 +30,11 @@ UserSchema.statics.createUser = async function(username, password_plaintext) {
     return user;
 };
 
+// get all F1 bets for the user
+UserSchema.methods.getF1Bets = async function() {
+    return await F1Bet.find({user: this._id});
+}
+
 // get all NBA bets for the user
 UserSchema.methods.getNBABets = async function() {
     return await NBABet.find({user: this._id});
@@ -52,6 +58,7 @@ UserSchema.methods.getNFLBets = async function() {
 // get all bets for all sports for the user
 UserSchema.methods.getBets = async function() {
     return {
+        "F1": await this.getF1Bets(),
         "NBA": await this.getNBABets(),
         "NCAAF": await this.getNCAAFBets(),
         "NCAAMBB": await this.getNCAAMBBBets(),

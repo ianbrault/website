@@ -41,11 +41,28 @@
     function betsToTable(bets) {
         let all_bets = [];
 
+        // add F1 bets
+        bets["F1"].forEach((b) => {
+            let result = (b["result"] == undefined) ? "N/A" : b["result"];
+            // TODO: F1 keys need better handling
+            all_bets.push({
+                "id": b["_id"],
+                "Date": dateToString(b["date"]),
+                "Sport": "F1",
+                "Team": b["driver"],
+                "Opponent": b["event"],
+                "Line": formatLineOdds(b["line"]),
+                "Odds": formatLineOdds(b["odds"]),
+                "Result": result,
+                "Wager": money_formatter.format(b["wager"]),
+                "Net": "N/A",  // TODO
+            });
+        });
+
         // add NBA bets
         bets["NBA"].forEach((b) => {
             let result = (b["result"] == undefined) ? "N/A" : b["result"];
             all_bets.push({
-                // include the ID for actions
                 "id": b["_id"],
                 "Date": dateToString(b["date"]),
                 "Sport": "NBA",
@@ -63,7 +80,6 @@
         bets["NCAAF"].forEach((b) => {
             let result = (b["result"] == undefined) ? "N/A" : b["result"];
             all_bets.push({
-                // include the ID for actions
                 "id": b["_id"],
                 "Date": dateToString(b["date"]),
                 "Sport": "NCAAF",
@@ -81,7 +97,6 @@
         bets["NCAAMBB"].forEach((b) => {
             let result = (b["result"] == undefined) ? "N/A" : b["result"];
             all_bets.push({
-                // include the ID for actions
                 "id": b["_id"],
                 "Date": dateToString(b["date"]),
                 "Sport": "NCAAMBB",
@@ -99,7 +114,6 @@
         bets["NFL"].forEach((b) => {
             let result = (b["result"] == undefined) ? "N/A" : b["result"];
             all_bets.push({
-                // include the ID for actions
                 "id": b["_id"],
                 "Date": dateToString(b["date"]),
                 "Sport": "NFL",

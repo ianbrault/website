@@ -32,6 +32,7 @@
         "NFL",
         "NCAAMBB",
         "NCAAF",
+        "F1",
     ];
 
     function getTeams(sport) {
@@ -123,15 +124,27 @@
     async function onSubmit() {
         // note: strip the dollar sign from the wager
         let wager_val = wager.value.substring(1, wager.value.length);
-        let body = {
-            date: date,
-            team: team,
-            opponent: opponent,
-            line: line.value,
-            odds: odds.value,
-            wager: wager_val,
-            user: get(user_logged_in),
-        };
+        let body = {};
+        if (selected_sport == "F1") {
+            body = {
+                date: date,
+                driver: team,
+                event: opponent,
+                odds: odds.value,
+                wager: wager_val,
+                user: get(user_logged_in),
+            };
+        } else {
+            body = {
+                date: date,
+                team: team,
+                opponent: opponent,
+                line: line.value,
+                odds: odds.value,
+                wager: wager_val,
+                user: get(user_logged_in),
+            };
+        }
         let url = `/bets/${selected_sport.toLowerCase()}/add`;
         let res = await post(url, body);
         if (res.status == 200) {
@@ -154,7 +167,7 @@
 
 <form class="bordered-round hflex">
     <!-- select the sport to populate the rest of the form -->
-    <Labeled text="select a sport">
+    <Labeled text="sport">
         <!-- clear the query body when the sport is changed -->
         <select bind:value={selected_sport}>
             <option disabled selected value>&nbsp;</option>
@@ -169,38 +182,54 @@
         <input type="date" bind:value={date}>
     </Labeled>
 
-    <!-- team (pick to win) -->
-    <Labeled text="team">
-        {#if selected_sport == "NCAAMBB" || selected_sport == "NCAAF"}
+    {#if selected_sport == "F1"}
+        <!-- driver -->
+        <Labeled text="driver">
             <input class="text-input" bind:value={team}>
-        {:else}
-            <select bind:value={team}>
-                <option disabled selected value>&nbsp;</option>
-                {#each getTeams(selected_sport) as team}
-                    <option value={team}>{getTeamName(selected_sport, team)}</option>
-                {/each}
-            </select>
-        {/if}
-    </Labeled>
+        </Labeled>
+    {:else}
+        <!-- team (pick to win) -->
+        <Labeled text="team">
+            {#if selected_sport == "NCAAMBB" || selected_sport == "NCAAF"}
+                <input class="text-input" bind:value={team}>
+            {:else}
+                <select bind:value={team}>
+                    <option disabled selected value>&nbsp;</option>
+                    {#each getTeams(selected_sport) as team}
+                        <option value={team}>{getTeamName(selected_sport, team)}</option>
+                    {/each}
+                </select>
+            {/if}
+        </Labeled>
+    {/if}
 
-    <!-- opponent -->
-    <Labeled text="opponent">
-        {#if selected_sport == "NCAAMBB" || selected_sport == "NCAAF"}
+    {#if selected_sport == "F1"}
+        <!-- event -->
+        <Labeled text="event">
             <input class="text-input" bind:value={opponent}>
-        {:else}
-            <select bind:value={opponent}>
-                <option disabled selected value>&nbsp;</option>
-                {#each getTeams(selected_sport) as team}
-                    <option value={team}>{getTeamName(selected_sport, team)}</option>
-                {/each}
-            </select>
-        {/if}
-    </Labeled>
+        </Labeled>
+    {:else}
+        <!-- opponent -->
+        <Labeled text="opponent">
+            {#if selected_sport == "NCAAMBB" || selected_sport == "NCAAF"}
+                <input class="text-input" bind:value={opponent}>
+            {:else}
+                <select bind:value={opponent}>
+                    <option disabled selected value>&nbsp;</option>
+                    {#each getTeams(selected_sport) as team}
+                        <option value={team}>{getTeamName(selected_sport, team)}</option>
+                    {/each}
+                </select>
+            {/if}
+        </Labeled>
+    {/if}
 
-    <!-- line -->
-    <Labeled text="line (or ML/PK)">
-        <input class="number-input" bind:this={line} on:input={formatLine}>
-    </Labeled>
+    {#if selected_sport != "F1"}
+        <!-- line -->
+        <Labeled text="line (or ML/PK)">
+            <input class="number-input" bind:this={line} on:input={formatLine}>
+        </Labeled>
+    {/if}
 
     <!-- odds -->
     <Labeled text="odds">
@@ -231,6 +260,7 @@
         padding: 16px;
         align-items: center;
         gap: 16px;
+        flex-wrap: wrap;
     }
 
     .text-input {

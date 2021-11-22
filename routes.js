@@ -8,6 +8,7 @@ const path = require("path");
 
 const log = require("./log");
 
+const F1Bet = require("./models/F1Bet");
 const NBABet = require("./models/NBABet");
 const NCAAFBet = require("./models/NCAAFBet");
 const NCAAMBBBet = require("./models/NCAAMBBBet");
@@ -134,9 +135,6 @@ function grabKeys(from, keys) {
 }
 
 async function createBet(res, sport, model, bet_body) {
-    // FIXME: DEBUG START
-    log.log(`sport=${sport}; body=${JSON.stringify(bet_body)}`);
-    // FIXME: DEBUG END
     let bet = new model(bet_body);
     try {
         await bet.save();
@@ -146,6 +144,13 @@ async function createBet(res, sport, model, bet_body) {
     log.log(`added ${sport} bet ${bet["_id"]} for user ${bet_body["user"]}`);
     res.status(200).json(bet);
 }
+
+router.post("/bets/f1/add", async (req, res) => {
+    log.log("POST /bets/f1/add");
+    let f1_keys = ["date", "driver", "event", "odds", "wager", "result", "user"];
+    let bet_body = grabKeys(req.body, f1_keys);
+    await createBet(res, "F1", F1Bet, bet_body);
+});
 
 router.post("/bets/nba/add", async (req, res) => {
     log.log("POST /bets/nba/add");
@@ -182,6 +187,11 @@ async function deleteBet(res, sport, model, bet_id) {
         res_error(res, 500, `failed to delete ${sport} bet ${bet_id}: ${err}`);
     }
 }
+
+router.post("/bets/f1/delete", async (req, res) => {
+    log.log("POST /bets/f1/delete");
+    await deleteBet(res, "F1", F1Bet, req.body["bet_id"]);
+});
 
 router.post("/bets/nba/delete", async (req, res) => {
     log.log("POST /bets/nba/delete");
