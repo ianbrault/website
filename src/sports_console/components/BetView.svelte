@@ -29,7 +29,9 @@
     }
 
     function formatLineOdds(value) {
-        if (value == "ML" || value == "PK") {
+        if (value == null || value == undefined) {
+            return "";
+        } else if (value == "ML" || value == "PK") {
             return value;
         } else if (value > 0) {
             return `+${value}`;

@@ -246,12 +246,21 @@
 
     <div class="spacer"/>
 
-    <button
-        disabled={!submitButtonEnabled([team, opponent, line, odds, wager])}
-        on:click|preventDefault={onSubmit}
-    >
-        submit
-    </button>
+    {#if selected_sport == "F1"}
+        <button
+            disabled={!submitButtonEnabled([team, opponent, odds, wager])}
+            on:click|preventDefault={onSubmit}
+        >
+            submit
+        </button>
+    {:else}
+        <button
+            disabled={!submitButtonEnabled([team, opponent, line, odds, wager])}
+            on:click|preventDefault={onSubmit}
+        >
+            submit
+        </button>
+    {/if}
 </form>
 
 <style>
