@@ -185,15 +185,15 @@
     {#if selected_sport == "F1"}
         <!-- driver -->
         <Labeled text="driver">
-            <input class="text-input" bind:value={team}>
+            <input id="driver" bind:value={team}>
         </Labeled>
     {:else}
         <!-- team (pick to win) -->
         <Labeled text="team">
             {#if selected_sport == "NCAAMBB" || selected_sport == "NCAAF"}
-                <input class="text-input" bind:value={team}>
+                <input id="team" bind:value={team}>
             {:else}
-                <select bind:value={team}>
+                <select id="team" bind:value={team}>
                     <option disabled selected value>&nbsp;</option>
                     {#each getTeams(selected_sport) as team}
                         <option value={team}>{getTeamName(selected_sport, team)}</option>
@@ -206,15 +206,15 @@
     {#if selected_sport == "F1"}
         <!-- event -->
         <Labeled text="event">
-            <input class="text-input" bind:value={opponent}>
+            <input id="event" bind:value={opponent}>
         </Labeled>
     {:else}
         <!-- opponent -->
         <Labeled text="opponent">
             {#if selected_sport == "NCAAMBB" || selected_sport == "NCAAF"}
-                <input class="text-input" bind:value={opponent}>
+                <input id="opponent" bind:value={opponent}>
             {:else}
-                <select bind:value={opponent}>
+                <select id="opponent" bind:value={opponent}>
                     <option disabled selected value>&nbsp;</option>
                     {#each getTeams(selected_sport) as team}
                         <option value={team}>{getTeamName(selected_sport, team)}</option>
@@ -227,19 +227,19 @@
     {#if selected_sport != "F1"}
         <!-- line -->
         <Labeled text="line (or ML/PK)">
-            <input class="number-input" bind:this={line} on:input={formatLine}>
+            <input id="line" bind:this={line} on:input={formatLine}>
         </Labeled>
     {/if}
 
     <!-- odds -->
     <Labeled text="odds">
-        <input class="number-input" bind:this={odds} on:input={formatOdds}>
+        <input id="odds" bind:this={odds} on:input={formatOdds}>
     </Labeled>
 
     <!-- wager -->
     <Labeled text="wager">
         <input
-            class="number-input" placeholder="$0.00"
+            id="wager" placeholder="$0.00"
             bind:this={wager} on:input={formatWager}
         >
     </Labeled>
@@ -263,13 +263,32 @@
         flex-wrap: wrap;
     }
 
-    .text-input {
-        max-width: 120px;
+    #team, #opponent {
+        width: 220px;
     }
 
-    .number-input {
+    #line {
+        width: 110px;
+    }
+
+    #odds {
+        width: 70px;
+    }
+
+    #wager {
+        width: 90px;
+    }
+
+    #driver {
+        width: 160px;
+    }
+
+    #event {
+        width: 200px;
+    }
+
+    #line, #odds, #wager {
         text-align: right;
-        max-width: 120px;
     }
 
     button {

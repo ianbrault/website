@@ -6,11 +6,14 @@
 <script>
     import "../common.css";
 
+    import { onMount } from "svelte";
+
     import { user_logged_in, user_bets } from "../stores.js";
     import { post } from "../utils.js";
 
     let username;
     let password;
+    let username_input;
     let login_error = "";
 
     // common logic between login/register buttons
@@ -42,10 +45,15 @@
     async function registerUser() {
         await handler("/user/register");
     }
+
+    // auto-focus the username input
+    onMount(() => {
+        username_input.focus();
+    });
 </script>
 
 <form id="login-wrapper" class="vflex-center" on:submit|preventDefault={loginUser}>
-    <input bind:value={username} placeholder="username">
+    <input bind:value={username} bind:this={username_input} placeholder="username">
     <input type="password" bind:value={password} placeholder="password">
 
     <div id="login-button-wrapper" class="hflex-center">
