@@ -7,7 +7,6 @@ const https = require("https");
 const path = require("path");
 
 const express = require("express");
-const mongoose = require("mongoose");
 const webpack = require("webpack");
 const webpackDevMiddleware = require("webpack-dev-middleware");
 
@@ -32,12 +31,6 @@ app.use(webpackDevMiddleware(compiler, {
 
 app.use("/", router);
 
-// connect to the MongoDB database
-const uri = "mongodb://127.0.0.1:27017/sports";
-mongoose.connect(uri)
-    .then(() => log.log(`successfully connected to database at ${uri}`))
-    .catch((err) => log.log_error(`failed to connect to database at ${uri}: ${err}`));
-
 // set up the HTTP/HTTPS servers
 let https_port = process.env.NODE_ENV === "production" ? 443 : 3443;
 log.log(`HTTPS server running on port ${https_port}`);
@@ -50,3 +43,4 @@ https.createServer({
     key: private_key,
     cert: certificate
 }, app).listen(https_port);
+
