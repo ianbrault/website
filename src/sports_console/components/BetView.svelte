@@ -6,19 +6,26 @@
 <script>
     import Dropdown from "./Dropdown.svelte";
 
+    import { F1DriverTeams, F1TeamLogos } from "../f1.js";
     import { NBATeamFullName } from "../nba.js";
+    import { NCAALogos } from "../ncaa.js";
     import { NFLTeamFullName } from "../nfl.js";
     import { user_bets } from "../stores.js";
     import { post } from "../utils.js";
 
     let columns = [
-        "Date", "Sport", "Team", "Opponent", "Line", "Odds", "Result", "Wager", "Net",
+        // note: the logo column header will not be shown
+        "Date", "Logo", "Details", "Line", "Odds", "Result", "Wager", "Net",
     ];
 
     let money_formatter = new Intl.NumberFormat(undefined, {
         style: "currency",
         currency: "USD",
     });
+
+    function colClass(col, header) {
+        return `table-${header ? "header-" : ""}col ${col.toLowerCase()}-col`;
+    }
 
     function dateToString(d) {
         let date = new Date(d);
@@ -33,10 +40,42 @@
             return "";
         } else if (value == "ML" || value == "PK") {
             return value;
-        } else if (value > 0) {
+        } else if (typeof value == "number" && value > 0) {
             return `+${value}`;
         } else {
             return value.toString();
+        }
+    }
+
+    function getF1Logo(driver, date) {
+        let placeholder = "/img/logos/f1/F1.svg";
+
+        let d = new Date(date);
+        let year = d.getFullYear().toString();
+
+        if (driver in F1DriverTeams[year]) {
+            return F1TeamLogos[F1DriverTeams[year][driver]];
+        } else {
+            return placeholder;
+        }
+    }
+
+    function getNCAALogo(sport, team) {
+        if (team in NCAALogos) {
+            return NCAALogos[team];
+        } else if (sport == "NCAAF") {
+            return "/img/logos/football.svg";
+        } else if (sport == "NCAAMBB") {
+            return "/img/logos/basketball.svg";
+        }
+    }
+
+    function logoClass(src) {
+        // shrink the placeholder icons
+        if (src.endsWith("basketball.svg") || src.endsWith("football.svg")) {
+            return "team-logo-placeholder";
+        } else {
+            return "team-logo";
         }
     }
 
@@ -46,13 +85,12 @@
         // add F1 bets
         bets["F1"].forEach((b) => {
             let result = (b["result"] == undefined) ? "N/A" : b["result"];
-            // TODO: F1 keys need better handling
             all_bets.push({
                 "id": b["_id"],
                 "Date": dateToString(b["date"]),
                 "Sport": "F1",
-                "Team": b["driver"],
-                "Opponent": b["event"],
+                "Logo": getF1Logo(b["driver"], b["date"]),
+                "Details": `${b["driver"]} (${b["event"]})`,
                 "Line": formatLineOdds(b["line"]),
                 "Odds": formatLineOdds(b["odds"]),
                 "Result": result,
@@ -68,8 +106,8 @@
                 "id": b["_id"],
                 "Date": dateToString(b["date"]),
                 "Sport": "NBA",
-                "Team": NBATeamFullName(b["team"]),
-                "Opponent": NBATeamFullName(b["opponent"]),
+                "Logo": `/img/logos/nba/${b["team"]}.svg`,
+                "Details": `${NBATeamFullName(b["team"])} (vs. ${b["opponent"]})`,
                 "Line": formatLineOdds(b["line"]),
                 "Odds": formatLineOdds(b["odds"]),
                 "Result": result,
@@ -85,8 +123,8 @@
                 "id": b["_id"],
                 "Date": dateToString(b["date"]),
                 "Sport": "NCAAF",
-                "Team": b["team"],
-                "Opponent": b["opponent"],
+                "Logo": getNCAALogo("NCAAF", b["team"]),
+                "Details": `${b["team"]} (vs. ${b["opponent"]})`,
                 "Line": formatLineOdds(b["line"]),
                 "Odds": formatLineOdds(b["odds"]),
                 "Result": result,
@@ -102,8 +140,8 @@
                 "id": b["_id"],
                 "Date": dateToString(b["date"]),
                 "Sport": "NCAAMBB",
-                "Team": b["team"],
-                "Opponent": b["opponent"],
+                "Logo": getNCAALogo("NCAAMBB", b["team"]),
+                "Details": `${b["team"]} (vs. ${b["opponent"]})`,
                 "Line": formatLineOdds(b["line"]),
                 "Odds": formatLineOdds(b["odds"]),
                 "Result": result,
@@ -119,8 +157,8 @@
                 "id": b["_id"],
                 "Date": dateToString(b["date"]),
                 "Sport": "NFL",
-                "Team": NFLTeamFullName(b["team"]),
-                "Opponent": NFLTeamFullName(b["opponent"]),
+                "Logo": `/img/logos/nfl/${b["team"]}.svg`,
+                "Details": `${NFLTeamFullName(b["team"])} (vs. ${b["opponent"]})`,
                 "Line": formatLineOdds(b["line"]),
                 "Odds": formatLineOdds(b["odds"]),
                 "Result": result,
@@ -172,31 +210,35 @@
 </script>
 
 <div id="bet-view-container" class="bordered-round">
-    <table>
-        <thead>
-            <tr>
-                {#each columns as column}
-                    <th>{column}</th>
-                {/each}
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {#each betsToTable($user_bets) as bet}
-                <tr>
-                    {#each columns as column}
-                        <td>{bet[column]}</td>
-                    {/each}
-                    <td>
-                        <Dropdown
-                            text="..."
-                            onClick={(action) => betDropdownHandler(bet["Sport"], bet["id"], action)}
-                        />
-                    </td>
-                </tr>
+    <div id="bet-table">
+        <div class="table-header">
+            {#each columns as column}
+                <div class={colClass(column, true)}>
+                    {(column != "Logo") ? column : ""}
+                </div>
             {/each}
-        </tbody>
-    </table>
+            <div class={colClass("Actions", true)}>Actions</div>
+        </div>
+        {#each betsToTable($user_bets) as bet}
+            <div class="table-row">
+                {#each columns as column}
+                    <div class={colClass(column, false)}>
+                        {#if column == "Logo"}
+                            <img class={logoClass(bet[column])} src={bet[column]} alt="team logo">
+                        {:else}
+                            {bet[column]}
+                        {/if}
+                    </div>
+                {/each}
+                <div class={colClass("Actions", false)}>
+                    <Dropdown
+                        text="..."
+                        onClick={(action) => betDropdownHandler(bet["Sport"], bet["id"], action)}
+                    />
+                </div>
+            </div>
+        {/each}
+    </div>
 </div>
 
 <style>
@@ -207,45 +249,81 @@
         border-radius: 4px;
     }
 
-    table {
+    #bet-table {
         width: 100%;
-        table-layout: auto;
-        border-spacing: 0;
-        font-size: 14px;
-        text-align: right;
+        font-size: 13px;
     }
 
-
-    table td, table th {
-        border-bottom: 1px solid #aaaaaa;
+    .table-header, .table-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
     }
 
-    table tr:last-child > td {
-        border-bottom: none;
+    .table-header {
+        border-bottom: 1px solid #888888;
+        background-color: rgb(233, 233, 237);
     }
 
-    thead {
-        background-color: #e0e0e0;
+    .table-row {
+        height: 30px;
+        border-bottom: 1px solid #bbbbbb;
+    } .table-row:hover {
+        background-color: rgb(233, 233, 237);
     }
 
-    tbody > tr:hover {
-        background-color: #eeeeee;
+    .table-col, .table-header-col {
+        padding-left: 12px;
+        padding-right: 12px;
     }
 
-    td, th {
-        padding: 4px 12px;
-    }
-
-    th {
+    .table-header-col {
         font-weight: 600;
         padding-top: 8px;
         padding-bottom: 8px;
     }
 
-    tr > th:first-child, tr > td:first-child {
-        text-align: left;
-    } tr > th:last-child, tr > td:last-child {
+    .table-col {
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .date-col {
+        width: 8%;
+    } .logo-col {
+        width: 50px;
+    }.details-col {
+        flex-grow: 1;
+    } .line-col, .odds-col, .result-col {
+        width: 6%;
+    } .wager-col, .net-col {
+        width: 8%;
+    } .actions-col {
+        width: 10%;
+    }
+
+    .line-col, .odds-col, .result-col, .wager-col, .net-col {
+        text-align: right;
+    } .actions-col {
         text-align: center;
+    }
+
+    .logo-col {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-right: 2px;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .team-logo {
+        width: 36px;
+        max-height: 32px;
+    } .team-logo-placeholder {
+        width: 28px;
+        max-height: 24px;
     }
 </style>
 
