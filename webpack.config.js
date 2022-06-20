@@ -9,9 +9,9 @@ module.exports = {
     // TODO: figure out a better way to do this
     mode: "development",
     entry: {
-        // home: "./src/home.js",
+        home: "./src/home/home.js",
+        todo: "./src/todo/todo.js",
         bbash18_teaser: "./src/bbash18_teaser.js",
-        sports_console: "./src/sports_console/sports_console.js",
     },
     output: {
         filename: "[name].js",

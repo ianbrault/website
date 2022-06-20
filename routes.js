@@ -24,6 +24,11 @@ router.get("/", (req, res) => {
     sendHTML(res, "home.html");
 });
 
+router.get("/todo", (req, res) => {
+    log.log("GET /todo");
+    sendHTML(res, "todo.html");
+});
+
 /*
 ** POST routes
 */
