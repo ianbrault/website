@@ -1,0 +1,25 @@
+/*
+** base.css
+*/
+
+@font-face {
+    font-family: "SF Pro Display";
+    font-weight: 400;
+    src: url("/public/fonts/SF-Pro-Display-Regular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "SF Pro Display";
+    font-weight: 300;
+    src: url("/public/fonts/SF-Pro-Display-Light.otf") format("opentype");
+}
+
+* {
+    font-family: "SF Pro Display";
+}
+
+.vflex {
+    display: flex;
+    flex-direction: column;
+}
+

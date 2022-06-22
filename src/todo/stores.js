@@ -1,0 +1,8 @@
+/*
+** stores.js
+*/
+
+import { writable } from "svelte/store";
+
+export const focusedItem = writable(undefined);
+

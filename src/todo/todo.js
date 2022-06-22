@@ -1,5 +1,5 @@
 /*
-** src/todo/todo.js
+** todo.js
 */
 
 import "../css/base.css";
