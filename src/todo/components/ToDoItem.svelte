@@ -9,10 +9,13 @@
     import { focusedItem } from "../stores.js";
 
     const dispatch = createEventDispatcher();
+    const IndentPerLevel = 32;
 
     // props
     export let id;
+    export let parentId;
     export let text;
+    export let level;
 
     let label;
     let checked = false;
@@ -25,6 +28,15 @@
         setTimeout(function() {
             label.focus();
         }, 0);
+    }
+
+    function eventInfo() {
+        // packages up the to-do item info into an Object
+        return {
+            id: id,
+            parentId: parentId,
+            level: level,
+        };
     }
 
     function unfocus(_event) {
@@ -42,29 +54,29 @@
         if (event.key === "Enter") {
             event.preventDefault();
             unfocus();
-            dispatch("enter");
+            dispatch("enter", eventInfo());
         }
         else if (event.key === "Tab") {
             event.preventDefault();
             if (shiftPressed) {
-                dispatch("shifttab");
+                dispatch("shifttab", eventInfo());
             } else  {
-                dispatch("tab");
+                dispatch("tab", eventInfo());
             }
         }
         else if (event.key === "Escape") {
             event.preventDefault();
             unfocus();
-            dispatch("escape");
+            dispatch("escape", eventInfo());
         }
-        else if (event.key === "ShiftLeft" || event.key === "ShiftRight") {
+        else if (event.key === "Shift") {
             // track when Shift is pressed/released
             shiftPressed = true;
         }
     }
 
     function onKeyUp(event) {
-        if (event.key === "ShiftLeft" || event.key === "ShiftRight") {
+        if (event.key === "Shift") {
             // track when Shift is pressed/released
             shiftPressed = false;
         }
@@ -79,7 +91,7 @@
     });
 </script>
 
-<div>
+<div style={`padding-left: ${level * IndentPerLevel}px`}>
     <input
         id={id}
         type="checkbox"
@@ -114,5 +126,4 @@
         margin-right: 8px;
     }
 </style>
-
 
