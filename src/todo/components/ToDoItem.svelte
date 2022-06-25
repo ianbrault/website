@@ -113,9 +113,10 @@
 
 <style>
     label {
+        font-size: 16px;
         font-weight: 300;
         /* add padding to make the label more clickable */
-        padding-right: 40px;
+        padding-right: 64px;
     }
 
     label:focus {

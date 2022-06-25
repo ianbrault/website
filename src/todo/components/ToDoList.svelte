@@ -102,13 +102,13 @@
 
 <style>
     #todo-list {
+        flex-grow: 1;
         justify-content: flex-start;
         align-items: flex-start;
         gap: 4px;
         box-sizing: border-box;
         width: 100%;
         height: 100%;
-        padding: 32px;
     }
 </style>
 
