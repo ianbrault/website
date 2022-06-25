@@ -14,11 +14,10 @@
     // items will be loaded from local storage on component mount
     let toDoItems = [];
 
-    function itemIndentLevel(id) {
-        for (const item of toDoItems) {
-            // find the item with matching ID
-            if (item.id == id) {
-                return item.level;
+    function itemIndex(id) {
+        for (let i = 0; i < toDoItems.length; i++) {
+            if (toDoItems[i].id == id) {
+                return i;
             }
         }
         return undefined;
@@ -29,17 +28,14 @@
         let newItems = [];
         let newItem = {
             id: uuidv4(),
-            // FIXME: this needs to be event.detail.parentId
-            // not changing yet because it will break indent
-            parentId: event.detail.id,
             text: "",
             level: event.detail.level,
         };
         console.log("adding new item", newItem.id);
-        // add to the list after the parent ID
+        // add to the list after the item
         for (const item of toDoItems) {
             newItems.push(item);
-            if (item.id == newItem.parentId) {
+            if (item.id == event.detail.id) {
                 newItems.push(newItem);
             }
         }
@@ -57,15 +53,15 @@
     function indentItem(event) {
         // re-assign to toDoItems to force the re-draw
         let newItems = [];
+        // first check if the item can be indented: if it is already indented
+        // from the previous item, do not allow it to be indented further
+        let i = itemIndex(event.detail.id);
+        if (i == 0 || toDoItems[i].level > toDoItems[i - 1].level) {
+            return;
+        }
         for (const item of toDoItems) {
-            // find the item with matching ID and do not indent more than one
-            // level more than the parent item
-            // FIXME: need to handle the parent ID checking differently
-            if (
-                item.id == event.detail.id
-                && item.level == itemIndentLevel(event.detail.parentId)
-            ) {
-                // FIXME: this will have a new parent after indenting
+            // find the item with matching ID
+            if (item.id == event.detail.id) {
                 console.log("indenting item", event.detail.id);
                 item.level++;
             }
@@ -79,10 +75,14 @@
     function unindentItem(event) {
         // re-assign to toDoItems to force the re-draw
         let newItems = [];
+        // first check if the item can be un-indented: just ensure that it
+        // will end up with a non-negative level
+        if (event.detail.level == 0) {
+            return;
+        }
         for (const item of toDoItems) {
-            // find the item with matching ID and keep the level nonnegative
-            if (item.id == event.detail.id && item.level > 0) {
-                // FIXME: this will have a new parent after un-indenting
+            // find the item with matching ID
+            if (item.id == event.detail.id) {
                 console.log("un-indenting item", event.detail.id);
                 item.level--;
             }

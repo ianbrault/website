@@ -3,7 +3,7 @@
 -->
 
 <script>
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount, onDestroy } from "svelte";
 
     import "../base.css";
     import { focusedItem } from "../stores.js";
@@ -13,11 +13,12 @@
 
     // props
     export let id;
-    export let parentId;
     export let text;
     export let level;
 
     let label;
+    let isMounted = false;
+    let focusQueued = false;
     let checked = false;
     let editable = false;
     let shiftPressed = false;
@@ -27,16 +28,17 @@
         // NOTE: setTimeout is necessary in order for the focus event to fire
         setTimeout(function() {
             label.focus();
-        }, 0);
-        // FIXME: DEBUG
-        event.preventDefault();
+        }, 10);
+        // sometimes we pass an empty event
+        if (Object.keys(event).length > 0) {
+            event.preventDefault();
+        }
     }
 
     function eventInfo() {
         // packages up the to-do item info into an Object
         return {
             id: id,
-            parentId: parentId,
             text: label.textContent,
             level: level,
         };
@@ -79,11 +81,30 @@
         }
     }
 
+    // note when the component has mounted
+    onMount(() => {
+        isMounted = true;
+        // check if a focus action is queued
+        if (focusQueued) {
+            focus({});
+            focusQueued = false;
+        }
+    });
+    onDestroy(() => {
+        isMounted = false;
+    });
+
     // subscribe to the focused item store and focus the current item whenever
     // it is requested by another component
     focusedItem.subscribe(focusedId => {
         if (focusedId == id) {
-            focus();
+            // NOTE: cannot focus until the component has mounted, this causes
+            // issues when a new item is created and immediately focused
+            if (isMounted) {
+                focus({});
+            } else {
+                focusQueued = true;
+            }
         }
     });
 </script>
