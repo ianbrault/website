@@ -22,12 +22,14 @@
     let editable = false;
     let shiftPressed = false;
 
-    function focus(_event) {
+    function focus(event) {
         editable = true;
         // NOTE: setTimeout is necessary in order for the focus event to fire
         setTimeout(function() {
             label.focus();
         }, 0);
+        // FIXME: DEBUG
+        event.preventDefault();
     }
 
     function eventInfo() {
@@ -35,19 +37,14 @@
         return {
             id: id,
             parentId: parentId,
+            text: label.textContent,
             level: level,
         };
     }
 
     function unfocus(_event) {
         editable = false;
-    }
-
-    function onMouseDown(event) {
-        // block double-click from selecting text when label is not editable
-        if (event.detail > 1 && !editable) {
-            event.preventDefault();
-        }
+        dispatch("update", eventInfo());
     }
 
     function onKeyDown(event) {
@@ -100,9 +97,8 @@
     <label
         for={id}
         bind:this={label}
-        on:dblclick={focus}
+        on:click={focus}
         on:focusout={unfocus}
-        on:mousedown={onMouseDown}
         on:keydown={onKeyDown}
         on:keyup={onKeyUp}
         contenteditable={editable}
