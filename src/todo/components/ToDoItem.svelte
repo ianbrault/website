@@ -19,6 +19,7 @@
     let label;
     let isMounted = false;
     let focusQueued = false;
+    let focusEnd = undefined;
     let checked = false;
     let editable = false;
     let shiftPressed = false;
@@ -27,7 +28,17 @@
         editable = true;
         // NOTE: setTimeout is necessary in order for the focus event to fire
         setTimeout(function() {
-            label.focus();
+            if (focusEnd) {
+                let selection = window.getSelection();
+                let range = document.createRange();
+                // NOTE: unsure why the 1 puts the cursor at the end
+                range.setStart(label, 1);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                label.focus();
+            }
         }, 10);
         // sometimes we pass an empty event
         if (Object.keys(event).length > 0) {
@@ -64,9 +75,17 @@
             }
         }
         else if (event.key === "Escape") {
+            // un-focus on Escape
             event.preventDefault();
             unfocus();
             dispatch("escape", eventInfo());
+        }
+        else if (event.key === "Backspace") {
+            // only request a delete once the item is empty
+            if (label.textContent.length == 0) {
+                event.preventDefault();
+                dispatch("delete", eventInfo());
+            }
         }
         else if (event.key === "Shift") {
             // track when Shift is pressed/released
@@ -96,8 +115,9 @@
 
     // subscribe to the focused item store and focus the current item whenever
     // it is requested by another component
-    focusedItem.subscribe(focusedId => {
-        if (focusedId == id) {
+    focusedItem.subscribe(info => {
+        if (info && info.id == id) {
+            focusEnd = info.focusEnd;
             // NOTE: cannot focus until the component has mounted, this causes
             // issues when a new item is created and immediately focused
             if (isMounted) {

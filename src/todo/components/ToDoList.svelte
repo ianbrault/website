@@ -45,9 +45,9 @@
         // NOTE: do not store items yet, wait until the new item is un-focused
     }
 
-    function focusItem(id) {
+    function focusItem(id, focusEnd = false) {
         console.log("focusing item", id);
-        focusedItem.set(id);
+        focusedItem.set({ id: id, focusEnd: focusEnd });
     }
 
     function indentItem(event) {
@@ -110,6 +110,27 @@
         storeToDoItems(toDoItems);
     }
 
+    function deleteItem(event) {
+        // re-assign to toDoItems to force the re-draw
+        let newItems = [];
+        let i = itemIndex(event.detail.id);
+        for (const item of toDoItems) {
+            // skip the deleted item
+            if (item.id == event.detail.id) {
+                console.log("deleting item", event.detail.id);
+                continue;
+            }
+            newItems.push(item);
+        }
+        toDoItems = newItems;
+        // focus the previous item
+        if (i && i > 0) {
+            focusItem(toDoItems[i - 1].id, true);
+        }
+        // store updated item state to local storage
+        storeToDoItems(toDoItems);
+    }
+
     onMount(() => {
         // load stored to-do items when the component mounts
         let items = loadToDoItems();
@@ -133,6 +154,7 @@
             on:tab={indentItem}
             on:shifttab={unindentItem}
             on:update={itemUpdated}
+            on:delete={deleteItem}
             {...item}
         />
     {/each}
