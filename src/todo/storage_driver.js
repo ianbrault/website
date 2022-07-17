@@ -2,6 +2,8 @@
 ** storage_driver.js
 */
 
+import { Item } from "./Item.js";
+
 const ToDoItemsKey = "toDoItems";
 
 export function loadToDoItems() {
@@ -9,7 +11,8 @@ export function loadToDoItems() {
     // parse the items into an Object
     let items = [];
     if (itemData) {
-        items = JSON.parse(itemData);
+        let itemObjects = JSON.parse(itemData);
+        items = itemObjects.map(obj => Item.fromJSON(obj));
     }
     console.log(`loaded ${items.length} to-do items`);
     return items;
@@ -17,6 +20,7 @@ export function loadToDoItems() {
 
 export function storeToDoItems(items) {
     console.log(`storing ${items.length} to-do items into local storage`);
-    localStorage.setItem(ToDoItemsKey, JSON.stringify(items));
+    let itemObjects = items.map(item => item.toJSON());
+    localStorage.setItem(ToDoItemsKey, JSON.stringify(itemObjects));
 }
 

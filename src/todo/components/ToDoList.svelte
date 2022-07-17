@@ -4,11 +4,12 @@
 
 <script>
     import { onMount } from "svelte";
-    import { v4 as uuidv4 } from "uuid";
 
     import "../base.css";
+    import { Item } from "../Item.js";
     import { focusedItem } from "../stores.js";
     import { loadToDoItems, storeToDoItems } from "../storage_driver.js";
+
     import ToDoItem from "./ToDoItem.svelte";
 
     // items will be loaded from local storage on component mount
@@ -26,11 +27,7 @@
     function addNewItem(event) {
         // re-assign to toDoItems to force the re-draw
         let newItems = [];
-        let newItem = {
-            id: uuidv4(),
-            text: "",
-            level: event.detail.level,
-        };
+        let newItem = Item.newItem("", event.detail.level);
         console.log("adding new item", newItem.id);
         // add to the list after the item
         for (const item of toDoItems) {
