@@ -15,6 +15,7 @@
     // items will be loaded from local storage on component mount
     let toDoItems = [];
 
+    // TODO: will no longer be valid with the new data format
     function itemIndex(id) {
         for (let i = 0; i < toDoItems.length; i++) {
             if (toDoItems[i].id == id) {
@@ -24,6 +25,7 @@
         return undefined;
     }
 
+    // TODO: will no longer be valid with the new data format
     function addNewItem(event) {
         // re-assign to toDoItems to force the re-draw
         let newItems = [];
@@ -47,6 +49,7 @@
         focusedItem.set({ id: id, focusEnd: focusEnd });
     }
 
+    // TODO: will no longer be valid with the new data format
     function indentItem(event) {
         // re-assign to toDoItems to force the re-draw
         let newItems = [];
@@ -69,6 +72,7 @@
         storeToDoItems(toDoItems);
     }
 
+    // TODO: will no longer be valid with the new data format
     function unindentItem(event) {
         // re-assign to toDoItems to force the re-draw
         let newItems = [];
@@ -90,6 +94,7 @@
         storeToDoItems(toDoItems);
     }
 
+    // TODO: will no longer be valid with the new data format
     function itemUpdated(event) {
         // re-assign to toDoItems to force the re-draw
         let newItems = [];
@@ -107,6 +112,7 @@
         storeToDoItems(toDoItems);
     }
 
+    // TODO: will no longer be valid with the new data format
     function deleteItem(event) {
         // re-assign to toDoItems to force the re-draw
         let newItems = [];
@@ -133,6 +139,7 @@
         let items = loadToDoItems();
         if (items.length == 0) {
             // initialize with a placeholder item if there are none stored
+            // TODO: will no longer be valid with the new data format
             items = [{
                 id: uuidv4(),
                 parentId: undefined,
