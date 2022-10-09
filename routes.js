@@ -19,12 +19,12 @@ let sendHTML = (res, file) => {
 ** GET routes
 */
 
-router.get("/", (req, res) => {
+router.get("/", (_, res) => {
     log.log("GET /");
     sendHTML(res, "home.html");
 });
 
-router.get("/todo", (req, res) => {
+router.get("/todo", (_, res) => {
     log.log("GET /todo");
     sendHTML(res, "todo.html");
 });
@@ -33,6 +33,7 @@ router.get("/todo", (req, res) => {
 ** POST routes
 */
 
+// NOTE: CURRENTLY UNUSED
 let res_error = (res, status, message) => {
     log.log_error(message);
     res.status(status).send(message);
@@ -40,7 +41,7 @@ let res_error = (res, status, message) => {
 
 /* archived sites */
 
-router.get("/archive/bbash18-teaser", (req, res) => {
+router.get("/archive/bbash18-teaser", (_, res) => {
     log.log("GET /archive/bbash18-teaser");
     sendHTML(res, "bbash18_teaser.html");
 });

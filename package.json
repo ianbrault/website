@@ -4,10 +4,9 @@
     "description": "",
     "private": true,
     "scripts": {
-        "droplet": "ssh ian@138.68.3.149",
+        "droplet": "ssh ian@128.199.0.171",
         "build-dev": "webpack --mode=development",
         "build-prod": "webpack --mode=production",
-        "start": "rm -rf dist/* && node app",
         "dev": "NODE_ENV='development' node app",
         "prod": "NODE_ENV='production' node app"
     },

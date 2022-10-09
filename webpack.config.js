@@ -5,18 +5,12 @@
 const path = require("path");
 const webpack = require("webpack");
 
-module.exports = {
-    // TODO: figure out a better way to do this
-    mode: "development",
+var webpackConfig = {
+    mode: process.env.NODE_ENV,
     entry: {
         home: "./src/home/home.js",
         todo: "./src/todo/todo.js",
         bbash18_teaser: "./src/bbash18_teaser.js",
-    },
-    output: {
-        filename: "[name].js",
-        path: __dirname + "/dist",
-        publicPath: "/",
     },
     optimization: {
         minimize: true,
@@ -45,3 +39,21 @@ module.exports = {
         ]
     },
 };
+
+if (process.env.NODE_ENV === "development") {
+    webpackConfig.output = {
+        filename: "[name].js",
+        path: __dirname + "/dist",
+        publicPath: "/",
+    };
+}
+else if (process.env.NODE_ENV === "production") {
+    webpackConfig.output = {
+        filename: "[name].js",
+        path: "/var/www/brault.dev/html",
+        publicPath: "/",
+    };
+}
+
+module.exports = webpackConfig;
+

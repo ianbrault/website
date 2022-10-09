@@ -4,5 +4,5 @@
 
 import { writable } from "svelte/store";
 
-export const focusedItem = writable(undefined);
+export const editMode = writable(false);
 

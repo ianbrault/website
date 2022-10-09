@@ -35,3 +35,8 @@
     flex-direction: column;
 }
 
+.hflex {
+    display: flex;
+    flex-direction: row;
+}
+
