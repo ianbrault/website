@@ -5,15 +5,15 @@
 import { v4 as uuidv4 } from "uuid";
 
 export class Item {
-    constructor(id, text, level) {
-        this.id = id;
+    constructor(text, level, isChecked = false, id = undefined) {
+        if (!id) {
+            this.id = uuidv4();
+        } else {
+            this.id = id;
+        }
         this.text = text;
         this.level = level;
-    }
-
-    static newItem(text, level) {
-        let id = uuidv4();
-        return new Item(id, text, level);
+        this.isChecked = isChecked
     }
 
     toJSON() {
@@ -21,11 +21,12 @@ export class Item {
             id: this.id,
             text: this.text,
             level: this.level,
+            isChecked: this.isChecked,
         }
     }
 
     static fromJSON(obj) {
-        return new Item(obj.id, obj.text, obj.level);
+        return new Item(obj.text, obj.level, obj.isChecked, obj.id);
     }
 }
 

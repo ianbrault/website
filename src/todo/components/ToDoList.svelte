@@ -4,27 +4,30 @@
 
 <script>
     import { onMount } from "svelte";
-    import { editMode } from "../stores.js";
+    import { editMode, toDoItems } from "../stores.js";
     import { loadToDoItems } from "../storage_driver.js";
 
     import ToDoEditArea from "./ToDoEditArea.svelte";
     import ToDoItem from "./ToDoItem.svelte";
     import "../base.css";
 
-    // to-do items are loaded on component mount
-    let toDoItems = [];
+    let items = [];
 
+    // load stored to-do items when the component mounts
     onMount(() => {
-        // load stored to-do items when the component mounts
-        toDoItems = loadToDoItems();
+        items = loadToDoItems();
+    });
+    // and re-load stores to-do items whenever they are modified
+    toDoItems.subscribe((storedItems) => {
+        items = storedItems;
     });
 </script>
 
 <section id="todo-list" class="vflex">
     {#if $editMode}
         <ToDoEditArea/>
-    {:else if toDoItems.length > 0}
-        {#each toDoItems as item (item.id)}
+    {:else if items.length > 0}
+        {#each items as item (item.id)}
             <ToDoItem {...item}/>
         {/each}
     {:else}
@@ -41,6 +44,7 @@
         box-sizing: border-box;
         width: 100%;
         height: 100%;
+        padding-top: 10px;
     }
 </style>
 

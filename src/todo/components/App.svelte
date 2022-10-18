@@ -4,7 +4,8 @@
 -->
 
 <script>
-    import { editMode } from "../stores.js";
+    import { editMode, toDoItems } from "../stores.js";
+    import { storeToDoItems } from "../storage_driver.js";
 
     import IconButton from "./IconButton.svelte";
     import ToDoList from "./ToDoList.svelte";
@@ -17,6 +18,12 @@
     function unsetEditMode() {
         editMode.set(false);
     }
+
+    // store the to-do items to local storage whenever they change
+    // done at the top-level component for simplicity/clarity
+    toDoItems.subscribe((items) => {
+        storeToDoItems(items);
+    });
 </script>
 
 <main class="vflex">

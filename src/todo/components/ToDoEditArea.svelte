@@ -3,27 +3,18 @@
 -->
 
 <script>
+    import { Item } from "../Item.js";
+    import { editMode, toDoItems } from "../stores.js";
+    import { dump, parse } from "../todoTextParser.js";
+
     let textarea;
 
     const ItemLeader = "[ ]";
-    const ItemLeaderSelected = "[x]";
     const Tab = "    ";
 
     function setCursor(pos) {
         textarea.selectionStart = pos;
         textarea.selectionEnd = pos;
-    }
-
-    function previousLineStart() {
-        let start = currentLineStart();
-        if (start == 0) {
-            return 0;
-        }
-        let i = start - 2;
-        while (i >= 0 && textarea.value[i] !== "\n") {
-            i--;
-        }
-        return i + 1;
     }
 
     function currentLineStart() {
@@ -119,6 +110,21 @@
             setCursor(textarea.value.length);
         }
     }
+
+    editMode.subscribe((mode) => {
+        if (textarea) {
+            // dump the to-do items into text when entering edit mode
+            if (mode) {
+                textarea.value = dump($toDoItems);
+            }
+            // and parse and store the to-do items when leaving edit mode
+            else {
+                let itemObjects = parse(textarea.value);
+                let items = itemObjects.map(obj => Item.fromJSON(obj));
+                toDoItems.set(items);
+            }
+        }
+    });
 </script>
 
 <textarea
