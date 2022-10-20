@@ -3,7 +3,6 @@
 */
 
 const fs = require("fs");
-const https = require("https");
 const path = require("path");
 
 const express = require("express");
@@ -31,16 +30,6 @@ app.use(webpackDevMiddleware(compiler, {
 
 app.use("/", router);
 
-// set up the HTTP/HTTPS servers
-let https_port = process.env.NODE_ENV === "production" ? 443 : 3443;
-log.log(`HTTPS server running on port ${https_port}`);
-
-let certificate = fs.readFileSync("ianbrault.pem");
-let private_key = fs.readFileSync("ianbrault.key");
-
-// HTTPS server
-https.createServer({
-    key: private_key,
-    cert: certificate
-}, app).listen(https_port);
+const port = 3030;
+app.listen(port, () => log.log(`server running on https://127.0.0.1:${port}`));
 
