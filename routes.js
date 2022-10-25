@@ -29,15 +29,10 @@ router.get("/todo", (_, res) => {
     sendHTML(res, "todo.html");
 });
 
-/*
-** POST routes
-*/
-
-// NOTE: CURRENTLY UNUSED
-let res_error = (res, status, message) => {
-    log.log_error(message);
-    res.status(status).send(message);
-}
+router.get("/sleeper", (_, res) => {
+    log.log("GET /sleeper");
+    sendHTML(res, "sleeper.html");
+});
 
 /* archived sites */
 
