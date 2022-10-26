@@ -5,14 +5,24 @@
 
 <script>
     import "../base.css";
-    import { getAllLeagueInfo } from "../api.js";
-    import { currentLeaguesInfo, leagueAllInfo, loading, userInfo } from "../stores.js";
+    import {
+        getAllLeagueInfo,
+        getLeagueMatchupsForWeek,
+        getLeagueUsers,
+    } from "../api.js";
+    import {
+        currQuery,
+        leagueInfo,
+        loadingProgress,
+        numQueries,
+        userLeagues,
+    } from "../stores.js";
 
     let selectedLeague;
 
     function leagues() {
         let names = [];
-        $currentLeaguesInfo.forEach((league) => {
+        $userLeagues.forEach((league) => {
             names.push({id: league.league_id, name: league.name});
         });
         names.sort((a, b) => {
@@ -27,23 +37,79 @@
         return names;
     }
 
+    function clearStores() {
+        leagueInfo.set(null);
+        userLeagues.set(null);
+    }
+
+    async function getAllLeagueMatchups(leagueID, leagueInfo) {
+        try {
+            let info = {};
+            // start from the current year and work backwards
+            let id = leagueID;
+            let currentYear = new Date().getFullYear();
+            while (id > 0) {
+                let matchups = [];
+                // TODO: SWITCH BETWEEN 16 and 17
+                let nWeeks = 17;
+                for (let w = 1; w <= nWeeks; w++) {
+                    let weekMatchups = await getLeagueMatchupsForWeek(leagueID, w);
+                    matchups.push(weekMatchups);
+                    currQuery.update((n) => n + 1);
+                }
+                info[currentYear] = matchups;
+                id = leagueInfo[currentYear].previous_league_id;
+                currentYear--;
+            }
+            return info;
+        } catch (err) {
+            console.error(`league matchup lookup failed: ${err}`);
+            return null;
+        }
+    }
+
     async function onSubmit(event) {
         event.preventDefault();
-        loading.set(true);
-
-        // get all data across all years for the selected league
-        console.log(`searching for league ${selectedLeague}`);
-        let leagueData = await getAllLeagueInfo(selectedLeague);
-        if (leagueData) {
-            leagueAllInfo.set(leagueData);
-            loading.set(false);
-        } else {
-            alert(`failed to find leage ${selectedLeague}`);
-            loading.set(false);
-            // clear all stores to return to the original form
-            userInfo.set(null);
-            currentLeaguesInfo.set(null);
+        let leagueID = selectedLeague;
+        if (!leagueID) {
+            return;
         }
+        loadingProgress.set(true);
+
+        // get league info across all years for the selected league
+        console.log(`searching for league ${leagueID}`);
+        let leagueData = await getAllLeagueInfo(leagueID);
+
+        // set progress bar for remaining queries
+        // TODO: BETTER WAY TO SET THIS
+        let nWeeks = 17;
+        numQueries.set(Object.keys(leagueData).length * nWeeks);
+
+        // get league user info for the selected league
+        let leagueUserData = await getLeagueUsers(leagueID);
+        currQuery.update((n) => n + 1);
+
+        // get league matchup info across all years for the selected league
+        let leagueMatchupData = await getAllLeagueMatchups(leagueID, leagueData);
+
+        if (leagueData && leagueUserData && leagueMatchupData) {
+            // combine queries into a single object
+            let leagueAllData = {
+                users: leagueUserData,
+                years: {},
+            };
+            Object.keys(leagueData).forEach((year) => {
+                leagueAllData.years[year] = {
+                    info: leagueData[year],
+                    matchups: leagueMatchupData[year],
+                };
+            });
+            leagueInfo.set(leagueAllData);
+        } else {
+            alert(`failed to find league ${leagueID}`);
+            clearStores();
+        }
+        loadingProgress.set(false);
     }
 </script>
 

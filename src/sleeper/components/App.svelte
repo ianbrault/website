@@ -5,25 +5,33 @@
 
 <script>
     import "../base.css";
-    import { currentLeaguesInfo, leagueAllInfo, loading, userInfo } from "../stores.js";
+    import {
+        leagueInfo,
+        loadingProgress,
+        loadingSpinner,
+        userLeagues,
+    } from "../stores.js";
 
     import LeagueSelector from "./LeagueSelector.svelte";
+    import QueryProgressBar from "./QueryProgressBar.svelte";
     import Spinner from "./Spinner.svelte";
     import UserLogin from "./UserLogin.svelte";
 
     // FIXME: DEBUG
     function foo() {
-        console.log($leagueAllInfo);
+        console.log($leagueInfo);
         return "success";
     }
 </script>
 
 <main class="vflex">
-    {#if $loading}
+    {#if $loadingSpinner}
         <Spinner/>
-    {:else if $leagueAllInfo}
+    {:else if $loadingProgress}
+        <QueryProgressBar/>
+    {:else if $leagueInfo}
         <p>{foo()}</p>
-    {:else if $userInfo && $currentLeaguesInfo}
+    {:else if $userLeagues}
         <LeagueSelector/>
     {:else}
         <UserLogin/>
