@@ -7,23 +7,19 @@
     import "../base.css";
     import {
         league_info,
-        loading_progress,
-        loading_spinner,
+        loading,
         user_leagues,
     } from "../stores.js";
 
     import LeagueSelector from "./LeagueSelector.svelte";
     import LeagueStatsView from "./LeagueStatsView.svelte";
-    import QueryProgressBar from "./QueryProgressBar.svelte";
     import Spinner from "./Spinner.svelte";
     import UserLogin from "./UserLogin.svelte";
 </script>
 
 <main class="vflex">
-    {#if $loading_spinner}
+    {#if $loading}
         <Spinner/>
-    {:else if $loading_progress}
-        <QueryProgressBar/>
     {:else if $league_info}
         <LeagueStatsView/>
     {:else if $user_leagues}

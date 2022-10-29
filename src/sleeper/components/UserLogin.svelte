@@ -10,7 +10,7 @@
         get_user_current_leagues,
     } from "../api.js";
     import {
-        loading_spinner,
+        loading,
         user_leagues,
     } from "../stores.js";
 
@@ -18,7 +18,7 @@
 
     async function on_submit(event) {
         event.preventDefault();
-        loading_spinner.set(true);
+        loading.set(true);
 
         // get the user data for the given username
         let username = username_input.value;
@@ -34,7 +34,7 @@
         } else {
             alert(`failed to find user "${username}"`);
         }
-        loading_spinner.set(false);
+        loading.set(false);
     }
 </script>
 

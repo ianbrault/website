@@ -13,10 +13,8 @@
         get_nfl_state,
     } from "../api.js";
     import {
-        curr_query,
         league_info,
-        loading_progress,
-        num_queries,
+        loading,
         user_leagues,
     } from "../stores.js";
 
@@ -37,15 +35,18 @@
     }
 
     async function get_all_league_matchups(league_id, league_info, nfl_state) {
+        let info = {};
+        // store all the promises and join at the end
+        let promises = [];
+        let promise_years = [];
+        let responses = [];
         try {
-            let info = {};
             // start from the current year and work backwards
             let id = league_id;
             let current_year = new Date().getFullYear();
             let year = current_year;
             while (id > 0) {
                 console.log(`getting matchups for league "${league_info[year].name}" year ${year}`);
-                let matchups = [];
                 let n_weeks = league_info[year].settings.playoff_week_start - 1;
                 let end;
                 if (year == current_year) {
@@ -58,19 +59,27 @@
                     end = n_weeks;
                 }
                 for (let w = 1; w <= end; w++) {
-                    let week_matchups = await get_league_matchups_for_week(id, w);
-                    matchups.push(week_matchups);
-                    curr_query.update((n) => n + 1);
+                    promises.push(get_league_matchups_for_week(id, w));
+                    promise_years.push(year);
                 }
-                info[year] = matchups;
                 id = league_info[year].previous_league_id;
                 year--;
             }
-            return info;
+            // gather promises and assign results
+            responses = await Promise.all(promises);
         } catch (err) {
             console.error(`league matchup lookup failed: ${err}`);
             return null;
         }
+        // assign results of the promises
+        for (let i = 0; i < responses.length; i++) {
+            let year = promise_years[i];
+            if (!(year in info)) {
+                info[year] = [];
+            }
+            info[year].push(responses[i]);
+        }
+        return info;
     }
 
     async function on_submit(event) {
@@ -79,30 +88,20 @@
         if (!league_id) {
             return;
         }
-        loading_progress.set(true);
+        loading.set(true);
 
         // get league info across all years for the selected league
         console.log(`searching for league ${league_id}`);
         let league_data = await get_all_league_info(league_id);
-        let n_weeks = 0;
-        let current_year = new Date().getFullYear();
-        if (league_data) {
-            n_weeks = league_data[current_year].settings.playoff_week_start - 1;
-        }
 
         // get the NFL state to determine the progress of the current year
         let nfl_state = await get_nfl_state();
 
-        // set progress bar for remaining queries
-        num_queries.set(((Object.keys(league_data).length - 1) * n_weeks) + nfl_state.week);
-
         // get league user info for the selected league
         let league_user_data = await get_league_users(league_id);
-        curr_query.update((n) => n + 1);
 
         // get league roster info for the selected league
         let league_roster_data = await get_league_rosters(league_id);
-        curr_query.update((n) => n + 1);
 
         // get league matchup info across all years for the selected league
         let league_matchup_data = await get_all_league_matchups(league_id, league_data, nfl_state);
@@ -125,7 +124,7 @@
             alert(`failed to find league ${league_id}`);
             clear_stores();
         }
-        loading_progress.set(false);
+        loading.set(false);
     }
 </script>
 

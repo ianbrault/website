@@ -14,6 +14,16 @@ async function get(url, error) {
     }
 }
 
+async function get_no_await(url, error) {
+    try {
+        console.log(`query: ${url}`);
+        return fetch(url).then((res) => res.json());
+    } catch (err) {
+        console.error(`${error}: ${err}`);
+        return null;
+    }
+}
+
 /*
 ** gets the user data associated with the given username
 */
@@ -82,7 +92,8 @@ export async function get_league_rosters(league_id) {
 */
 export async function get_league_matchups_for_week(league_id, week) {
     let url = `${URL_BASE}/league/${league_id}/matchups/${week}`;
-    return await get(url, `league ${week} matchups lookup failed`);
+    // NOTE: return the Promise so that they can be awaited all at once
+    return get_no_await(url, `league ${week} matchups lookup failed`);
 }
 
 /*
