@@ -6,32 +6,27 @@
 <script>
     import "../base.css";
     import {
-        leagueInfo,
-        loadingProgress,
-        loadingSpinner,
-        userLeagues,
+        league_info,
+        loading_progress,
+        loading_spinner,
+        user_leagues,
     } from "../stores.js";
 
     import LeagueSelector from "./LeagueSelector.svelte";
+    import LeagueStatsView from "./LeagueStatsView.svelte";
     import QueryProgressBar from "./QueryProgressBar.svelte";
     import Spinner from "./Spinner.svelte";
     import UserLogin from "./UserLogin.svelte";
-
-    // FIXME: DEBUG
-    function foo() {
-        console.log($leagueInfo);
-        return "success";
-    }
 </script>
 
 <main class="vflex">
-    {#if $loadingSpinner}
+    {#if $loading_spinner}
         <Spinner/>
-    {:else if $loadingProgress}
+    {:else if $loading_progress}
         <QueryProgressBar/>
-    {:else if $leagueInfo}
-        <p>{foo()}</p>
-    {:else if $userLeagues}
+    {:else if $league_info}
+        <LeagueStatsView/>
+    {:else if $user_leagues}
         <LeagueSelector/>
     {:else}
         <UserLogin/>

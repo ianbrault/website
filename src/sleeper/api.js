@@ -17,7 +17,7 @@ async function get(url, error) {
 /*
 ** gets the user data associated with the given username
 */
-export async function getUser(username) {
+export async function get_user(username) {
     let url = `${URL_BASE}/user/${username}`;
     return await get(url, "user lookup failed");
 }
@@ -25,34 +25,34 @@ export async function getUser(username) {
 /*
 ** gets all NFL league data from the current year for the given user ID
 */
-export async function getUserCurrentLeagues(userID) {
-    let currentYear = new Date().getFullYear();
-    let url = `${URL_BASE}/user/${userID}/leagues/nfl/${currentYear}`;
+export async function get_user_current_leagues(user_id) {
+    let current_year = new Date().getFullYear();
+    let url = `${URL_BASE}/user/${user_id}/leagues/nfl/${current_year}`;
     return await get(url, "user league lookup failed");
 }
 
 /*
 ** gets the NFL league data for the given league ID
 */
-export async function getLeagueInfo(leagueID) {
-    let url = `${URL_BASE}/league/${leagueID}`;
+export async function get_league_info(league_id) {
+    let url = `${URL_BASE}/league/${league_id}`;
     return await get(url, "league lookup failed");
 }
 
 /*
 ** gets all NFL league data from all years for the given league ID
 */
-export async function getAllLeagueInfo(leagueID) {
+export async function get_all_league_info(league_id) {
     try {
         let info = {};
         // start from the current year and work backwards
-        let id = leagueID;
-        let currentYear = new Date().getFullYear();
+        let id = league_id;
+        let current_year = new Date().getFullYear();
         while (id > 0) {
-            let leagueInfo = await getLeagueInfo(id);
-            info[currentYear] = leagueInfo;
-            id = leagueInfo.previous_league_id;
-            currentYear--;
+            let league_info = await get_league_info(id);
+            info[current_year] = league_info;
+            id = league_info.previous_league_id;
+            current_year--;
         }
         return info;
     } catch (err) {
@@ -64,44 +64,60 @@ export async function getAllLeagueInfo(leagueID) {
 /*
 ** gets all user info for the given league ID
 */
-export async function getLeagueUsers(leagueID) {
-    let url = `${URL_BASE}/league/${leagueID}/users`;
+export async function get_league_users(league_id) {
+    let url = `${URL_BASE}/league/${league_id}/users`;
     return await get(url, "league user lookup failed");
+}
+
+/*
+** gets all roster info for the given league ID
+*/
+export async function get_league_rosters(league_id) {
+    let url = `${URL_BASE}/league/${league_id}/rosters`;
+    return await get(url, "league roster lookup failed");
 }
 
 /*
 ** get the matchup info from the given week for the given league ID
 */
-export async function getLeagueMatchupsForWeek(leagueID, week) {
-    let url = `${URL_BASE}/league/${leagueID}/matchups/${week}`;
+export async function get_league_matchups_for_week(league_id, week) {
+    let url = `${URL_BASE}/league/${league_id}/matchups/${week}`;
     return await get(url, `league ${week} matchups lookup failed`);
 }
 
 /*
 ** gets all matchup info for the given league ID
 */
-export async function getAllLeagueMatchups(leagueID, leagueInfo) {
+export async function get_all_league_matchups(league_id, league_info) {
     try {
         let info = {};
         // start from the current year and work backwards
-        let id = leagueID;
-        let currentYear = new Date().getFullYear();
+        let id = league_id;
+        let current_year = new Date().getFullYear();
         while (id > 0) {
             let matchups = [];
             // TODO: SWITCH BETWEEN 16 and 17
-            let nWeeks = 17;
-            for (let w = 1; w <= nWeeks; w++) {
-                let weekMatchups = await getLeagueMatchupsForWeek(leagueID, w);
-                matchups.push(weekMatchups);
+            let n_weeks = 17;
+            for (let w = 1; w <= n_weeks; w++) {
+                let week_matchups = await get_league_matchups_for_week(league_id, w);
+                matchups.push(week_matchups);
             }
-            info[currentYear] = matchups;
-            id = leagueInfo[currentYear].previous_league_id;
-            currentYear--;
+            info[current_year] = matchups;
+            id = league_info[current_year].previous_league_id;
+            current_year--;
         }
         return info;
     } catch (err) {
         console.error(`league matchup lookup failed: ${err}`);
         return null;
     }
+}
+
+/*
+** gets the current NFL state
+*/
+export async function get_nfl_state() {
+    let url = `${URL_BASE}/state/nfl`;
+    return await get(url, `NFL state lookup failed`);
 }
 

@@ -6,41 +6,41 @@
 <script>
     import "../base.css";
     import {
-        getUser,
-        getUserCurrentLeagues,
+        get_user,
+        get_user_current_leagues,
     } from "../api.js";
     import {
-        loadingSpinner,
-        userLeagues,
+        loading_spinner,
+        user_leagues,
     } from "../stores.js";
 
-    let usernameInput;
+    let username_input;
 
-    async function onSubmit(event) {
+    async function on_submit(event) {
         event.preventDefault();
-        loadingSpinner.set(true);
+        loading_spinner.set(true);
 
         // get the user data for the given username
-        let username = usernameInput.value;
+        let username = username_input.value;
         console.log(`searching for user ${username}`);
-        let userData = await getUser(username);
-        if (userData) {
+        let user_data = await get_user(username);
+        if (user_data) {
             // get the leagues data from the current year for the user
-            console.log(`searching for leagues for user ${userData.user_id}`);
-            let userLeagueData = await getUserCurrentLeagues(userData.user_id);
-            if (userLeagueData) {
-                userLeagues.set(userLeagueData);
+            console.log(`searching for leagues for user ${user_data.user_id}`);
+            let user_league_data = await get_user_current_leagues(user_data.user_id);
+            if (user_league_data) {
+                user_leagues.set(user_league_data);
             }
         } else {
             alert(`failed to find user "${username}"`);
         }
-        loadingSpinner.set(false);
+        loading_spinner.set(false);
     }
 </script>
 
-<form id="user-input" class="vflex" on:submit={onSubmit}>
+<form id="user-input" class="vflex" on:submit={on_submit}>
     <label for="username">Enter your username:</label>
-    <input type="text" id="username-input" required bind:this={usernameInput}>
+    <input type="text" id="username-input" required bind:this={username_input}>
     <button id="user-button">submit</button>
 </form>
 

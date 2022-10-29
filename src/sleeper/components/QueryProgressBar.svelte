@@ -7,36 +7,24 @@
     import { tweened } from "svelte/motion";
 
     import "../base.css";
-    import { currQuery, numQueries } from "../stores.js";
+    import { curr_query, num_queries } from "../stores.js";
 
     let value = tweened(0, {
         duration: 250,
     });
     let max = 0;
 
-    currQuery.subscribe((n) => {
+    curr_query.subscribe((n) => {
         value.set(n);
     });
-    numQueries.subscribe((n) => {
+    num_queries.subscribe((n) => {
         max = n;
     });
 </script>
 
-<section class="vflex">
-    <progress max={max} value={$value}></progress>
-</section>
+<progress max={max} value={$value}></progress>
 
 <style>
-    section {
-        justify-content: center;
-        box-sizing: border-box;
-        width: 100%;
-        height: 100%;
-        align-items: center;
-        padding: 32px 64px 64px 64px;
-        font-size: 14px;
-    }
-
     progress {
         width: 32vw;
     }
