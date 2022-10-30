@@ -25,6 +25,14 @@ async function get_no_await(url, error) {
 }
 
 /*
+** gets the current NFL state
+*/
+export async function get_nfl_state() {
+    let url = `${URL_BASE}/state/nfl`;
+    return await get(url, `NFL state lookup failed`);
+}
+
+/*
 ** gets the user data associated with the given username
 */
 export async function get_user(username) {
@@ -90,7 +98,7 @@ export async function get_league_rosters(league_id) {
 /*
 ** get the matchup info from the given week for the given league ID
 */
-export async function get_league_matchups_for_week(league_id, week) {
+async function get_league_matchups_for_week(league_id, week) {
     let url = `${URL_BASE}/league/${league_id}/matchups/${week}`;
     // NOTE: return the Promise so that they can be awaited all at once
     return get_no_await(url, `league ${week} matchups lookup failed`);
@@ -99,36 +107,100 @@ export async function get_league_matchups_for_week(league_id, week) {
 /*
 ** gets all matchup info for the given league ID
 */
-export async function get_all_league_matchups(league_id, league_info) {
+export async function get_all_league_matchups(league_id, league_info, nfl_state) {
+    let info = {};
+    // store all the promises and join at the end
+    let promises = [];
+    let promise_years = [];
+    let responses = [];
     try {
-        let info = {};
         // start from the current year and work backwards
         let id = league_id;
         let current_year = new Date().getFullYear();
+        let year = current_year;
         while (id > 0) {
-            let matchups = [];
-            // TODO: SWITCH BETWEEN 16 and 17
-            let n_weeks = 17;
-            for (let w = 1; w <= n_weeks; w++) {
-                let week_matchups = await get_league_matchups_for_week(league_id, w);
-                matchups.push(week_matchups);
+            let n_weeks = league_info[year].settings.playoff_week_start - 1;
+            let end = n_weeks;
+            if (year == current_year) {
+                if (league_info[year].status == "in_season") {
+                    end = nfl_state.week - 1;
+                } else {
+                    end = nfl_state.week;
+                }
             }
-            info[current_year] = matchups;
-            id = league_info[current_year].previous_league_id;
-            current_year--;
+            for (let w = 1; w <= end; w++) {
+                promises.push(get_league_matchups_for_week(id, w));
+                promise_years.push(year);
+            }
+            id = league_info[year].previous_league_id;
+            year--;
         }
-        return info;
+        responses = await Promise.all(promises);
     } catch (err) {
         console.error(`league matchup lookup failed: ${err}`);
         return null;
     }
+    // assign results of the promises
+    for (let i = 0; i < responses.length; i++) {
+        let year = promise_years[i];
+        if (!(year in info)) {
+            info[year] = [];
+        }
+        info[year].push(responses[i]);
+    }
+    return info;
 }
 
 /*
-** gets the current NFL state
+** gets all transaction info from the given week for the given league ID
 */
-export async function get_nfl_state() {
-    let url = `${URL_BASE}/state/nfl`;
-    return await get(url, `NFL state lookup failed`);
+async function get_league_transactions_for_week(league_id, week) {
+    let url = `${URL_BASE}/league/${league_id}/transactions/${week}`;
+    // NOTE: return the Promise so that they can be awaited all at once
+    return get_no_await(url, `league ${week} transactions lookup failed`);
 }
 
+/*
+** gets all transaction info for the given league ID
+*/
+export async function get_all_league_transactions(league_id, league_info, nfl_state) {
+    let info = {};
+    // store all the promises and join at the end
+    let promises = [];
+    let promise_years = [];
+    let responses = [];
+    try {
+        // start from the current year and work backwards
+        let id = league_id;
+        let current_year = new Date().getFullYear();
+        let year = current_year;
+        while (id > 0) {
+            let n_weeks = league_info[year].settings.playoff_week_start - 1;
+            let end = n_weeks;
+            if (year == current_year) {
+                end = nfl_state.week;
+            }
+            for (let w = 1; w <= end; w++) {
+                promises.push(get_league_transactions_for_week(id, w));
+                promise_years.push(year);
+            }
+            id = league_info[year].previous_league_id;
+            year--;
+        }
+        responses = await Promise.all(promises);
+    } catch (err) {
+        console.error(`league matchup lookup failed: ${err}`);
+        return null;
+    }
+    // assign results of the promises
+    for (let i = 0; i < responses.length; i++) {
+        let year = promise_years[i];
+        if (!(year in info)) {
+            info[year] = [];
+        }
+        for (const transaction of responses[i]) {
+            info[year].push(transaction);
+        }
+    }
+    return info;
+}

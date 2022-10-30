@@ -13,7 +13,7 @@ export function user_id_to_name(league_info, user_id) {
     }
 }
 
-function roster_id_to_league_id(league_info, roster_id) {
+function roster_id_to_user_id(league_info, roster_id) {
     return league_info.rosters[roster_id - 1].owner_id;
 }
 
@@ -86,11 +86,11 @@ export function get_matchup_stats(league_info) {
                 let games = teams.filter((team) => team.matchup_id == matchup_id);
                 // assign one of the teams to team_a and the other to team_b
                 // gather team_a stats
-                let team_a_id = roster_id_to_league_id(league_info, games[0].roster_id);
+                let team_a_id = roster_id_to_user_id(league_info, games[0].roster_id);
                 let team_a_starters_points = starters_points_total(games[0]);
                 let team_a_bench_points = bench_points_total(games[0]);
                 // gather team_b stats
-                let team_b_id = roster_id_to_league_id(league_info, games[1].roster_id);
+                let team_b_id = roster_id_to_user_id(league_info, games[1].roster_id);
                 let team_b_starters_points = starters_points_total(games[1]);
                 let team_b_bench_points = bench_points_total(games[1]);
                 // assign to user stats for team_a
@@ -127,6 +127,42 @@ export function get_matchup_stats(league_info) {
                         week: week,
                         matchup_id: matchup_id,
                     };
+                }
+            }
+        }
+    }
+
+    return stats;
+}
+
+export function get_transaction_stats(league_info) {
+    /*
+    ** data format
+    **  trades_proposed
+    **  trades_completed
+    */
+    let stats = {};
+    for (const user of league_info.users) {
+        stats[user.user_id] = {
+            trades_proposed: 0,
+            trades_completed: 0,
+        };
+    }
+
+    // grab transaction info
+    // iterate over years in order so that matchups are chronological
+    let years = Object.keys(league_info.years);
+    let min_year = Math.min(...years);
+    let max_year = Math.max(...years);
+    for (let year = min_year; year <= max_year; year++) {
+        for (const transaction of league_info.years[year].transactions) {
+            if (transaction.type == "trade") {
+                stats[transaction.creator].trades_proposed += 1;
+                if (transaction.status == "complete") {
+                    for (const roster_id of transaction.roster_ids) {
+                        let user_id = roster_id_to_user_id(league_info, roster_id);
+                        stats[user_id].trades_completed += 1;
+                    }
                 }
             }
         }

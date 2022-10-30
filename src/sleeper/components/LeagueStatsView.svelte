@@ -6,19 +6,22 @@
 <script>
     import "../base.css";
     import { league_info } from "../stores.js";
-    import { get_matchup_stats, user_id_to_name } from "../utils.js";
+    import {
+        get_matchup_stats,
+        get_transaction_stats,
+        user_id_to_name,
+    } from "../utils.js";
 
     import StatsListView from "./StatsListView.svelte";
 
+    // post-process some of the league data
     let matchup_stats = get_matchup_stats($league_info);
+    let transaction_stats = get_transaction_stats($league_info);
+
     // FIXME: DEBUG
     console.log($league_info);
     console.log(matchup_stats);
-
-    let win_pct_headers = ["Name", "W", "L", "Pct"];
-    let points_scored_headers = ["Name", "PF"];
-    let points_against_headers = ["Name", "PA"];
-    let bench_points_headers = ["Name", "Pts"];
+    console.log(transaction_stats);
 
     function get_league_name() {
         let current_year = new Date().getFullYear();
@@ -26,9 +29,10 @@
     }
 
     function get_win_pct_ratings(stats) {
-        let win_pct_entries = [];
+        let headers = ["Name", "W", "L", "Pct"];
+        let entries = [];
         for (const [user_id, user_stats] of Object.entries(stats.users)) {
-            win_pct_entries.push({
+            entries.push({
                 name: user_id_to_name($league_info, user_id),
                 wins: user_stats.wins,
                 losses: user_stats.losses,
@@ -38,7 +42,7 @@
             });
         }
         // reverse-sort to get descending order
-        win_pct_entries.sort((a, b) => {
+        entries.sort((a, b) => {
             if (a.wins == b.wins) {
                 // use points_for to break ties
                 return a.points_for - b.points_for;
@@ -47,47 +51,84 @@
             }
         }).reverse();
         // transform into the expected StatsListView format
-        return win_pct_entries.map((o) => {
+        entries = entries.map((o) => {
             return [o.name, o.wins, o.losses, `${o.win_pct.toFixed(1)}%`];
         });
+        return {
+            headers: headers,
+            entries: entries,
+        };
     }
 
     function get_points_scored_ratings(stats) {
-        let points_scored_entries = [];
+        let headers = ["Name", "PF"];
+        let entries = [];
         for (const [user_id, user_stats] of Object.entries(stats.users)) {
-            points_scored_entries.push({
+            entries.push({
                 name: user_id_to_name($league_info, user_id),
                 points_for: user_stats.points_for,
             });
         }
         // reverse-sort to get descending order
-        points_scored_entries.sort((a, b) => a.points_for - b.points_for).reverse();
-        return points_scored_entries.map((o) => [o.name, o.points_for.toFixed(2)]);
+        entries.sort((a, b) => a.points_for - b.points_for).reverse();
+        entries = entries.map((o) => [o.name, o.points_for.toFixed(2)]);
+        return {
+            headers: headers,
+            entries: entries,
+        };
     }
 
     function get_points_against_ratings(stats) {
-        let points_against_entries = [];
+        let headers = ["Name", "PA"];
+        let entries = [];
         for (const [user_id, user_stats] of Object.entries(stats.users)) {
-            points_against_entries.push({
+            entries.push({
                 name: user_id_to_name($league_info, user_id),
                 points_against: user_stats.points_against,
             });
         }
-        points_against_entries.sort((a, b) => a.points_against - b.points_against);
-        return points_against_entries.map((o) => [o.name, o.points_against.toFixed(2)]);
+        entries.sort((a, b) => a.points_against - b.points_against);
+        entries = entries.map((o) => [o.name, o.points_against.toFixed(2)]);
+        return {
+            headers: headers,
+            entries: entries,
+        };
     }
 
     function get_bench_points_ratings(stats) {
-        let bench_points_entries = [];
+        let headers = ["Name", "Pts"];
+        let entries = [];
         for (const [user_id, user_stats] of Object.entries(stats.users)) {
-            bench_points_entries.push({
+            entries.push({
                 name: user_id_to_name($league_info, user_id),
                 bench_points: user_stats.bench_points,
             });
         }
         // reverse-sort to get descending order
-        bench_points_entries.sort((a, b) => a.bench_points - b.bench_points).reverse();
-        return bench_points_entries.map((o) => [o.name, o.bench_points.toFixed(2)]);
+        entries.sort((a, b) => a.bench_points - b.bench_points).reverse();
+        entries = entries.map((o) => [o.name, o.bench_points.toFixed(2)]);
+        return {
+            headers: headers,
+            entries: entries,
+        };
+    }
+
+    function get_trades_completed_ratings(stats) {
+        let headers = ["Name", "Trades"];
+        let entries = [];
+        for (const [user_id, user_stats] of Object.entries(stats)) {
+            entries.push({
+                name: user_id_to_name($league_info, user_id),
+                trades_completed: user_stats.trades_completed,
+            });
+        }
+        // reverse-sort to get descending order
+        entries.sort((a, b) => a.trades_completed - b.trades_completed).reverse();
+        entries = entries.map((o) => [o.name, o.trades_completed]);
+        return {
+            headers: headers,
+            entries: entries,
+        };
     }
 </script>
 
@@ -96,23 +137,23 @@
     <div id="stats-views-wrapper" class="hflex">
         <StatsListView
             title="WIN PERCENTAGE"
-            headers={win_pct_headers}
-            entries={get_win_pct_ratings(matchup_stats)}
+            {...get_win_pct_ratings(matchup_stats)}
         />
         <StatsListView
             title="TOTAL POINTS SCORED"
-            headers={points_scored_headers}
-            entries={get_points_scored_ratings(matchup_stats)}
+            {...get_points_scored_ratings(matchup_stats)}
         />
         <StatsListView
             title="TOTAL POINTS AGAINST"
-            headers={points_against_headers}
-            entries={get_points_against_ratings(matchup_stats)}
+            {...get_points_against_ratings(matchup_stats)}
         />
         <StatsListView
             title="TOTAL BENCH POINTS"
-            headers={bench_points_headers}
-            entries={get_bench_points_ratings(matchup_stats)}
+            {...get_bench_points_ratings(matchup_stats)}
+        />
+        <StatsListView
+            title="TOTAL TRADES COMPLETED"
+            {...get_trades_completed_ratings(transaction_stats)}
         />
     </div>
 </section>

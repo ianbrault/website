@@ -26,7 +26,9 @@
             <p class="grid-header">{header}</p>
         {/each}
         {#each entries as entry, i}
-            <p class="grid-item-index">{i + 1}</p>
+            <div class="vflex grid-item-index-wrapper">
+                <p class="grid-item-index">{i + 1}</p>
+            </div>
             {#each entry as field, j}
                 {#if j == 0}
                     <p class="grid-item-name">{field}</p>
@@ -65,13 +67,16 @@
         text-align: left;
     }
 
+    .grid-item-index-wrapper {
+        height: 100%;
+        justify-content: center;
+    }
+
     .grid-item-index {
         font-size: 12px;
         margin: 0;
         margin-right: 4px;
         text-align: right;
-        vertical-align: center;
-        height: 100%;
     }
 
     .grid-item {
