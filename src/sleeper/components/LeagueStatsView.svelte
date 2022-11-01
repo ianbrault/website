@@ -13,6 +13,7 @@
         user_id_to_name,
     } from "../utils.js";
 
+    import GameStatView from "./GameStatView.svelte";
     import StatsListView from "./StatsListView.svelte";
 
     // post-process some of the league data
@@ -157,6 +158,16 @@
         <StatsListView
             title="TOTAL TRADES COMPLETED"
             {...get_trades_completed_ratings(transaction_stats)}
+        />
+        <GameStatView
+            title="BEST WINNER SCORE"
+            game={matchup_stats.max_score}
+            bold_winner={true}
+        />
+        <GameStatView
+            title="WORST LOSER SCORE"
+            game={matchup_stats.min_score}
+            bold_loser={true}
         />
     </div>
 </section>
