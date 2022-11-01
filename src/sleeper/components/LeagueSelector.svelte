@@ -18,6 +18,7 @@
         loading,
         user_leagues,
     } from "../stores.js";
+    import { get_game_stats } from "../utils.js";
 
     let selected_league;
 
@@ -56,24 +57,27 @@
         let league_matchup_data = await get_all_league_matchups(league_id, league_data, nfl_state);
         // get league transaction info across all years for the selected league
         let league_transaction_data = await get_all_league_transactions(league_id, league_data, nfl_state);
+        // post-processing
+        // combine the matchup data into individual game data
+        let league_game_data = get_game_stats(league_roster_data, league_matchup_data);
 
         if (
             league_data
             && league_user_data
             && league_roster_data
-            && league_matchup_data
             && league_transaction_data
+            && league_game_data
         ) {
             // combine queries into a single object
             let league_all_data = {
                 users: league_user_data,
                 rosters: league_roster_data,
+                games: league_game_data,
                 years: {},
             };
             for (const year of Object.keys(league_data)) {
                 league_all_data.years[year] = {
                     info: league_data[year],
-                    matchups: league_matchup_data[year],
                     transactions: league_transaction_data[year],
                 };
             }

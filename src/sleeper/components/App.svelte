@@ -36,7 +36,7 @@
         width: 100%;
         height: 100%;
         align-items: center;
-        padding: 32px 64px 64px 64px;
+        padding: 64px;
     }
 </style>
 

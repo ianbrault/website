@@ -8,6 +8,7 @@
     import { league_info } from "../stores.js";
     import {
         get_matchup_stats,
+        get_per_user_matchup_stats,
         get_transaction_stats,
         user_id_to_name,
     } from "../utils.js";
@@ -16,11 +17,13 @@
 
     // post-process some of the league data
     let matchup_stats = get_matchup_stats($league_info);
+    let per_user_matchup_stats = get_per_user_matchup_stats($league_info);
     let transaction_stats = get_transaction_stats($league_info);
 
     // FIXME: DEBUG
     console.log($league_info);
     console.log(matchup_stats);
+    console.log(per_user_matchup_stats);
     console.log(transaction_stats);
 
     function get_league_name() {
@@ -33,7 +36,7 @@
         let entries = [];
         for (const [user_id, user_stats] of Object.entries(stats.users)) {
             entries.push({
-                name: user_id_to_name($league_info, user_id),
+                name: user_id_to_name($league_info.users, user_id),
                 wins: user_stats.wins,
                 losses: user_stats.losses,
                 win_pct: (user_stats.wins / (user_stats.wins + user_stats.losses)) * 100,
@@ -65,7 +68,7 @@
         let entries = [];
         for (const [user_id, user_stats] of Object.entries(stats.users)) {
             entries.push({
-                name: user_id_to_name($league_info, user_id),
+                name: user_id_to_name($league_info.users, user_id),
                 points_for: user_stats.points_for,
             });
         }
@@ -83,7 +86,7 @@
         let entries = [];
         for (const [user_id, user_stats] of Object.entries(stats.users)) {
             entries.push({
-                name: user_id_to_name($league_info, user_id),
+                name: user_id_to_name($league_info.users, user_id),
                 points_against: user_stats.points_against,
             });
         }
@@ -100,7 +103,7 @@
         let entries = [];
         for (const [user_id, user_stats] of Object.entries(stats.users)) {
             entries.push({
-                name: user_id_to_name($league_info, user_id),
+                name: user_id_to_name($league_info.users, user_id),
                 bench_points: user_stats.bench_points,
             });
         }
@@ -118,7 +121,7 @@
         let entries = [];
         for (const [user_id, user_stats] of Object.entries(stats)) {
             entries.push({
-                name: user_id_to_name($league_info, user_id),
+                name: user_id_to_name($league_info.users, user_id),
                 trades_completed: user_stats.trades_completed,
             });
         }
@@ -165,7 +168,8 @@
     }
 
     .title {
-        font-size: 20px;
+        font-size: 24px;
+        margin: 0;
         margin-bottom: 32px;
     }
 

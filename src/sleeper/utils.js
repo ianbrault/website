@@ -6,15 +6,15 @@ function sum(arr) {
     return arr.reduce((x, y) => x + y, 0);
 }
 
-export function user_id_to_name(league_info, user_id) {
-    let match = league_info.users.filter((user) => user.user_id == user_id);
+export function user_id_to_name(user_info, user_id) {
+    let match = user_info.filter((user) => user.user_id == user_id);
     if (match.length == 1) {
         return match[0].display_name;
     }
 }
 
-function roster_id_to_user_id(league_info, roster_id) {
-    return league_info.rosters[roster_id - 1].owner_id;
+function roster_id_to_user_id(roster_info, roster_id) {
+    return roster_info[roster_id - 1].owner_id;
 }
 
 function starters_points_total(game_info) {
@@ -31,19 +31,100 @@ function bench_points_total(game_info) {
     return total;
 }
 
+function summarize_game_info(roster_info, team_a_info, team_b_info, year, week, matchup_id) {
+    let info = {
+        team_a: {},
+        team_b: {},
+        year: year,
+        week: week,
+        matchup_id: matchup_id,
+    };
+
+    // assign one of the teams to team_a and the other to team_b
+    // gather team_a stats
+    info.team_a.user_id = roster_id_to_user_id(roster_info, team_a_info.roster_id);
+    info.team_a.starters_points = starters_points_total(team_a_info);
+    info.team_a.bench_points = bench_points_total(team_a_info);
+    // gather team_b stats
+    info.team_b.user_id = roster_id_to_user_id(roster_info, team_b_info.roster_id);
+    info.team_b.starters_points = starters_points_total(team_b_info);
+    info.team_b.bench_points = bench_points_total(team_b_info);
+
+    // assign the winner/loser and associated scores
+    info.winner = (info.team_a.starters_points > info.team_b.starters_points)
+        ? info.team_a.user_id
+        : info.team_b.user_id;
+    if (info.winner == info.team_a.user_id) {
+        info.winner_score = info.team_a.starters_points;
+        info.loser_score = info.team_b.starters_points;
+    } else {
+        info.winner_score = info.team_b.starters_points;
+        info.loser_score = info.team_a.starters_points;
+    }
+
+    return info;
+}
+
+function game_info_placeholder() {
+    return {
+        team_a: {},
+        team_b: {},
+        year: 0,
+        week: 0,
+        matchup_id: 0,
+        winner_score: 0,
+        loser_score: Number.MAX_VALUE,
+    };
+}
+
+export function get_game_stats(roster_info, matchup_info) {
+    /*
+    ** data format
+    **  array:
+    **      team_a:
+    **          user_id
+    **          starter_points
+    **          bench_points
+    **      team_b:
+    **          user_id
+    **          starter_points
+    **          bench_points
+    **      winner
+    **      winner_score
+    **      loser_score
+    */
+    let stats = [];
+    if (!roster_info || !matchup_info) {
+        return stats;
+    }
+
+    // iterate over years in order so that matchups are chronological
+    let years = Object.keys(matchup_info);
+    let min_year = Math.min(...years);
+    let max_year = Math.max(...years);
+    let n_users = roster_info.length;
+    for (let year = min_year; year <= max_year; year++) {
+        for (const [week, teams] of matchup_info[year].entries()) {
+            // each week contains entries for each team, pair them by matchup_id
+            for (let matchup_id = 1; matchup_id <= n_users / 2; matchup_id++) {
+                let games = teams.filter((team) => team.matchup_id == matchup_id);
+                let info = summarize_game_info(
+                    roster_info, games[0], games[1], year, week, matchup_id);
+                stats.push(info);
+            }
+        }
+    }
+
+    return stats;
+}
+
 export function get_matchup_stats(league_info) {
     /*
     ** data format
     **  max_score:
-    **      score
-    **      year
-    **      week
-    **      matchup_id
+    **      game object (see get_game_stats for format)
     **  min_score:
-    **      score
-    **      year
-    **      week
-    **      matchup_id
+    **      game object (see get_game_stats for format)
     **  users:
     **      wins
     **      losses
@@ -52,16 +133,8 @@ export function get_matchup_stats(league_info) {
     **      bench_points
     */
     let stats = {};
-    stats.max_score = {
-        score: 0,
-        year: 0,
-        week: 0,
-    }
-    stats.min_score = {
-        score: Number.MAX_VALUE,
-        year: 0,
-        week: 0,
-    }
+    stats.max_score = game_info_placeholder();
+    stats.min_score = game_info_placeholder();
     stats.users = {};
     for (const user of league_info.users) {
         stats.users[user.user_id] = {
@@ -73,63 +146,49 @@ export function get_matchup_stats(league_info) {
         };
     }
 
-    // grab matchup info
-    // iterate over years in order so that matchups are chronological
-    let years = Object.keys(league_info.years);
-    let min_year = Math.min(...years);
-    let max_year = Math.max(...years);
-    let n_users = league_info.users.length;
-    for (let year = min_year; year <= max_year; year++) {
-        for (const [week, teams] of league_info.years[year].matchups.entries()) {
-            // each week contains entries for each team, pair them by matchup_id
-            for (let matchup_id = 1; matchup_id <= n_users / 2; matchup_id++) {
-                let games = teams.filter((team) => team.matchup_id == matchup_id);
-                // assign one of the teams to team_a and the other to team_b
-                // gather team_a stats
-                let team_a_id = roster_id_to_user_id(league_info, games[0].roster_id);
-                let team_a_starters_points = starters_points_total(games[0]);
-                let team_a_bench_points = bench_points_total(games[0]);
-                // gather team_b stats
-                let team_b_id = roster_id_to_user_id(league_info, games[1].roster_id);
-                let team_b_starters_points = starters_points_total(games[1]);
-                let team_b_bench_points = bench_points_total(games[1]);
-                // assign to user stats for team_a
-                stats.users[team_a_id].points_for += team_a_starters_points;
-                stats.users[team_a_id].points_against += team_b_starters_points;
-                stats.users[team_a_id].bench_points += team_a_bench_points;
-                // assign to user stats for team_a
-                stats.users[team_b_id].points_for += team_b_starters_points;
-                stats.users[team_b_id].points_against += team_a_starters_points;
-                stats.users[team_b_id].bench_points += team_b_bench_points;
-                // check for the winner
-                if (team_a_starters_points > team_b_starters_points) {
-                    stats.users[team_a_id].wins += 1;
-                    stats.users[team_b_id].losses += 1;
-                } else {
-                    stats.users[team_b_id].wins += 1;
-                    stats.users[team_a_id].losses += 1;
-                }
-                // check if either score is the minimum/maximum
-                let winner_score = Math.max(team_a_starters_points, team_b_starters_points);
-                let loser_score = Math.min(team_a_starters_points, team_b_starters_points);
-                if (winner_score > stats.max_score.score) {
-                    stats.max_score = {
-                        score: winner_score,
-                        year: year,
-                        week: week,
-                        matchup_id: matchup_id,
-                    };
-                }
-                if (loser_score < stats.min_score.score) {
-                    stats.min_score = {
-                        score: loser_score,
-                        year: year,
-                        week: week,
-                        matchup_id: matchup_id,
-                    };
-                }
+    // iterate over games info
+    for (const game of league_info.games) {
+        // assign to user stats for team_a
+        stats.users[game.team_a.user_id].points_for += game.team_a.starters_points;
+        stats.users[game.team_a.user_id].points_against += game.team_b.starters_points;
+        stats.users[game.team_a.user_id].bench_points += game.team_a.bench_points;
+        // assign to user stats for team_b
+        stats.users[game.team_b.user_id].points_for += game.team_b.starters_points;
+        stats.users[game.team_b.user_id].points_against += game.team_a.starters_points;
+        stats.users[game.team_b.user_id].bench_points += game.team_b.bench_points;
+        // assign winner/loser stats
+        let loser = game.winner == game.team_a.user_id ? game.team_b.user_id : game.team_a.user_id;
+        stats.users[game.winner].wins += 1;
+        stats.users[loser].losses += 1;
+        // check if either score is the minimum/maximum
+        if (game.winner_score > stats.max_score.winner_score) {
+            stats.max_score = game;
+        }
+        if (game.loser_score < stats.min_score.loser_score) {
+            stats.min_score = game;
+        }
+    }
+
+    return stats;
+}
+
+export function get_per_user_matchup_stats(league_info) {
+    // maps user IDs to objects which map opponent IDs to the number of wins against them
+    let stats = {};
+    // initialize with user ID permutations
+    for (const user of league_info.users) {
+        stats[user.user_id] = {};
+        for (const uuser of league_info.users) {
+            if (uuser.user_id != user.user_id) {
+                stats[user.user_id][uuser.user_id] = 0;
             }
         }
+    }
+
+    // iterate over games info
+    for (const game of league_info.games) {
+        let loser = game.winner == game.team_a.user_id ? game.team_b.user_id : game.team_a.user_id;
+        stats[game.winner][loser] += 1;
     }
 
     return stats;
@@ -160,7 +219,7 @@ export function get_transaction_stats(league_info) {
                 stats[transaction.creator].trades_proposed += 1;
                 if (transaction.status == "complete") {
                     for (const roster_id of transaction.roster_ids) {
-                        let user_id = roster_id_to_user_id(league_info, roster_id);
+                        let user_id = roster_id_to_user_id(league_info.rosters, roster_id);
                         stats[user_id].trades_completed += 1;
                     }
                 }
