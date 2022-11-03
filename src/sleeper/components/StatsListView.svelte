@@ -43,6 +43,7 @@
 <style>
     .stats-list-wrapper {
         font-size: 14px;
+        margin: 32px 0;
     }
 
     .stats-list-title {

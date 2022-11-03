@@ -23,7 +23,7 @@
     }
 
     function week_desc() {
-        return `${game.year} WEEK ${game.week}`;
+        return `${game.year} WEEK ${game.week + 1}`;
     }
 </script>
 
@@ -41,6 +41,7 @@
 <style>
     .stat-wrapper {
         font-size: 14px;
+        margin: 32px 0;
     }
 
     .stat-title {

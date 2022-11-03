@@ -121,20 +121,29 @@ export function get_game_stats(roster_info, matchup_info) {
 export function get_matchup_stats(league_info) {
     /*
     ** data format
-    **  max_score:
-    **      game object (see get_game_stats for format)
-    **  min_score:
-    **      game object (see get_game_stats for format)
     **  users:
     **      wins
     **      losses
     **      points_for
     **      points_against
     **      bench_points
+    **  max_score:
+    **      game object (see get_game_stats for format)
+    **  min_score:
+    **      game object
+    **  biggest_blowout:
+    **      game object
+    **  closest_game:
+    **      game object
     */
     let stats = {};
     stats.max_score = game_info_placeholder();
     stats.min_score = game_info_placeholder();
+    stats.biggest_blowout = game_info_placeholder();
+    stats.biggest_blowout.loser_score = 0;
+    stats.closest_game = game_info_placeholder();
+    stats.closest_game.winner_score = Number.MAX_VALUE;
+    stats.closest_game.loser_score = 0;
     stats.users = {};
     for (const user of league_info.users) {
         stats.users[user.user_id] = {
@@ -148,6 +157,9 @@ export function get_matchup_stats(league_info) {
 
     // iterate over games info
     for (const game of league_info.games) {
+        let diff = game.winner_score - game.loser_score;
+        let blowout = stats.biggest_blowout.winner_score - stats.biggest_blowout.loser_score;
+        let closest = stats.closest_game.winner_score - stats.closest_game.loser_score;
         // assign to user stats for team_a
         stats.users[game.team_a.user_id].points_for += game.team_a.starters_points;
         stats.users[game.team_a.user_id].points_against += game.team_b.starters_points;
@@ -166,6 +178,12 @@ export function get_matchup_stats(league_info) {
         }
         if (game.loser_score < stats.min_score.loser_score) {
             stats.min_score = game;
+        }
+        if (diff > blowout) {
+            stats.biggest_blowout = game;
+        }
+        if (diff < closest) {
+            stats.closest_game = game;
         }
     }
 
@@ -194,17 +212,29 @@ export function get_per_user_matchup_stats(league_info) {
     return stats;
 }
 
+function transaction_num_adds(transaction_info) {
+    if (transaction_info.adds == null) {
+        return 0;
+    } else {
+        return Object.keys(transaction_info.adds).length;
+    }
+}
+
 export function get_transaction_stats(league_info) {
     /*
     ** data format
     **  trades_proposed
     **  trades_completed
+    **  player_transactions (waivers + free agents)
+    **  faab_spent
     */
     let stats = {};
     for (const user of league_info.users) {
         stats[user.user_id] = {
             trades_proposed: 0,
             trades_completed: 0,
+            player_transactions: 0,
+            faab_spent: 0,
         };
     }
 
@@ -223,6 +253,17 @@ export function get_transaction_stats(league_info) {
                         stats[user_id].trades_completed += 1;
                     }
                 }
+            }
+            if (transaction.type == "free_agent" && transaction.status == "complete") {
+                let roster_id = transaction.roster_ids[0];
+                let user_id = roster_id_to_user_id(league_info.rosters, roster_id);
+                stats[user_id].player_transactions += transaction_num_adds(transaction);
+            }
+            if (transaction.type == "waiver" && transaction.status == "complete") {
+                let roster_id = transaction.roster_ids[0];
+                let user_id = roster_id_to_user_id(league_info.rosters, roster_id);
+                stats[user_id].player_transactions += transaction_num_adds(transaction);
+                stats[user_id].faab_spent += transaction.settings.waiver_bid;
             }
         }
     }

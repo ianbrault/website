@@ -134,6 +134,42 @@
             entries: entries,
         };
     }
+
+    function get_player_transactions_ratings(stats) {
+        let headers = ["Name", "Txns"];
+        let entries = [];
+        for (const [user_id, user_stats] of Object.entries(stats)) {
+            entries.push({
+                name: user_id_to_name($league_info.users, user_id),
+                transactions: user_stats.player_transactions,
+            });
+        }
+        // reverse-sort to get descending order
+        entries.sort((a, b) => a.transactions - b.transactions).reverse();
+        entries = entries.map((o) => [o.name, o.transactions]);
+        return {
+            headers: headers,
+            entries: entries,
+        };
+    }
+
+    function get_faab_spent_ratings(stats) {
+        let headers = ["Name", "FAAB"];
+        let entries = [];
+        for (const [user_id, user_stats] of Object.entries(stats)) {
+            entries.push({
+                name: user_id_to_name($league_info.users, user_id),
+                faab_spent: user_stats.faab_spent,
+            });
+        }
+        // reverse-sort to get descending order
+        entries.sort((a, b) => a.faab_spent - b.faab_spent).reverse();
+        entries = entries.map((o) => [o.name, `$${o.faab_spent}`]);
+        return {
+            headers: headers,
+            entries: entries,
+        };
+    }
 </script>
 
 <section id="league-stats-wrapper">
@@ -159,6 +195,15 @@
             title="TOTAL TRADES COMPLETED"
             {...get_trades_completed_ratings(transaction_stats)}
         />
+        <StatsListView
+            title="TOTAL FA/WAIVER MOVES"
+            {...get_player_transactions_ratings(transaction_stats)}
+        />
+        <StatsListView
+            title="TOTAL FAAB SPENT"
+            {...get_faab_spent_ratings(transaction_stats)}
+        />
+        <div class="grid-break"></div>
         <GameStatView
             title="BEST WINNER SCORE"
             game={matchup_stats.max_score}
@@ -168,6 +213,14 @@
             title="WORST LOSER SCORE"
             game={matchup_stats.min_score}
             bold_loser={true}
+        />
+        <GameStatView
+            title="BIGGEST BLOWOUT"
+            game={matchup_stats.biggest_blowout}
+        />
+        <GameStatView
+            title="CLOSEST GAME"
+            game={matchup_stats.closest_game}
         />
     </div>
 </section>
@@ -186,7 +239,12 @@
 
     #stats-views-wrapper {
         flex-wrap: wrap;
-        gap: 64px;
+        column-gap: 64px;
+    }
+
+    .grid-break {
+        flex-basis: 100%;
+        height: 0;
     }
 </style>
 
