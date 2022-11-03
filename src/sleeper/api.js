@@ -204,3 +204,49 @@ export async function get_all_league_transactions(league_id, league_info, nfl_st
     }
     return info;
 }
+
+/*
+** gets all drafts for the given league ID
+*/
+export async function get_all_league_drafts(league_id) {
+    let url = `${URL_BASE}/league/${league_id}/drafts`;
+    return get(url, `league drafts lookup failed`);
+}
+
+/*
+** gets info for the given draft ID
+*/
+async function get_draft_picks(draft_id) {
+    let url = `${URL_BASE}/draft/${draft_id}/picks`;
+    // NOTE: return the Promise so that they can be awaited all at once
+    return get_no_await(url, `draft picks lookup failed`);
+}
+
+/*
+** gets all draft info for the given league ID
+*/
+export async function get_all_league_draft_picks(draft_info) {
+    let info = {};
+    // store all the promises and join at the end
+    let promises = [];
+    let promise_years = [];
+    let responses = [];
+    try {
+        for (const draft of draft_info) {
+            promises.push(get_draft_picks(draft.draft_id));
+            promise_years.push(Number(draft.season));
+        }
+        responses = await Promise.all(promises);
+    } catch (err) {
+        console.error(`league draft picks lookup failed: ${err}`);
+        return null;
+    }
+    // assign results of the promises
+    for (let i = 0; i < responses.length; i++) {
+        let year = promise_years[i];
+        if (!(year in info)) {
+            info[year] = [responses[i]];
+        }
+    }
+    return info;
+}

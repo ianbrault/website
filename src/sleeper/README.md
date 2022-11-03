@@ -14,4 +14,3 @@
 - [x] Total trades completed
 - [x] Total free agent/waiver pickups
 - [x] Total FAAB spent
-- [ ] Most draft picks
