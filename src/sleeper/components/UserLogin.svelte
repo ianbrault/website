@@ -56,6 +56,7 @@
     }
 
     #user-button {
+        font-size: 14px;
         align-self: center;
         padding: 2px 16px;
         margin: 4px;

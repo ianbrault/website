@@ -20,15 +20,12 @@
 <div class="stats-list-wrapper vflex">
     <p class="stats-list-title">{title}</p>
     <div class="stats-list-grid" style={grid_layout_style()}>
-        <!-- empty header item for the index -->
-        <p class="grid-header"></p>
+        <p class="grid-header">#</p>
         {#each headers as header}
             <p class="grid-header">{header}</p>
         {/each}
         {#each entries as entry, i}
-            <div class="vflex grid-item-index-wrapper">
-                <p class="grid-item-index">{i + 1}</p>
-            </div>
+            <p class="grid-item-index">{i + 1}</p>
             {#each entry as field, j}
                 {#if j == 0}
                     <p class="grid-item-name">{field}</p>
@@ -43,13 +40,12 @@
 <style>
     .stats-list-wrapper {
         font-size: 14px;
-        margin: 32px 0;
+        margin: 20px 0;
     }
 
     .stats-list-title {
         font-weight: 600;
         margin: 4px 0;
-        margin-left: 2.5em;
     }
 
     .stats-list-grid {
@@ -68,15 +64,8 @@
         text-align: left;
     }
 
-    .grid-item-index-wrapper {
-        height: 100%;
-        justify-content: center;
-    }
-
     .grid-item-index {
-        font-size: 12px;
         margin: 0;
-        margin-right: 4px;
         text-align: right;
     }
 
@@ -88,6 +77,12 @@
     .grid-item-name {
         margin: 0;
         text-align: left;
+    }
+
+    @media only screen and (max-width: 768px) {
+        .stats-list-wrapper {
+            margin: 12px 0;
+        }
     }
 </style>
 

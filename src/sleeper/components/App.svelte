@@ -38,5 +38,11 @@
         align-items: center;
         padding: 64px;
     }
+
+    @media only screen and (max-width: 768px) {
+        main {
+            padding: 40px;
+        }
+    }
 </style>
 

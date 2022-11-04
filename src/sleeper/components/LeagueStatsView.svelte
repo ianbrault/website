@@ -175,6 +175,25 @@
 <section id="league-stats-wrapper">
     <p class="title">{get_league_name()}</p>
     <div id="stats-views-wrapper" class="hflex">
+        <GameStatView
+            title="MOST POINTS"
+            game={matchup_stats.max_score}
+            bold_winner={true}
+        />
+        <GameStatView
+            title="LEAST POINTS"
+            game={matchup_stats.min_score}
+            bold_loser={true}
+        />
+        <GameStatView
+            title="BIGGEST BLOWOUT"
+            game={matchup_stats.biggest_blowout}
+        />
+        <GameStatView
+            title="CLOSEST GAME"
+            game={matchup_stats.closest_game}
+        />
+        <div class="grid-break"></div>
         <StatsListView
             title="WIN PERCENTAGE"
             {...get_win_pct_ratings(matchup_stats)}
@@ -203,25 +222,6 @@
             title="TOTAL FAAB SPENT"
             {...get_faab_spent_ratings(transaction_stats)}
         />
-        <div class="grid-break"></div>
-        <GameStatView
-            title="BEST WINNER SCORE"
-            game={matchup_stats.max_score}
-            bold_winner={true}
-        />
-        <GameStatView
-            title="WORST LOSER SCORE"
-            game={matchup_stats.min_score}
-            bold_loser={true}
-        />
-        <GameStatView
-            title="BIGGEST BLOWOUT"
-            game={matchup_stats.biggest_blowout}
-        />
-        <GameStatView
-            title="CLOSEST GAME"
-            game={matchup_stats.closest_game}
-        />
     </div>
 </section>
 
@@ -245,6 +245,13 @@
     .grid-break {
         flex-basis: 100%;
         height: 0;
+    }
+
+    @media only screen and (max-width: 768px) {
+        .title {
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
     }
 </style>
 

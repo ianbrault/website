@@ -41,7 +41,7 @@
 <style>
     .stat-wrapper {
         font-size: 14px;
-        margin: 32px 0;
+        margin: 20px 0;
     }
 
     .stat-title {
@@ -71,5 +71,11 @@
 
     .grid-bold {
         font-weight: 600;
+    }
+
+    @media only screen and (max-width: 768px) {
+        .stat-wrapper {
+            margin: 12px 0;
+        }
     }
 </style>
