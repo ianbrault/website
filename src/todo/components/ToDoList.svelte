@@ -14,7 +14,6 @@
 
     // load stored to-do items when the component mounts
     onMount(() => {
-        console.log("ToDoList:onMount");
         items = loadToDoItems();
     });
 </script>

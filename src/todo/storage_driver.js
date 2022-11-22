@@ -14,7 +14,7 @@ export function loadToDoItems() {
         let itemObjects = JSON.parse(itemData);
         items = itemObjects.map(obj => Item.fromJSON(obj));
     }
-    console.log(`loaded ${items.length} to-do items`);
+    console.log(`loaded ${items.length} to-do items from local storage`);
     return items;
 }
 

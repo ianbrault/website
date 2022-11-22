@@ -21,8 +21,20 @@
 
     function currentLineStart() {
         let i = textarea.selectionStart;
+        // use the "previous" line if the cursor is at the end of a line
+        if (textarea.value[i] == "\n") {
+            i--;
+        }
         while (i >= 0 && textarea.value[i] !== "\n") {
             i--;
+        }
+        return i + 1;
+    }
+
+    function nextLineStart() {
+        let i = textarea.selectionStart;
+        while (i < textarea.value.length && textarea.value[i] !== "\n") {
+            i++;
         }
         return i + 1;
     }
@@ -40,6 +52,11 @@
         return currentLineStart()
             + currentLineIndentLevel()
             + ItemLeader.length + 1;
+    }
+
+    function currentLineContents() {
+        return textarea.value.slice(
+            currentLineContentsStart(), nextLineStart());
     }
 
     function addNewItem() {
@@ -62,18 +79,22 @@
     }
 
     function indentCurrentItem() {
+        let cursorPos = textarea.selectionStart;
         let lineStart = currentLineStart();
         textarea.value = textarea.value.slice(0, lineStart)
             + Tab
             + textarea.value.slice(lineStart);
+        setCursor(cursorPos + Tab.length);
     }
 
     function unindentCurrentItem() {
+        let cursorPos = textarea.selectionStart;
         let indentLevel = currentLineIndentLevel();
         if (indentLevel > 0) {
             let lineStart = currentLineStart();
             textarea.value = textarea.value.slice(0, lineStart)
                 + textarea.value.slice(lineStart + Tab.length);
+            setCursor(cursorPos - Tab.length);
         }
     }
 
@@ -81,8 +102,13 @@
         let cursorPos = textarea.selectionStart;
 
         // add a new item if enter was pressed
+        // OR if the current item is empty and indented, un-indent it
         if (event.key === "Enter") {
-            addNewItem();
+            if (!currentLineContents() && currentLineIndentLevel() > 0) {
+                unindentCurrentItem();
+            } else {
+                addNewItem();
+            }
             event.preventDefault();
         }
         // delete the current item if backspace was pressed and the cursor is
@@ -115,14 +141,12 @@
 
     // load and dump the stored to-do items when the component mounts
     onMount(() => {
-        console.log("ToDoEditArea:onMount");
         let items = loadToDoItems();
         textarea.value = dump(items);
     });
     // parse and store the to-do items when the component unmounts
 
     onDestroy(() => {
-        console.log("ToDoEditArea:onDestroy");
         let itemObjects = parse(textarea.value);
         let items = itemObjects.map(obj => Item.fromJSON(obj));
         storeToDoItems(items);
