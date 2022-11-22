@@ -69,8 +69,10 @@
         setCursor(cursorPos + newItem.length);
     }
 
-    function deleteCurrentItem() {
-        let cursorPos = textarea.selectionStart;
+    function deleteCurrentItem(cursorPos = undefined) {
+        if (cursorPos === undefined) {
+            cursorPos = textarea.selectionStart;
+        }
         let lineStart = currentLineStart();
         let sliceStart = lineStart == 0 ? 0 : lineStart - 1;
         textarea.value = textarea.value.slice(0, sliceStart)
@@ -114,8 +116,13 @@
         // delete the current item if backspace was pressed and the cursor is
         // at the start of the line
         if (event.key === "Backspace") {
-            if (cursorPos == currentLineContentsStart()) {
-                deleteCurrentItem();
+            // check if the cursor is anywhere within the indicator
+            let contentsStart = currentLineContentsStart();
+            if (
+                cursorPos >= currentLineStart()
+                && cursorPos <= contentsStart
+            ) {
+                deleteCurrentItem(contentsStart);
                 event.preventDefault();
             }
         }
