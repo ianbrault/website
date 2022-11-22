@@ -5,23 +5,56 @@
 <script>
     import { onMount } from "svelte";
 
-    import { loadToDoItems } from "../storage_driver.js";
+    import { loadToDoItems, storeToDoItems } from "../storage_driver.js";
 
     import ToDoItem from "./ToDoItem.svelte";
     import "../base.css";
 
     let items = [];
 
+    function checkItem(id) {
+        console.log(`checking to-do item ${id}`);
+        // find the item and mark it as checked
+        for (const item of items) {
+            if (item.id == id) {
+                item.isChecked = true;
+            }
+        }
+        // then flush to local storage
+        storeToDoItems(items);
+    }
+
+    function uncheckItem(id) {
+        console.log(`un-checking to-do item ${id}`);
+        // find the item and mark it as un-checked
+        for (const item of items) {
+            if (item.id == id) {
+                item.isChecked = false;
+            }
+        }
+        // then flush to local storage
+        storeToDoItems(items);
+    }
+
+    function itemToggled(event) {
+        if (event.detail.checked) {
+            checkItem(event.detail.id);
+        } else {
+            uncheckItem(event.detail.id);
+        }
+    }
+
     // load stored to-do items when the component mounts
     onMount(() => {
         items = loadToDoItems();
+        console.debug(items);
     });
 </script>
 
 <section id="todo-list" class="vflex">
     {#if items.length > 0}
         {#each items as item (item.id)}
-            <ToDoItem {...item}/>
+            <ToDoItem {...item} on:toggled={itemToggled}/>
         {/each}
     {:else}
         <p>nothing here yet...</p>
