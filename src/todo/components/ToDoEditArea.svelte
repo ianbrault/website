@@ -3,9 +3,11 @@
 -->
 
 <script>
+    import { onDestroy, onMount } from "svelte";
+
     import { Item } from "../Item.js";
-    import { editMode, toDoItems } from "../stores.js";
-    import { dump, parse } from "../todoTextParser.js";
+    import { loadToDoItems, storeToDoItems } from "../storage_driver.js";
+    import { dump, parse } from "../todo_text_parser.js";
 
     let textarea;
 
@@ -111,19 +113,19 @@
         }
     }
 
-    editMode.subscribe((mode) => {
-        if (textarea) {
-            // dump the to-do items into text when entering edit mode
-            if (mode) {
-                textarea.value = dump($toDoItems);
-            }
-            // and parse and store the to-do items when leaving edit mode
-            else {
-                let itemObjects = parse(textarea.value);
-                let items = itemObjects.map(obj => Item.fromJSON(obj));
-                toDoItems.set(items);
-            }
-        }
+    // load and dump the stored to-do items when the component mounts
+    onMount(() => {
+        console.log("ToDoEditArea:onMount");
+        let items = loadToDoItems();
+        textarea.value = dump(items);
+    });
+    // parse and store the to-do items when the component unmounts
+
+    onDestroy(() => {
+        console.log("ToDoEditArea:onDestroy");
+        let itemObjects = parse(textarea.value);
+        let items = itemObjects.map(obj => Item.fromJSON(obj));
+        storeToDoItems(items);
     });
 </script>
 

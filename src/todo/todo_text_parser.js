@@ -33,7 +33,7 @@ export function dump(items) {
     let itemTexts = [];
 
     items.forEach((item) => {
-        let pad = " ".repeat(item.level);
+        let pad = " ".repeat(item.level * SpacePerIndent);
         let indicator = item.isChecked ? "[x]" : "[ ]";
         itemTexts.push(`${pad}${indicator} ${item.text}`);
     });
