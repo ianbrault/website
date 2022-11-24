@@ -4,6 +4,7 @@
 -->
 
 <script>
+    import { storeToDoItems } from "../storage_driver.js";
     import { editMode } from "../stores.js";
 
     import IconButton from "./IconButton.svelte";
@@ -17,6 +18,13 @@
 
     function unsetEditMode() {
         editMode.set(false);
+    }
+
+    // TODO: ONLY USE FOR DEBUG
+    function deleteAllItems() {
+        console.log("deleting all items");
+        storeToDoItems([]);
+        alert("deleted items: reload the page");
     }
 </script>
 
@@ -37,6 +45,14 @@
             size="20px"
             action={unsetEditMode}
             enabled={$editMode}
+        />
+        <!-- TODO: ONLY USE FOR DEBUG -->
+        <div class="divider"></div>
+        <IconButton
+            src="/icons/delete.svg"
+            alt="delete all"
+            size="20px"
+            action={deleteAllItems}
         />
     </section>
     {#if $editMode}
@@ -75,4 +91,3 @@
         margin: 0 16px;
     }
 </style>
-

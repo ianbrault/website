@@ -5,7 +5,7 @@
 <script>
     import { onDestroy, onMount } from "svelte";
 
-    import { Item } from "../Item.js";
+    import { ItemDay } from "../ItemDay.js";
     import { loadToDoItems, storeToDoItems } from "../storage_driver.js";
     import { dump, parse } from "../todo_text_parser.js";
 
@@ -59,6 +59,10 @@
             currentLineContentsStart(), nextLineStart());
     }
 
+    function currentLineFullContents() {
+        return textarea.value.slice(currentLineStart(), nextLineStart());
+    }
+
     function addNewItem() {
         let cursorPos = textarea.selectionStart;
         let indentLevel = currentLineIndentLevel();
@@ -100,6 +104,10 @@
         }
     }
 
+    function currentLineIsDateLine() {
+        return currentLineFullContents().startsWith("DATE: ");
+    }
+
     function onTextInput(event) {
         let cursorPos = textarea.selectionStart;
 
@@ -114,15 +122,16 @@
             event.preventDefault();
         }
         // delete the current item if backspace was pressed and the cursor is
-        // at the start of the line
+        // at the start of the line or if it is a date line
         if (event.key === "Backspace") {
             // check if the cursor is anywhere within the indicator
+            let lineStart = currentLineStart();
             let contentsStart = currentLineContentsStart();
-            if (
-                cursorPos >= currentLineStart()
-                && cursorPos <= contentsStart
-            ) {
+            if (cursorPos >= lineStart && cursorPos <= contentsStart) {
                 deleteCurrentItem(contentsStart);
+                event.preventDefault();
+            } else if (currentLineIsDateLine()) {
+                deleteCurrentItem();
                 event.preventDefault();
             }
         }
@@ -138,10 +147,36 @@
         }
     }
 
+    function onClick() {
+        let cursorPos = textarea.selectionStart;
+        // if the click is on a date line, move the cursor to the end
+        if (currentLineIsDateLine()) {
+            setCursor(nextLineStart() - 1);
+        }
+        // if the click is before the line contents, move the cursor to the
+        // start of the contents
+        else if (
+            cursorPos >= currentLineStart()
+            && cursorPos < currentLineContentsStart()
+        ) {
+            setCursor(currentLineContentsStart());
+        }
+    }
+
+    function getCurrentDate() {
+        let date = new Date();
+        // zero out hour/minutes/seconds
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+        return date.toUTCString();
+    }
+
     function onFocus() {
-        // add the initial item if the edit area is empty
+        // add the initial date + item if the edit area is empty
         if (textarea.value.length == 0) {
-            textarea.value = ItemLeader + " ";
+            textarea.value = `DATE: ${getCurrentDate()}\n${ItemLeader} `;
             setCursor(textarea.value.length);
         }
     }
@@ -155,7 +190,7 @@
 
     onDestroy(() => {
         let itemObjects = parse(textarea.value);
-        let items = itemObjects.map(obj => Item.fromJSON(obj));
+        let items = itemObjects.map(obj => ItemDay.fromJSON(obj));
         storeToDoItems(items);
     });
 </script>
@@ -165,6 +200,7 @@
     bind:this={textarea}
     on:focus={onFocus}
     on:keydown={onTextInput}
+    on:mouseup={onClick}
 >
 </textarea>
 

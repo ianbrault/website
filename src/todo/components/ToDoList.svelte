@@ -7,7 +7,7 @@
 
     import { loadToDoItems, storeToDoItems } from "../storage_driver.js";
 
-    import ToDoItem from "./ToDoItem.svelte";
+    import ToDoItemDay from "./ToDoItemDay.svelte";
     import "../base.css";
 
     let items = [];
@@ -15,9 +15,11 @@
     function checkItem(id) {
         console.log(`checking to-do item ${id}`);
         // find the item and mark it as checked
-        for (const item of items) {
-            if (item.id == id) {
-                item.isChecked = true;
+        for (const itemDay of items) {
+            for (const item of itemDay.items) {
+                if (item.id == id) {
+                    item.isChecked = true;
+                }
             }
         }
         // then flush to local storage
@@ -27,9 +29,11 @@
     function uncheckItem(id) {
         console.log(`un-checking to-do item ${id}`);
         // find the item and mark it as un-checked
-        for (const item of items) {
-            if (item.id == id) {
-                item.isChecked = false;
+        for (const itemDay of items) {
+            for (const item of itemDay.items) {
+                if (item.id == id) {
+                    item.isChecked = false;
+                }
             }
         }
         // then flush to local storage
@@ -54,7 +58,7 @@
 <section id="todo-list" class="vflex">
     {#if items.length > 0}
         {#each items as item (item.id)}
-            <ToDoItem {...item} on:toggled={itemToggled}/>
+            <ToDoItemDay {...item} on:toggled={itemToggled}/>
         {/each}
     {:else}
         <p>nothing here yet...</p>
@@ -73,4 +77,3 @@
         padding-top: 10px;
     }
 </style>
-
