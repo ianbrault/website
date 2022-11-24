@@ -4,13 +4,22 @@
 -->
 
 <script>
-    import { storeToDoItems } from "../storage_driver.js";
+    import { ItemDay } from "../ItemDay.js";
+    import { loadToDoItems, storeToDoItems } from "../storage_driver.js";
     import { editMode } from "../stores.js";
 
     import IconButton from "./IconButton.svelte";
     import ToDoEditArea from "./ToDoEditArea.svelte";
     import ToDoList from "./ToDoList.svelte";
     import "../base.css";
+    import { Item } from "../Item.js";
+
+    // modify the key variable to force a re-render
+    let key = 0;
+
+    function rerender() {
+        key++;
+    }
 
     function setEditMode() {
         editMode.set(true);
@@ -20,11 +29,49 @@
         editMode.set(false);
     }
 
+    function advanceDay() {
+        let items = loadToDoItems();
+        // grab the most recent day
+        let day = items.pop();
+        // increment the date
+        let nextDay = new Date(day.date.getTime() + 86400000);  // +1 day in ms
+        // assign completed items to the current day and incomplete items to
+        // the next day
+        let curr = [];
+        let next = [];
+        for (const item of day.items) {
+            if (item.isChecked) {
+                curr.push(item);
+            } else {
+                next.push(item);
+            }
+        }
+        // skip the current day if there are no completed items
+        if (curr.length > 0) {
+            items.push(new ItemDay(day.date, curr, day.id));
+        }
+        // if all items from the current day were completed, add an empty item
+        // for the next day
+        if (next.length == 0) {
+            next.push(new Item("", 0));
+        }
+        items.push(new ItemDay(nextDay, next));
+        // flush the items to local storage and re-render
+        storeToDoItems(items);
+        rerender();
+    }
+
     // TODO: ONLY USE FOR DEBUG
     function deleteAllItems() {
-        console.log("deleting all items");
-        storeToDoItems([]);
-        alert("deleted items: reload the page");
+        // confirm first
+        let goAhead = confirm(
+            "WARNING: this will erase all stored items! Are you sure you " +
+            "want to continue?");
+        if (goAhead) {
+            console.log("deleting all items");
+            storeToDoItems([]);
+            rerender();
+        }
     }
 </script>
 
@@ -46,6 +93,12 @@
             action={unsetEditMode}
             enabled={$editMode}
         />
+        <IconButton
+            src="/icons/arrow-right.svg"
+            alt="next day"
+            size="20px"
+            action={advanceDay}
+        />
         <!-- TODO: ONLY USE FOR DEBUG -->
         <div class="divider"></div>
         <IconButton
@@ -58,7 +111,10 @@
     {#if $editMode}
         <ToDoEditArea/>
     {:else}
-        <ToDoList/>
+        <!-- use the key to re-render the list -->
+        {#key key}
+            <ToDoList/>
+        {/key}
     {/if}
 </main>
 
