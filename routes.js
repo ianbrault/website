@@ -41,5 +41,15 @@ router.get("/archive/bbash18-teaser", (_, res) => {
     sendHTML(res, "bbash18_teaser.html");
 });
 
+router.get("/archive/faroutfest", (_, res) => {
+    log.log("GET /archive/faroutfest");
+    sendHTML(res, "faroutfest.html");
+});
+
+router.get("/archive/faroutfest/faq", (_, res) => {
+    log.log("GET /archive/faroutfest/faq");
+    sendHTML(res, "faroutfest_faq.html");
+});
+
 module.exports = router;
 

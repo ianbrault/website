@@ -1,0 +1,110 @@
+@font-face {
+    font-family: "Filson Soft Medium";
+    src: url("/fonts/filson_soft_medium.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "Filson Soft Book";
+    src: url("/fonts/filson_soft_book.woff") format("woff");
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: linear-gradient(rgb(182,242,242), rgb(228,208,116));
+    font-family: "Filson Soft Medium";
+}
+
+#logo {
+    width: 32vw;
+    margin-top: 32px;
+}
+
+svg {
+    height: 42px;
+    margin: 8px 0 28px 0;
+}
+
+#title {
+    height: 42px;
+    font-size: 32px;
+    text-anchor: middle;
+    paint-order: stroke;
+    fill: #EADAC7;
+    stroke: #3d3d3d;
+    stroke-width: 2.5px;
+    stroke-linejoin: round;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 12px 0;
+}
+
+.q, .a {
+    color: #3d3d3d;
+    margin: 4px 0;
+    font-size: 20px;
+    text-align: center;
+} .a {
+    font-family: "Filson Soft Book";
+}
+
+#back-link {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    text-decoration: none;
+}
+
+#back {
+    color: #3d3d3d;
+    margin: 0;
+    font-size: 20px;
+}
+
+/* MOBILE STYLING */
+@media only screen and (max-device-width: 813px) {
+    #logo {
+        width: 72vw;
+        margin-top: 40px;
+    }
+
+    svg {
+        height: 60px;
+        margin: 12px 0 32px 0;
+    }
+
+    #title {
+        height: 60px;
+        font-size: 48px;
+        stroke-width: 4px;
+    }
+
+    .q, .a {
+        font-size: 34px;
+    }
+
+    #back-link {
+        top: 20px;
+        left: 20px;
+    }
+
+    #back {
+        font-size: 28px;
+    }
+}

@@ -9,9 +9,13 @@ var webpackConfig = {
     mode: process.env.NODE_ENV,
     entry: {
         home: "./src/home/home.js",
-        bbash18_teaser: "./src/bbash18_teaser.js",
         todo: "./src/todo/todo.js",
         sleeper: "./src/sleeper/sleeper.js",
+        // archived sites
+        bbash18_teaser: "./src/bbash18_teaser.js",
+        faroutfest: "./src/faroutfest/faroutfest.js",
+        faroutfest_lineup: "./src/faroutfest/lineup.js",
+        faroutfest_slideshow: "./src/faroutfest/slideshow.js",
     },
     output: {
         filename: "[name].js",
@@ -47,4 +51,3 @@ var webpackConfig = {
 };
 
 module.exports = webpackConfig;
-
