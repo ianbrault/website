@@ -24,6 +24,11 @@ router.get("/", (_, res) => {
     sendHTML(res, "home.html");
 });
 
+router.get("/projects", (_, res) => {
+    log.log("GET /projects");
+    sendHTML(res, "projects.html");
+});
+
 router.get("/todo", (_, res) => {
     log.log("GET /todo");
     sendHTML(res, "todo.html");

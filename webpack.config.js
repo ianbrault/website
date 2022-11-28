@@ -8,7 +8,8 @@ const webpack = require("webpack");
 var webpackConfig = {
     mode: process.env.NODE_ENV,
     entry: {
-        home: "./src/home/home.js",
+        // TODO: uncomment if dynamic content is needed for the homepage
+        // home: "./src/home/home.js",
         todo: "./src/todo/todo.js",
         sleeper: "./src/sleeper/sleeper.js",
         // archived sites
