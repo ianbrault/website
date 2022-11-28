@@ -20,6 +20,10 @@ main {
     gap: 20px;
 }
 
+p {
+    margin: 0;
+}
+
 .vflex {
     display: flex;
     flex-direction: column;
@@ -33,19 +37,16 @@ main {
 #title {
     font-size: 40px;
     font-weight: 600;
-    margin: 0;
     margin-bottom: 8px;
 }
 
 .subtitle {
     font-size: 18px;
     font-weight: 600;
-    margin: 0;
 }
 
 .text {
     font-size: 16px;
-    margin: 0;
 }
 
 .currently {
