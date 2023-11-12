@@ -3,24 +3,19 @@
 */
 
 const path = require("path");
-const webpack = require("webpack");
 
-var webpackConfig = {
-    mode: process.env.NODE_ENV,
+module.exports = {
     entry: {
-        // TODO: uncomment if dynamic content is needed for the homepage
-        // home: "./src/home/home.js",
-        todo: "./src/todo/todo.js",
-        sleeper: "./src/sleeper/sleeper.js",
-        // archived sites
-        bbash18_teaser: "./src/bbash18_teaser.js",
-        faroutfest: "./src/faroutfest/faroutfest.js",
-        faroutfest_lineup: "./src/faroutfest/lineup.js",
-        faroutfest_slideshow: "./src/faroutfest/slideshow.js",
+        bbash18_teaser: "./archive/src/bbash18_teaser.js",
+        faroutfest: "./archive/src/faroutfest/faroutfest.js",
+        faroutfest_lineup: "./archive/src/faroutfest/lineup.js",
+        faroutfest_slideshow: "./archive/src/faroutfest/slideshow.js",
+        sleeper: "./sleeper/src/sleeper.js",
+        todo: "./todo/src/todo.js",
     },
     output: {
         filename: "[name].js",
-        path: __dirname + "/dist",
+        path: path.resolve(__dirname, "dist"),
         publicPath: "/",
     },
     optimization: {
@@ -28,27 +23,28 @@ var webpackConfig = {
     },
     resolve: {
         alias: {
-            svelte: path.resolve("node_modules", "svelte")
+            svelte: path.resolve("node_modules", "svelte/src/runtime")
         },
-        extensions: [".svelte"],
+        extensions: [".mjs", ".js", ".svelte"],
+        mainFields: ["svelte", "browser", "module", "main"],
+        conditionNames: ["svelte", "browser", "import"]
     },
     module: {
         rules: [
             {
                 test: /\.(html|svelte)$/,
                 use: "svelte-loader"
-            }, {
-                // required to prevent errors from Svelte on Webpack 5+
+            },
+            {
                 test: /node_modules\/svelte\/.*\.mjs$/,
                 resolve: {
                     fullySpecified: false
                 }
-            }, {
+            },
+            {
                 test: /\.css$/i,
                 use: ["style-loader", "css-loader"],
             },
         ]
     },
 };
-
-module.exports = webpackConfig;
