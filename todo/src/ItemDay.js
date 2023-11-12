@@ -26,8 +26,8 @@ export class ItemDay {
     }
 
     static fromJSON(obj) {
-        let date = new Date(Date.parse(obj.date));
-        let items = obj.items.map((item) => Item.fromJSON(item));
+        const date = new Date(Date.parse(obj.date));
+        const items = obj.items.map((item) => Item.fromJSON(item));
         return new ItemDay(date, items, obj.id);
     }
 }

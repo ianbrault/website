@@ -14,7 +14,7 @@ async function get(url, error) {
     }
 }
 
-async function get_no_await(url, error) {
+function get_no_await(url, error) {
     try {
         console.log(`query: ${url}`);
         return fetch(url).then((res) => res.json());
@@ -28,7 +28,7 @@ async function get_no_await(url, error) {
 ** gets the current NFL state
 */
 export async function get_nfl_state() {
-    let url = `${URL_BASE}/state/nfl`;
+    const url = `${URL_BASE}/state/nfl`;
     return await get(url, `NFL state lookup failed`);
 }
 
@@ -36,7 +36,7 @@ export async function get_nfl_state() {
 ** gets the user data associated with the given username
 */
 export async function get_user(username) {
-    let url = `${URL_BASE}/user/${username}`;
+    const url = `${URL_BASE}/user/${username}`;
     return await get(url, "user lookup failed");
 }
 
@@ -44,8 +44,8 @@ export async function get_user(username) {
 ** gets all NFL league data from the current year for the given user ID
 */
 export async function get_user_current_leagues(user_id) {
-    let current_year = new Date().getFullYear();
-    let url = `${URL_BASE}/user/${user_id}/leagues/nfl/${current_year}`;
+    const current_year = new Date().getFullYear();
+    const url = `${URL_BASE}/user/${user_id}/leagues/nfl/${current_year}`;
     return await get(url, "user league lookup failed");
 }
 
@@ -53,7 +53,7 @@ export async function get_user_current_leagues(user_id) {
 ** gets the NFL league data for the given league ID
 */
 export async function get_league_info(league_id) {
-    let url = `${URL_BASE}/league/${league_id}`;
+    const url = `${URL_BASE}/league/${league_id}`;
     return await get(url, "league lookup failed");
 }
 
@@ -62,12 +62,12 @@ export async function get_league_info(league_id) {
 */
 export async function get_all_league_info(league_id) {
     try {
-        let info = {};
+        const info = {};
         // start from the current year and work backwards
         let id = league_id;
         let current_year = new Date().getFullYear();
         while (id > 0) {
-            let league_info = await get_league_info(id);
+            const league_info = await get_league_info(id);
             info[current_year] = league_info;
             id = league_info.previous_league_id;
             current_year--;
@@ -83,7 +83,7 @@ export async function get_all_league_info(league_id) {
 ** gets all user info for the given league ID
 */
 export async function get_league_users(league_id) {
-    let url = `${URL_BASE}/league/${league_id}/users`;
+    const url = `${URL_BASE}/league/${league_id}/users`;
     return await get(url, "league user lookup failed");
 }
 
@@ -91,15 +91,15 @@ export async function get_league_users(league_id) {
 ** gets all roster info for the given league ID
 */
 export async function get_league_rosters(league_id) {
-    let url = `${URL_BASE}/league/${league_id}/rosters`;
+    const url = `${URL_BASE}/league/${league_id}/rosters`;
     return await get(url, "league roster lookup failed");
 }
 
 /*
 ** get the matchup info from the given week for the given league ID
 */
-async function get_league_matchups_for_week(league_id, week) {
-    let url = `${URL_BASE}/league/${league_id}/matchups/${week}`;
+function get_league_matchups_for_week(league_id, week) {
+    const url = `${URL_BASE}/league/${league_id}/matchups/${week}`;
     // NOTE: return the Promise so that they can be awaited all at once
     return get_no_await(url, `league ${week} matchups lookup failed`);
 }
@@ -108,18 +108,18 @@ async function get_league_matchups_for_week(league_id, week) {
 ** gets all matchup info for the given league ID
 */
 export async function get_all_league_matchups(league_id, league_info, nfl_state) {
-    let info = {};
+    const info = {};
     // store all the promises and join at the end
-    let promises = [];
-    let promise_years = [];
+    const promises = [];
+    const promise_years = [];
     let responses = [];
     try {
         // start from the current year and work backwards
         let id = league_id;
-        let current_year = new Date().getFullYear();
+        const current_year = new Date().getFullYear();
         let year = current_year;
         while (id > 0) {
-            let n_weeks = league_info[year].settings.playoff_week_start - 1;
+            const n_weeks = league_info[year].settings.playoff_week_start - 1;
             let end = n_weeks;
             if (year == current_year) {
                 if (league_info[year].status == "in_season") {
@@ -142,7 +142,7 @@ export async function get_all_league_matchups(league_id, league_info, nfl_state)
     }
     // assign results of the promises
     for (let i = 0; i < responses.length; i++) {
-        let year = promise_years[i];
+        const year = promise_years[i];
         if (!(year in info)) {
             info[year] = [];
         }
@@ -154,8 +154,8 @@ export async function get_all_league_matchups(league_id, league_info, nfl_state)
 /*
 ** gets all transaction info from the given week for the given league ID
 */
-async function get_league_transactions_for_week(league_id, week) {
-    let url = `${URL_BASE}/league/${league_id}/transactions/${week}`;
+function get_league_transactions_for_week(league_id, week) {
+    const url = `${URL_BASE}/league/${league_id}/transactions/${week}`;
     // NOTE: return the Promise so that they can be awaited all at once
     return get_no_await(url, `league ${week} transactions lookup failed`);
 }
@@ -164,18 +164,18 @@ async function get_league_transactions_for_week(league_id, week) {
 ** gets all transaction info for the given league ID
 */
 export async function get_all_league_transactions(league_id, league_info, nfl_state) {
-    let info = {};
+    const info = {};
     // store all the promises and join at the end
-    let promises = [];
-    let promise_years = [];
+    const promises = [];
+    const promise_years = [];
     let responses = [];
     try {
         // start from the current year and work backwards
         let id = league_id;
-        let current_year = new Date().getFullYear();
+        const current_year = new Date().getFullYear();
         let year = current_year;
         while (id > 0) {
-            let n_weeks = league_info[year].settings.playoff_week_start - 1;
+            const n_weeks = league_info[year].settings.playoff_week_start - 1;
             let end = n_weeks;
             if (year == current_year) {
                 end = nfl_state.week;
@@ -194,7 +194,7 @@ export async function get_all_league_transactions(league_id, league_info, nfl_st
     }
     // assign results of the promises
     for (let i = 0; i < responses.length; i++) {
-        let year = promise_years[i];
+        const year = promise_years[i];
         if (!(year in info)) {
             info[year] = [];
         }
@@ -208,16 +208,16 @@ export async function get_all_league_transactions(league_id, league_info, nfl_st
 /*
 ** gets all drafts for the given league ID
 */
-export async function get_all_league_drafts(league_id) {
-    let url = `${URL_BASE}/league/${league_id}/drafts`;
+export function get_all_league_drafts(league_id) {
+    const url = `${URL_BASE}/league/${league_id}/drafts`;
     return get(url, `league drafts lookup failed`);
 }
 
 /*
 ** gets info for the given draft ID
 */
-async function get_draft_picks(draft_id) {
-    let url = `${URL_BASE}/draft/${draft_id}/picks`;
+function get_draft_picks(draft_id) {
+    const url = `${URL_BASE}/draft/${draft_id}/picks`;
     // NOTE: return the Promise so that they can be awaited all at once
     return get_no_await(url, `draft picks lookup failed`);
 }
@@ -226,10 +226,10 @@ async function get_draft_picks(draft_id) {
 ** gets all draft info for the given league ID
 */
 export async function get_all_league_draft_picks(draft_info) {
-    let info = {};
+    const info = {};
     // store all the promises and join at the end
-    let promises = [];
-    let promise_years = [];
+    const promises = [];
+    const promise_years = [];
     let responses = [];
     try {
         for (const draft of draft_info) {
@@ -243,7 +243,7 @@ export async function get_all_league_draft_picks(draft_info) {
     }
     // assign results of the promises
     for (let i = 0; i < responses.length; i++) {
-        let year = promise_years[i];
+        const year = promise_years[i];
         if (!(year in info)) {
             info[year] = [responses[i]];
         }

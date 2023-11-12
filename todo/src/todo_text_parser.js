@@ -13,12 +13,12 @@ function parseItem(line) {
     while (line[i] === " " && i < line.length) {
         i++;
     }
-    let level = i / SpacePerIndent;
+    const level = i / SpacePerIndent;
     // check if the item is checked
-    let indicator = line.slice(i, i + 3);
-    let isChecked = indicator === "[x]";
+    const indicator = line.slice(i, i + 3);
+    const isChecked = indicator === "[x]";
     // grab the text
-    let text = line.slice(i + 4);
+    const text = line.slice(i + 4);
 
     return {
         id: uuidv4(),
@@ -29,9 +29,9 @@ function parseItem(line) {
 }
 
 export function parse(text) {
-    let items = [];
+    const items = [];
 
-    let lines = text.split(/\r?\n/);
+    const lines = text.split(/\r?\n/);
     let currentDate = undefined;
     let dateItems = [];
     for (const [i, line] of lines.entries()) {
@@ -57,7 +57,7 @@ export function parse(text) {
                 console.error(`line ${i}: parsed a to-do item before a date`);
                 return [];
             }
-            let item = parseItem(line);
+            const item = parseItem(line);
             dateItems.push(item);
         }
         // otherwise raise an error
@@ -74,16 +74,16 @@ export function parse(text) {
 }
 
 function dumpItem(item) {
-    let pad = " ".repeat(item.level * SpacePerIndent);
-    let indicator = item.isChecked ? "[x]" : "[ ]";
+    const pad = " ".repeat(item.level * SpacePerIndent);
+    const indicator = item.isChecked ? "[x]" : "[ ]";
     return `${pad}${indicator} ${item.text}`;
 }
 
 export function dump(contents) {
-    let lines = [];
+    const lines = [];
 
     for (const entry of contents) {
-        let { date, items } = entry;
+        const { date, items } = entry;
         lines.push(`DATE: ${date.toUTCString()}`);
         for (const item of items) {
             lines.push(dumpItem(item));
