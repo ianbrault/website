@@ -1,11 +1,11 @@
 /*
-** recipe_book/models/Recipe.ts
+** recipe_book/models/Recipe.js
 */
 
-import { model, Schema } from "npm:mongoose@^6.7";
+import { model, Schema, Types } from "npm:mongoose@^6.7";
 
 const recipeSchema = new Schema({
-    _id: false,
+    userId: Types.ObjectId,
     uuid: {
         type: String,
         required: true,
@@ -18,12 +18,8 @@ const recipeSchema = new Schema({
         type: String,
         required: true,
     },
-    ingredients: {
-        type: [String],
-    },
-    instructions: {
-        type: [String],
-    },
+    ingredients: [String],
+    instructions: [String],
 });
 
 export default model("Recipe", recipeSchema);

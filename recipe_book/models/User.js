@@ -4,9 +4,6 @@
 
 import { model, Schema } from "npm:mongoose@^6.7";
 
-import Recipe from "./Recipe.ts";
-import RecipeFolder from "./RecipeFolder.ts";
-
 const userSchema = new Schema({
     email: {
         type: String,
@@ -18,18 +15,10 @@ const userSchema = new Schema({
         required: true,
     },
     key: {
-        type: String,  // UUID
+        type: String,
         required: true,
     },
-    root: {
-        type: String,  // UUID
-    },
-    recipes: {
-        type: [Recipe.schema],
-    },
-    folders: {
-        type: [RecipeFolder.schema],
-    },
+    root: String,
 });
 
 export default model("User", userSchema);
