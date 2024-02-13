@@ -9,6 +9,8 @@ import {
     createFolder,
     createRecipe,
     createUser,
+    deleteFolder,
+    deleteRecipe,
     getUser,
     updateFolder,
     updateRecipe,
@@ -124,6 +126,32 @@ router.post("/recipes/update", async (req, res) => {
         res.sendStatus(200);
     } catch(err) {
         error(`POST /recipes/update: ${err.message}`);
+        res.status(400).send(err.message);
+    }
+});
+
+router.post("/recipes/delete", async (req, res) => {
+    info("POST /recipes/delete");
+
+    try {
+        // validate the provided user info
+        await validateUserInfo(req.body.userId, req.body.userKey);
+
+        // delete the recipes
+        const recipes = req.body.recipes ? req.body.recipes : [];
+        for (const uuid of recipes) {
+            await deleteRecipe(uuid);
+        }
+        // delete the folders
+        const folders = req.body.folders ? req.body.folders : [];
+        for (const uuid of folders) {
+            await deleteFolder(uuid);
+        }
+
+        debug("POST /recipes/delete: 200");
+        res.sendStatus(200);
+    } catch(err) {
+        error(`POST /recipes/delete: ${err.message}`);
         res.status(400).send(err.message);
     }
 });

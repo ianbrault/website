@@ -129,7 +129,33 @@ export async function updateRecipe(uuid, folderId, title, ingredients, instructi
     recipe.title = title;
     recipe.ingredients = ingredients;
     recipe.instructions = instructions;
+    debug(`updated recipe ${recipe.uuid}`);
     await recipe.save();
+}
+
+export async function deleteRecipe(uuid) {
+    // get the recipe
+    const recipe = await Recipe.findOne({uuid: uuid});
+    if (!recipe) {
+        // no need to fail if the recipe cannot be found, that is the end goal
+        return
+    }
+
+    // get the parent folder and detach the recipe from it
+    const parentFolder = await RecipeFolder.findOne({uuid: recipe.folderId});
+    // no need to fail if the folder cannot be found, allows for bulk deletion
+    // without being concerned with order-of-operations
+    if (parentFolder) {
+        const index = parentFolder.recipes.indexOf(uuid);
+        if (index > -1) {
+            parentFolder.recipes.splice(index, 1);
+            await parentFolder.save();
+        }
+    }
+
+    // now delete the recipe itself
+    await Recipe.deleteOne({uuid: uuid});
+    debug(`deleted recipe ${uuid}`);
 }
 
 export async function createFolder(userId, uuid, folderId, name, recipes, subfolders) {
@@ -169,5 +195,31 @@ export async function updateFolder(uuid, folderId, name, recipes, subfolders) {
     folder.name = name;
     folder.recipes = recipes;
     folder.subfolders = subfolders;
+    debug(`updated folder ${folder.uuid}`);
     await folder.save();
+}
+
+export async function deleteFolder(uuid) {
+    // get the folder
+    const folder = await RecipeFolder.findOne({uuid: uuid});
+    if (!folder) {
+        // no need to fail if the recipe cannot be found, that is the end goal
+        return
+    }
+
+    // get the parent folder and detach the folder from it
+    const parentFolder = await RecipeFolder.findOne({uuid: folder.folderId});
+    // no need to fail if the folder cannot be found, allows for bulk deletion
+    // without being concerned with order-of-operations
+    if (parentFolder) {
+        const index = parentFolder.subfolders.indexOf(uuid);
+        if (index > -1) {
+            parentFolder.subfolders.splice(index, 1);
+            await parentFolder.save();
+        }
+    }
+
+    // now delete the folder itself
+    await RecipeFolder.deleteOne({uuid: uuid});
+    debug(`deleted folder ${uuid}`);
 }
