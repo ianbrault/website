@@ -20,6 +20,20 @@ import { debug, error, info } from "../utils/log.ts";
 
 const router = express.Router();
 
+router.post("/recipes/poke", async (req, res) => {
+    info("POST /recipes/poke");
+
+    try {
+        // validate the provided user info
+        await validateUserInfo(req.body.userId, req.body.userKey);
+        debug("POST /recipes/poke: 200");
+        res.sendStatus(200);
+    } catch(err) {
+        error(`POST /recipes/poke: ${err.message}`);
+        res.status(400).send(err.message);
+    }
+});
+
 router.post("/recipes/register", async (req, res) => {
     info("POST /recipes/register");
 
@@ -42,7 +56,7 @@ router.post("/recipes/login", async (req, res) => {
     try {
         // retrieve the user info
         const userInfo = await getUser(req.body.email, req.body.password);
-        debug(`POST /recipes/register: response: ${JSON.stringify(userInfo)}`);
+        debug(`POST /recipes/login: response: ${JSON.stringify(userInfo)}`);
         res.send(userInfo);
     } catch(err) {
         error(`POST /recipes/login: ${err.message}`);
