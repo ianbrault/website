@@ -4,6 +4,9 @@
 
 import { model, Schema } from "npm:mongoose@^6.7";
 
+import Recipe from "./Recipe.js";
+import RecipeFolder from "./RecipeFolder.js";
+
 const userSchema = new Schema({
     email: {
         type: String,
@@ -19,6 +22,8 @@ const userSchema = new Schema({
         required: true,
     },
     root: String,
+    recipes: [Recipe.schema],
+    folders: [RecipeFolder.schema],
 });
 
 export default model("User", userSchema);

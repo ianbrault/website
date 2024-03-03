@@ -2,10 +2,10 @@
 ** recipe_book/models/RecipeFolder.js
 */
 
-import { model, Schema, Types } from "npm:mongoose@^6.7";
+import { model, Schema } from "npm:mongoose@^6.7";
 
 const RecipeFolderSchema = new Schema({
-    userId: Types.ObjectId,
+    _id: false,
     uuid: {
         type: String,
         required: true,

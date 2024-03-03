@@ -6,33 +6,14 @@
 import express from "npm:express@4.18";
 
 import {
-    createFolder,
-    createRecipe,
     createUser,
-    deleteFolder,
-    deleteRecipe,
     getUser,
-    updateFolder,
-    updateRecipe,
+    updateUser,
     validateUserInfo
 } from "./models/utils.js";
 import { debug, error, info } from "../utils/log.ts";
 
 const router = express.Router();
-
-router.post("/recipes/poke", async (req, res) => {
-    info("POST /recipes/poke");
-
-    try {
-        // validate the provided user info
-        await validateUserInfo(req.body.userId, req.body.userKey);
-        debug("POST /recipes/poke: 200");
-        res.sendStatus(200);
-    } catch(err) {
-        error(`POST /recipes/poke: ${err.message}`);
-        res.status(400).send(err.message);
-    }
-});
 
 router.post("/recipes/register", async (req, res) => {
     info("POST /recipes/register");
@@ -64,108 +45,33 @@ router.post("/recipes/login", async (req, res) => {
     }
 });
 
-router.post("/recipes/create", async (req, res) => {
-    info("POST /recipes/create");
+router.post("/recipes/user/poke", async (req, res) => {
+    info("POST /recipes/user/poke");
 
     try {
         // validate the provided user info
-        await validateUserInfo(req.body.userId, req.body.userKey);
-
-        // create the recipe, if provided
-        if (req.body.recipe) {
-            if (typeof req.body.recipe === "object" && req.body.recipe !== null) {
-                await createRecipe(
-                    req.body.userId, req.body.recipe.uuid, req.body.recipe.folderId,
-                    req.body.recipe.title, req.body.recipe.ingredients, req.body.recipe.instructions
-                );
-            } else {
-                throw new Deno.errors.InvalidData(`invalid recipe "${req.body.recipe}"`);
-            }
-        }
-        // create the folder, if provided
-        if (req.body.folder) {
-            if (typeof req.body.folder === "object" && req.body.folder !== null) {
-                await createFolder(
-                    req.body.userId, req.body.folder.uuid, req.body.folder.folderId,
-                    req.body.folder.name, req.body.folder.recipes, req.body.folder.subfolders
-                );
-            } else {
-                throw new Deno.errors.InvalidData(`invalid folder "${req.body.folder}"`);
-            }
-        }
-
-        debug("POST /recipes/create: 200");
+        await validateUserInfo(req.body.id, req.body.key);
+        debug("POST /recipes/user/poke: 200");
         res.sendStatus(200);
     } catch(err) {
-        error(`POST /recipes/create: ${err.message}`);
+        error(`POST /recipes/user/poke: ${err.message}`);
         res.status(400).send(err.message);
     }
 });
 
-router.post("/recipes/update", async (req, res) => {
-    info("POST /recipes/update");
+router.post("/recipes/user/update", async (req, res) => {
+    info("POST /recipes/user/update");
 
     try {
-        // validate the provided user info
-        await validateUserInfo(req.body.userId, req.body.userKey);
-
-        // update the recipes
-        const recipes = req.body.recipes ? req.body.recipes : [];
-        for (const recipe of recipes) {
-            // sanitize recipe inputs
-            if (typeof recipe === "object" && recipe !== null) {
-                await updateRecipe(
-                    recipe.uuid, recipe.folderId,
-                    recipe.title, recipe.ingredients, recipe.instructions
-                );
-            } else {
-                throw new Deno.errors.InvalidData(`invalid recipe "${recipe}"`);
-            }
-        }
-        // update the folders
-        const folders = req.body.folders ? req.body.folders : [];
-        for (const folder of folders) {
-            // sanitize folder inputs
-            if (typeof folder === "object" && folder !== null) {
-                await updateFolder(
-                    folder.uuid, folder.folderId,
-                    folder.name, folder.recipes, folder.subfolders
-                );
-            } else {
-                throw new Deno.errors.InvalidData(`invalid folder "${folder}"`);
-            }
-        }
-
-        debug("POST /recipes/update: 200");
+        // update the stored user using the provided info
+        await updateUser(
+            req.body.id, req.body.key,
+            req.body.root, req.body.recipes, req.body.folders
+        );
+        debug("POST /recipes/user/update: 200");
         res.sendStatus(200);
     } catch(err) {
-        error(`POST /recipes/update: ${err.message}`);
-        res.status(400).send(err.message);
-    }
-});
-
-router.post("/recipes/delete", async (req, res) => {
-    info("POST /recipes/delete");
-
-    try {
-        // validate the provided user info
-        await validateUserInfo(req.body.userId, req.body.userKey);
-
-        // delete the recipes
-        const recipes = req.body.recipes ? req.body.recipes : [];
-        for (const uuid of recipes) {
-            await deleteRecipe(uuid);
-        }
-        // delete the folders
-        const folders = req.body.folders ? req.body.folders : [];
-        for (const uuid of folders) {
-            await deleteFolder(uuid);
-        }
-
-        debug("POST /recipes/delete: 200");
-        res.sendStatus(200);
-    } catch(err) {
-        error(`POST /recipes/delete: ${err.message}`);
+        error(`POST /recipes/user/update: ${err.message}`);
         res.status(400).send(err.message);
     }
 });
