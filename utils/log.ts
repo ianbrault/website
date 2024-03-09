@@ -8,17 +8,17 @@ function logfmt(): string {
     const hour = dateObj.getHours().toString().padStart(2, "0");
     const mins = dateObj.getMinutes().toString().padStart(2, "0");
     const secs = dateObj.getSeconds().toString().padStart(2, "0");
-    return `[${dateStr} ${hour}:${mins}:${secs}]: `;
+    return `[${dateStr}T${hour}:${mins}:${secs}]: `;
 };
 
 export function debug(message: string) {
-    console.log(`%c${logfmt()}${message}`, "color: green");
+    console.debug(`${logfmt()}${message}`);
 }
 
 export function info(message: string) {
-    console.log(`${logfmt()}${message}`);
+    console.info(`${logfmt()}${message}`);
 }
 
 export function error(message: string) {
-    console.log(`%c${logfmt()}${message}`, "color: red; font-weight: bold");
+    console.error(`${logfmt()}${message}`);
 }
