@@ -13,7 +13,7 @@ const router = express.Router();
 router.get("/sleeper", (_req, res) => {
     info("GET /sleeper");
     res.sendFile("sleeper.html", {
-        root: path.getViewsDirectory("sleeper")
+        root: path.viewsDirectory("sleeper")
     });
 });
 

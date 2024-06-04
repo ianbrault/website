@@ -2,25 +2,25 @@
 ** recipe_book/models/utils.ts
 */
 
-import RecipeFolder from "./RecipeFolder.js";
-import User from "./User.js";
+import { HydratedDocument, Schema } from "npm:mongoose@^6.7";
 
+import User, { IUser, IUserInfo } from "./User.ts";
 import { debug } from "../../utils/log.ts";
 
-function uuid() {
+function uuid(): string {
     return crypto.randomUUID().toString().toUpperCase();
 }
 
-export async function createUser(email, password) {
+export async function createUser(email: string, password: string) {
     // TODO: check for pre-existing user
 
-    const root = new RecipeFolder({
-        uuid: uuid(),
-        folderId: null,
-        name: "",
-        recipes: [],
-        subfolders: [],
-    });
+    const root = {
+        "uuid": uuid(),
+        "folderId": null,
+        "name": "",
+        "recipes": [],
+        "subfolders": [],
+    };
     const user = new User({
         email: email,
         password: password,
@@ -34,7 +34,7 @@ export async function createUser(email, password) {
     debug(`created new user ${user._id} with root folder ${root.uuid}`);
 }
 
-export async function getUser(email, password) {
+export async function getUser(email: string, password: string): Promise<IUserInfo> {
     // search for the user matching the provided email/password
     const user = await User.findOne({email: email, password: password});
     if (!user) {
@@ -54,7 +54,7 @@ export async function getUser(email, password) {
     };
 }
 
-export async function validateUserInfo(id, key) {
+export async function validateUserInfo(id: string, key: string): Promise<HydratedDocument<IUser>> {
     // search for the user by ID
     const user = await User.findById(id);
     if (!user) {
@@ -67,7 +67,7 @@ export async function validateUserInfo(id, key) {
     return user;
 }
 
-export async function updateUser(id, key, root, recipes, folders) {
+export async function updateUser(id: string, key: string, root: string, recipes: Schema.Types.Mixed, folders: Schema.Types.Mixed) {
     // retrieve the user and validate the key
     const user = await validateUserInfo(id, key);
     user.root = root;

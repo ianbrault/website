@@ -13,14 +13,14 @@ const router = express.Router();
 router.get("/", (_req, res) => {
     info("GET /");
     res.sendFile("home.html", {
-        root: path.getViewsDirectory("home")
+        root: path.viewsDirectory("home")
     });
 });
 
 router.get("/projects", (_req, res) => {
     info("GET /projects");
     res.sendFile("projects.html", {
-        root: path.getViewsDirectory("home")
+        root: path.viewsDirectory("home")
     });
 });
 

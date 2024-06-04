@@ -10,7 +10,7 @@ import * as path from "$std/path/mod.ts";
 
 import router from "./router.ts";
 import { info } from "./utils/log.ts";
-import { getProjectDirectory, getStaticDirectory } from "./utils/path.ts";
+import { projectDirectory, staticDirectory } from "./utils/path.ts";
 
 const app = express();
 app.use(express.json());
@@ -18,12 +18,12 @@ app.use(express.urlencoded({extended: true}));
 app.use(router);
 
 // add static paths
-app.use(express.static(path.join(getProjectDirectory(), "dist")));
-app.use(express.static(path.join(getProjectDirectory(), "static")));
+app.use(express.static(path.join(projectDirectory(), "dist")));
+app.use(express.static(path.join(projectDirectory(), "static")));
 // add static paths from apps here
-app.use(express.static(getStaticDirectory("archive")));
-app.use(express.static(getStaticDirectory("home")));
-app.use(express.static(getStaticDirectory("todo")));
+app.use(express.static(staticDirectory("archive")));
+app.use(express.static(staticDirectory("home")));
+app.use(express.static(staticDirectory("todo")));
 
 // connect to the database
 const dbURL = "mongodb://localhost:27017";

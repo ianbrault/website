@@ -13,7 +13,7 @@ const router = express.Router();
 router.get("/todo", (_req, res) => {
     info("GET /todo");
     res.sendFile("todo.html", {
-        root: path.getViewsDirectory("todo")
+        root: path.viewsDirectory("todo")
     });
 });
 

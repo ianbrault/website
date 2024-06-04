@@ -10,7 +10,7 @@ import {
     getUser,
     updateUser,
     validateUserInfo
-} from "./models/utils.js";
+} from "./models/utils.ts";
 import { debug, error, info } from "../utils/log.ts";
 
 const router = express.Router();
