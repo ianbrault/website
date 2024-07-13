@@ -1,0 +1,52 @@
+/*
+** sleeper/src/styles/StatsListView.css
+*/
+
+.stats-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    margin: 20px 0;
+}
+
+.stats-list-title {
+    font-weight: 600;
+    margin: 4px 0;
+}
+
+.stats-list-grid {
+    display: grid;
+    column-gap: 16px;
+    row-gap: 2px;
+}
+
+.grid-header {
+    font-weight: 600;
+    margin: 4px 0;
+    text-align: right;
+}
+
+.grid-header:nth-child(2) {
+    text-align: left;
+}
+
+.grid-item-index {
+    margin: 0;
+    text-align: right;
+}
+
+.grid-item {
+    margin: 0;
+    text-align: right;
+}
+
+.grid-item-name {
+    margin: 0;
+    text-align: left;
+}
+
+@media only screen and (max-width: 768px) {
+    .stats-list-wrapper {
+        margin: 12px 0;
+    }
+}

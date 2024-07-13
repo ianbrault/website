@@ -2,11 +2,17 @@
 ** utils/path.ts
 */
 
-import * as path from "$std/path/mod.ts";
+import path from "path";
+import url from "url";
 
 export function projectDirectory(): string {
-    const filePath = path.fromFileUrl(import.meta.url);
-    return path.dirname(path.dirname(filePath));
+    const filename = url.fileURLToPath(import.meta.url);
+    return path.dirname(path.dirname(filename));
+}
+
+export function srcDirectory(app: string): string {
+    const projectDir = projectDirectory();
+    return path.join(projectDir, app, "src");
 }
 
 export function staticDirectory(app: string): string {

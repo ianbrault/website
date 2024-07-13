@@ -1,0 +1,33 @@
+/*
+** sleeper/src/styles/LeagueStatsView.css
+*/
+
+.league-stats-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.title {
+    font-size: 24px;
+    margin: 0;
+    margin-bottom: 32px;
+}
+
+.stats-views-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 64px;
+}
+
+.grid-break {
+    flex-basis: 100%;
+    height: 0;
+}
+
+@media only screen and (max-width: 768px) {
+    .title {
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+}

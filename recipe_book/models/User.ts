@@ -2,7 +2,7 @@
 ** recipe_book/models/User.ts
 */
 
-import { model, Schema, Types } from "npm:mongoose@^6.7";
+import { model, Schema, Types } from "mongoose";
 
 export interface IUser {
     email: string;

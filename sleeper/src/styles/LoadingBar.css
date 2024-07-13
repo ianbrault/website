@@ -1,0 +1,33 @@
+/*
+** sleeper/src/styles/LoadingBar.css
+*/
+
+.loading-bar-wrapper {
+    width: 120px;
+    height: 6px;
+    border-radius: 6px;
+    margin: 8px;
+    border: 1px solid black;
+    background-color: rgb(233, 233, 233);
+    overflow: hidden;
+    align-self: center;
+}
+
+@keyframes slider {
+    0% {
+        left: -40px;
+    }
+    100% {
+        left: 120px;
+    }
+}
+
+.loading-bar-slider {
+    width: 40px;
+    height: 6px;
+    border-radius: 6px;
+    background-color: gray;
+    position: relative;
+    left: -40px;
+    animation: 1s ease-in-out 0s infinite slider;
+}

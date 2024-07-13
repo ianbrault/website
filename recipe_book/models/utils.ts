@@ -2,7 +2,7 @@
 ** recipe_book/models/utils.ts
 */
 
-import { HydratedDocument, Schema } from "npm:mongoose@^6.7";
+import { HydratedDocument, Schema } from "mongoose";
 
 import User, { IUser, IUserInfo } from "./User.ts";
 import { debug } from "../../utils/log.ts";
@@ -38,7 +38,7 @@ export async function getUser(email: string, password: string): Promise<IUserInf
     // search for the user matching the provided email/password
     const user = await User.findOne({email: email, password: password});
     if (!user) {
-        throw new Deno.errors.NotFound(
+        throw Error(
             "The email address or password you entered is incorrect. Please " +
             "try again."
         );
@@ -58,11 +58,11 @@ export async function validateUserInfo(id: string, key: string): Promise<Hydrate
     // search for the user by ID
     const user = await User.findById(id);
     if (!user) {
-        throw new Deno.errors.NotFound(`invalid user ID ${id}`);
+        throw Error(`invalid user ID ${id}`);
     }
     // then assert that the provided key matches
     if (user.key != key) {
-        throw new Deno.errors.InvalidData("invalid user key");
+        throw Error("invalid user key");
     }
     return user;
 }

@@ -2,8 +2,7 @@
 ** archive/router.ts
 */
 
-// @deno-types="npm:@types/express@4"
-import express from "npm:express@4.18";
+import express from "express";
 
 import { info } from "../utils/log.ts";
 import * as path from "../utils/path.ts";

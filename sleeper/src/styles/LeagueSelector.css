@@ -1,0 +1,18 @@
+/*
+** sleeper/src/styles/LeagueSelector.css
+*/
+
+.league-input {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.league-button {
+    font-size: 14px;
+    align-self: center;
+    padding: 2px 16px;
+    margin: 4px;
+}
