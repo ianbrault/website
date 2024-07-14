@@ -278,7 +278,7 @@ svg {
 
 #copy {
     position: absolute;
-    left: 400px;
+    left: 600px;
     top: 60px;
     width: 640px;
     margin: 0;
@@ -308,7 +308,7 @@ svg {
 
 #lineup-wrapper {
     position: absolute;
-    left: 1906px;
+    left: 2450px;
     top: 8px;
     width: 780px;
     display: flex;
@@ -442,7 +442,7 @@ svg {
 #sponsors-wrapper {
     position: absolute;
     top: 20px;
-    left: 2720px;
+    left: 3460px;
     width: 360px;
     display: flex;
     flex-direction: column;
@@ -518,7 +518,7 @@ svg {
 #stage-wrapper {
     position: absolute;
     top: 32px;
-    right: 232px;
+    right: 242px;
     width: 500px;
     display: flex;
     flex-direction: column;
