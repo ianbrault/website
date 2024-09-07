@@ -21,7 +21,7 @@ router.use(recipeBook);
 router.use(sleeper);
 
 // Apple associated domain file for apps
-router.get(".well-known/apple-app-site-association", (_req, res) => {
+router.get("/.well-known/apple-app-site-association", (_req, res) => {
     info("GET /.well-known/apple-app-site-association");
     res.sendFile("apple-app-site-association", {
         root: path.join(pathUtils.projectDirectory(), "apple-app-site-association")
