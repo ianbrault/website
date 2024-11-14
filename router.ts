@@ -5,8 +5,8 @@
 import express from "express";
 
 import archive from "./archive/router.ts";
+import basil from "./basil/router.ts";
 import home from "./home/router.ts";
-import recipeBook from "./recipe_book/router.ts";
 import sleeper from "./sleeper/router.ts";
 
 import { info } from "./utils/log.ts";
@@ -15,8 +15,8 @@ import * as path from "./utils/path.ts";
 const router = express.Router();
 // add routers from apps here
 router.use(archive);
+router.use(basil);
 router.use(home);
-router.use(recipeBook);
 router.use(sleeper);
 
 // Apple associated domain file for apps

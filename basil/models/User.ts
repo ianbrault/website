@@ -1,5 +1,5 @@
 /*
-** recipe_book/models/User.ts
+** basil/models/User.ts
 */
 
 import { model, Schema, Types } from "mongoose";

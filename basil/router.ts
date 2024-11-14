@@ -1,5 +1,5 @@
 /*
-** recipe_book/router.ts
+** basil/router.ts
 */
 
 import express from "express";
@@ -14,52 +14,53 @@ import { debug, error, info } from "../utils/log.ts";
 
 const router = express.Router();
 
-router.post("/recipes/register", async (req, res) => {
-    info("POST /recipes/register");
+router.post("/basil/register", async (req, res) => {
+    info("POST /basil/register");
 
     try {
         // create the user model
-        await createUser(req.body.email, req.body.password);
-        // retrieve the newly-created user info, including the root folder
-        const userInfo = await getUser(req.body.email, req.body.password);
-        debug(`POST /recipes/register: response: ${JSON.stringify(userInfo)}`);
+        const userInfo = await createUser(
+            req.body.email, req.body.password,
+            req.body.root, req.body.recipes, req.body.folders
+        );
+        debug(`POST /basil/register: response: ${JSON.stringify(userInfo)}`);
         res.send(userInfo);
     } catch(err) {
-        error(`POST /recipes/register: ${err.message}`);
+        error(`POST /basil/register: ${err.message}`);
         res.status(400).send(err.message);
     }
 });
 
-router.post("/recipes/login", async (req, res) => {
-    info("POST /recipes/login");
+router.post("/basil/login", async (req, res) => {
+    info("POST /basil/login");
 
     try {
         // retrieve the user info
         const userInfo = await getUser(req.body.email, req.body.password);
-        debug(`POST /recipes/login: response: ${JSON.stringify(userInfo)}`);
+        debug(`POST /basil/login: response: ${JSON.stringify(userInfo)}`);
         res.send(userInfo);
     } catch(err) {
-        error(`POST /recipes/login: ${err.message}`);
+        error(`POST /basil/login: ${err.message}`);
         res.status(400).send(err.message);
     }
 });
 
-router.post("/recipes/user/poke", async (req, res) => {
-    info("POST /recipes/user/poke");
+router.post("/basil/user/poke", async (req, res) => {
+    info("POST /basil/user/poke");
 
     try {
         // validate the provided user info
         await validateUserInfo(req.body.id, req.body.key);
-        debug("POST /recipes/user/poke: 200");
+        debug("POST /basil/user/poke: 200");
         res.sendStatus(200);
     } catch(err) {
-        error(`POST /recipes/user/poke: ${err.message}`);
+        error(`POST /basil/user/poke: ${err.message}`);
         res.status(400).send(err.message);
     }
 });
 
-router.post("/recipes/user/update", async (req, res) => {
-    info("POST /recipes/user/update");
+router.post("/basil/user/update", async (req, res) => {
+    info("POST /basil/user/update");
 
     try {
         // update the stored user using the provided info
@@ -67,10 +68,10 @@ router.post("/recipes/user/update", async (req, res) => {
             req.body.id, req.body.key,
             req.body.root, req.body.recipes, req.body.folders
         );
-        debug("POST /recipes/user/update: 200");
+        debug("POST /basil/user/update: 200");
         res.sendStatus(200);
     } catch(err) {
-        error(`POST /recipes/user/update: ${err.message}`);
+        error(`POST /basil/user/update: ${err.message}`);
         res.status(400).send(err.message);
     }
 });
