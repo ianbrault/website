@@ -4,8 +4,16 @@
 
 import React from "react";
 
-import { League, getUserID, getUserCurrentLeagues } from "../api.ts";
+import {
+    League,
+    getUserID,
+    getUserCurrentLeagues
+} from "../api.ts";
+
+import Button from "../../../components/Button.tsx";
+import TextInput from "../../../components/TextInput.tsx";
 import LoadingBar from "./LoadingBar.tsx";
+
 import "../styles/UserLogin.css";
 
 interface UserLoginProps {
@@ -17,8 +25,8 @@ export default function UserLogin({ setLeagues, nextPage }: UserLoginProps) {
     const [username, setUsername] = React.useState("");
     const [loading, setLoading] = React.useState(false);
 
-    function onUsernameChange(event: React.ChangeEvent<HTMLInputElement>) {
-        setUsername(event.target.value);
+    function onUsernameChange(text: string) {
+        setUsername(text);
     }
 
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -57,14 +65,12 @@ export default function UserLogin({ setLeagues, nextPage }: UserLoginProps) {
 
     return (
         <form className="user-input" onSubmit={onSubmit}>
-            <label>Enter your username:</label>
-            <input
-                type="text"
-                className="username-input"
-                value={username}
+            <TextInput
+                label="Enter your username:"
                 onChange={onUsernameChange}
+                className="username-input"
             />
-            <button className="user-button">submit</button>
+            <Button message="submit" className="user-button"/>
             <LoadingBar loading={loading}/>
         </form>
     );

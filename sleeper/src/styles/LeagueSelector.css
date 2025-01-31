@@ -7,12 +7,14 @@
     flex-direction: column;
     justify-content: flex-start;
     gap: 8px;
-    font-size: 14px;
+}
+
+.league-input > label {
+    font-size: 1rem;
 }
 
 .league-button {
-    font-size: 14px;
     align-self: center;
-    padding: 2px 16px;
-    margin: 4px;
+    margin: 8px;
+    width: 128px;
 }

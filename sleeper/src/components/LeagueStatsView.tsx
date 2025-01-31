@@ -5,8 +5,10 @@
 import React from "react";
 
 import { Info, userIdToName } from "../utils.ts";
+
 import GameStatView from "./GameStatView.tsx";
 import StatsListView from "./StatsListView.tsx";
+
 import "../styles/LeagueStatsView.css";
 
 interface LeagueStatsViewProps {

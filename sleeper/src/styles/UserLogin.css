@@ -7,7 +7,6 @@
     flex-direction: column;
     justify-content: flex-start;
     gap: 8px;
-    font-size: 14px;
 }
 
 .username-input {
@@ -16,7 +15,6 @@
 
 .user-button {
     align-self: center;
-    padding: 2px 16px;
     margin: 4px;
-    font-size: 14px;
+    width: 128px;
 }

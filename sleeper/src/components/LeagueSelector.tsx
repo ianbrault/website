@@ -6,7 +6,11 @@ import React from "react";
 
 import { League } from "../api.ts";
 import { Info, getLeagueStats } from "../utils.ts";
+
+import Button from "../../../components/Button.tsx";
+import RadioInput from "../../../components/RadioInput.tsx";
 import LoadingBar from "./LoadingBar.tsx";
+
 import "../styles/LeagueSelector.css";
 
 interface LeagueSelectorProps {
@@ -19,8 +23,8 @@ export default function LeagueSelector({ leagues, setInfo, nextPage }: LeagueSel
     const [selectedLeague, setSelectedLeague] = React.useState("");
     const [loading, setLoading] = React.useState(false);
 
-    function onLeagueSelectedChange(event: React.ChangeEvent<HTMLInputElement>) {
-        setSelectedLeague(event.target.value);
+    function onLeagueSelectedChange(selection: string) {
+        setSelectedLeague(selection);
     }
 
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -42,22 +46,20 @@ export default function LeagueSelector({ leagues, setInfo, nextPage }: LeagueSel
 
     const inputs = leagues.map((league) => {
         return (
-            <label key={league.id}>
-                <input
-                    type="radio"
-                    value={league.id}
-                    checked={selectedLeague === league.id}
-                    onChange={onLeagueSelectedChange}
-                />
-                {league.name}
-            </label>
+            <RadioInput
+                key={league.id}
+                value={league.id}
+                label={league.name}
+                checked={selectedLeague === league.id}
+                onChange={onLeagueSelectedChange}
+            />
         );
     });
     return (
         <form id="league-input" className="league-input" onSubmit={onSubmit}>
             <label htmlFor="league-input">Select your league:</label>
             {inputs}
-            <button className="league-button">submit</button>
+            <Button message="submit" className="league-button"/>
             <LoadingBar loading={loading}/>
         </form>
     );

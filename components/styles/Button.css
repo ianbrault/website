@@ -1,0 +1,16 @@
+/*
+** components/styles/Button.css
+*/
+
+.components--button {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+
+    font-size: 0.9rem;
+
+    background-color: rgb(229, 229, 234);
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 4px 16px 5px 16px;
+}

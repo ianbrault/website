@@ -172,6 +172,7 @@ function getGameStats(rosters: Roster[], matchups: {[year: number]: Matchup[][]}
     const nUsers = rosters.length;
     for (let year = minYear; year <= maxYear; year++) {
         for (const [week, teams] of matchups[year].entries()) {
+            if (!teams || teams.length === 0) continue;
             // each week contains entries for each team, pair them by matchup ID
             for (let matchupID = 1; matchupID <= nUsers / 2; matchupID++) {
                 const games = teams.filter((team) => team.matchupID == matchupID);
