@@ -1,0 +1,15 @@
+/*
+** random/aoc_lanternfish/src/styles/FileInput.css
+*/
+
+.file-input {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    font-size: 1rem;
+}
+
+.file-input--input {
+    font-size: 0.8rem;
+}

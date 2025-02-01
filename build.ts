@@ -18,6 +18,7 @@ export default async function build() {
             "./archive/src/faroutfest/faroutfest.js",
             "./archive/src/faroutfest/lineup.js",
             "./archive/src/faroutfest/slideshow.js",
+            "./random/aoc_lanternfish/src/index.tsx",
             "./sleeper/src/index.tsx",
         ],
         outdir: "./dist",

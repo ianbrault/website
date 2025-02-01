@@ -8,16 +8,22 @@ import "./styles/Button.css";
 
 interface ButtonProps {
     message: string;
-    className: string;
+    onClick?: () => void;
+    className?: string;
 }
 
-export default function Button({ message, className = "" }: ButtonProps) {
+export default function Button({ message, onClick = undefined, className = "" }: ButtonProps) {
     const classes = ["components--button"];
     if (className) {
         classes.push(className);
     }
 
     return (
-        <button className={classes.join(" ")}>{message}</button>
+        <button
+            onClick={onClick}
+            className={classes.join(" ")}
+        >
+            {message}
+        </button>
     );
 }
