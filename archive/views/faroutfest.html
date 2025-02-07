@@ -97,43 +97,8 @@
             <div id="progress"></div>
         </nav>
     </div>
-    <div id="popup-overlay">
-        <div id="popup">
-            <a id="popup-link" target="_blank" href="https://www.kickstarter.com/projects/2030873472/westwoods-far-out-fest">
-                <img id="popup-image" src="/img/faroutfest/kickstarter.svg"/>
-            </a>
-            <a target="_blank" href="https://www.kickstarter.com/projects/2030873472/westwoods-far-out-fest">
-                <p id="popup-title">Help us hit our fundraising goal!</p>
-            </a>
-            <p id="popup-text">
-                Our event relies on community support from people like you. Help us make this
-                years event the best it can be by backing us on Kickstarter!
-            </p>
-            <div id="popup-row">
-                <a target="_blank" href="https://www.kickstarter.com/projects/2030873472/westwoods-far-out-fest">
-                    <div class="popup-button popup-button--yes">I'm in!</div>
-                </a>
-                <div class="popup-button popup-button--no">dismiss</div>
-            </div>
-        </div>
-    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="/archive/src/faroutfest/faroutfest.js"></script>
     <script src="/archive/src/faroutfest/slideshow.js"></script>
     <script src="/archive/src/faroutfest/lineup.js"></script>
-    <script type="text/javascript">
-        let overlay = document.getElementById("popup-overlay");
-
-        function dismissPopup() {
-            overlay.style.display = "none";
-        }
-
-        let buttons = document.getElementsByClassName("popup-button");
-        for (let i = 0; i < buttons.length; i++)
-            buttons[i].onclick = dismissPopup;
-
-        // show popup after 5 seconds
-        let popupDelay = 15000;
-        setTimeout(() => { overlay.style.display = "flex"; }, popupDelay);
-    </script>
 </body>
