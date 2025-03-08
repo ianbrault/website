@@ -1,10 +1,10 @@
 /*
-** random/aoc_lanternfish/src/components/FileInput.tsx
+** components/FileInput.tsx
 */
 
 import React from "react";
 
-import "../styles/FileInput.css";
+import "./styles/FileInput.css";
 
 interface FileInputProps {
     label: string;

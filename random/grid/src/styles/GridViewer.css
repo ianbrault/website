@@ -1,0 +1,39 @@
+/*
+** random/aoc_lanternfish/src/styles/GridViewer.css
+*/
+
+.grid-wrapper {
+    display: grid;
+    row-gap: 0;
+    column-gap: 0;
+
+    font-size: 0.75rem;
+
+    cursor: default;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.grid-item {
+    margin: 0;
+}
+
+.hover-text {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 64px;
+    border-radius: 8px;
+    padding: 4px 10px;
+
+    font-size: 0.8rem;
+    text-align: center;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.hover-text--hidden {
+    display: none;
+}

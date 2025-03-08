@@ -1,5 +1,5 @@
 /*
-** random/aoc_lanternfish/src/components/App.tsx
+** random/grid/src/components/App.tsx
 */
 
 import React from "react";

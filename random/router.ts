@@ -16,4 +16,11 @@ router.get("/random/aoc_lanternfish", (_req, res) => {
     });
 });
 
+router.get("/random/grid", (_req, res) => {
+    info("GET /random/grid");
+    res.sendFile("index.html", {
+        root: path.viewsDirectory("random/grid")
+    });
+});
+
 export default router;

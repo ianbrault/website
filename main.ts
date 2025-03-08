@@ -24,6 +24,7 @@ app.use(express.static(path.join(projectDirectory(), "static")));
 app.use(express.static(staticDirectory("archive")));
 app.use(express.static(staticDirectory("home")));
 app.use(express.static(staticDirectory("random/aoc_lanternfish")));
+app.use(express.static(staticDirectory("random/grid")));
 app.use(express.static(staticDirectory("sleeper")));
 
 // build website assets

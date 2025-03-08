@@ -1,0 +1,29 @@
+/*
+** random/grid/static/grid.base.css
+*/
+
+* {
+    font-family: "Source Code Pro";
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 64px;
+}
+
+@media only screen and (max-width: 768px) {
+    main {
+        padding: 40px;
+    }
+}
