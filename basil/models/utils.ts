@@ -12,7 +12,7 @@ function uuid(): string {
 }
 
 async function userExists(email: string): Promise<boolean> {
-    return User.findOne({email: email}) !== null;
+    return await User.findOne({email: email}) !== null;
 }
 
 export async function createUser(
@@ -35,8 +35,8 @@ export async function createUser(
             password: password,
             key: uuid(),
             root: root,
-            recipes: [recipes],
-            folders: [folders],
+            recipes: recipes,
+            folders: folders,
         });
     } else {
         const rootFolder = {
