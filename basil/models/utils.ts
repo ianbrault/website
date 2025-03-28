@@ -116,3 +116,16 @@ export async function updateUser(
     user.folders = folders;
     await user.save();
 }
+
+export async function deleteUser(
+    id: string,
+    key: string,
+    password: string,
+) {
+    // retrieve the user and validate the key
+    const user = await validateUserInfo(id, key);
+    if (user.password != password) {
+        throw Error("password does not match");
+    }
+    await user.deleteOne();
+}

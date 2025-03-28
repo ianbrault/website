@@ -6,6 +6,7 @@ import express from "express";
 
 import {
     createUser,
+    deleteUser,
     getUser,
     updateUser,
     validateUserInfo
@@ -72,6 +73,20 @@ router.post("/basil/user/update", async (req, res) => {
         res.sendStatus(200);
     } catch(err) {
         error(`POST /basil/user/update: ${err.message}`);
+        res.status(400).send(err.message);
+    }
+});
+
+router.post("/basil/user/delete", async (req, res) => {
+    info("POST /basil/user/delete");
+
+    try {
+        // delete the stored user using the provided info
+        await deleteUser(req.body.id, req.body.key, req.body.password);
+        debug("POST /basil/user/delete: 200");
+        res.sendStatus(200);
+    } catch(err) {
+        error(`POST /basil/user/delete: ${err.message}`);
         res.status(400).send(err.message);
     }
 });
