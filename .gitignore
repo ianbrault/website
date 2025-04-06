@@ -4,6 +4,7 @@ __pycache__
 
 .mongodb.log*
 
+**/.venv
 *.env
 *.pem
 *.key
