@@ -7,5 +7,3 @@ matches=$(ps aux | grep $USER | grep main.ts | grep -v grep | awk '{print $2}')
 if [[ ! -z $matches ]]; then
     kill $matches
 fi
-
-# kill $(ps aux | grep $USER | grep main.ts | grep -v grep | awk '{print $2}')
