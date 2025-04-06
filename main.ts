@@ -7,10 +7,16 @@ import mongoose from "mongoose";
 
 import path from "path";
 
+import { parseArgs } from "./args.ts";
 import build from "./build.ts";
 import router from "./router.ts";
-import { info } from "./utils/log.ts";
+import { info, setPrefix } from "./utils/log.ts";
 import { projectDirectory, staticDirectory } from "./utils/path.ts";
+
+// parse command-line arguments
+const args = parseArgs(process.argv);
+const port = args.nightly ? 8080 : 3030;
+setPrefix(args.nightly ? "nightly" : "server");
 
 const app = express();
 app.use(express.json());
@@ -34,5 +40,10 @@ const dbURL = "mongodb://localhost:27017";
 await mongoose.connect(dbURL);
 info(`connected to database at ${dbURL}`);
 // start the HTTPS server
-const port = 3030;
 app.listen(port, () => info(`server running on https://127.0.0.1:${port}`));
+
+// gracefully handle Ctrl+C
+process.once("SIGTERM", (_) => {
+    info("Ctrl+C received, terminating");
+    process.exit(0);
+});

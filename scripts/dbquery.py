@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# dbquery.py
+# Query users in the MongoDB database
 
 import argparse
 import pprint
