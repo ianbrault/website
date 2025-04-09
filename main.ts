@@ -13,6 +13,8 @@ import router from "./router.ts";
 import { info, setPrefix } from "./utils/log.ts";
 import { projectDirectory, staticDirectory } from "./utils/path.ts";
 
+import UserMigration from "./basil/migrations/User.ts";
+
 // parse command-line arguments
 const args = parseArgs(process.argv);
 const port = args.nightly ? 8080 : 3030;
@@ -35,10 +37,14 @@ app.use(express.static(staticDirectory("sleeper")));
 
 // build website assets
 await build();
+
 // connect to the MongoDB database
 const dbURL = "mongodb://localhost:27017";
 await mongoose.connect(dbURL);
 info(`connected to database at ${dbURL}`);
+// run any model migrations
+await UserMigration.migrate();
+
 // start the HTTPS server
 app.listen(port, () => info(`server running on https://127.0.0.1:${port}`));
 

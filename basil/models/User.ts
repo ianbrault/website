@@ -5,6 +5,7 @@
 import { model, Schema, Types } from "mongoose";
 
 export interface IUser {
+    schemaVersion: Number;
     email: string;
     password: string;
     key: string;
@@ -23,6 +24,10 @@ export interface IUserInfo {
 }
 
 const userSchema = new Schema<IUser>({
+    schemaVersion: {
+        type: Number,
+        required: true,
+    },
     email: {
         type: String,
         unique: true,
