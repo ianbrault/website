@@ -4,7 +4,7 @@
 
 import { HydratedDocument, Schema } from "mongoose";
 
-import User, { IUser, IUserInfo } from "./User.ts";
+import User, { IUser, IUserMethods, IUserInfo } from "./User.ts";
 import { debug } from "../../utils/log.ts";
 
 function uuid(): string {
@@ -20,14 +20,15 @@ export async function createUser(
     password: string,
     root: string,
     recipes: Schema.Types.Mixed,
-    folders: Schema.Types.Mixed
+    folders: Schema.Types.Mixed,
+    device: string,
 ): Promise<IUserInfo> {
     // check for a pre-existing user with the same email
     if (await userExists(email)) {
         throw Error("A user with the given email address already exists.");
     }
 
-    let user: HydratedDocument<IUser>;
+    let user: HydratedDocument<IUser, IUserMethods>;
     // create the root folder if one was not provided
     if (root) {
         user = new User({
@@ -37,6 +38,7 @@ export async function createUser(
             root: root,
             recipes: recipes,
             folders: folders,
+            devices: device ? [device] : [],
         });
     } else {
         const rootFolder = {
@@ -53,23 +55,18 @@ export async function createUser(
             root: rootFolder.uuid,
             recipes: [],
             folders: [rootFolder],
+            devices: device ? [device] : [],
         });
     }
 
     await user.save();
     debug(`created new user ${user._id} with root folder ${user.root}`);
-
-    return {
-        id: user._id,
-        email: user.email,
-        key: user.key,
-        root: user.root,
-        recipes: user.recipes,
-        folders: user.folders,
-    };
+    return user.info();
 }
 
-export async function getUser(email: string, password: string): Promise<IUserInfo> {
+export async function getUser(email: string, password: string)
+    : Promise<HydratedDocument<IUser, IUserMethods>>
+{
     // search for the user matching the provided email/password
     const user = await User.findOne({email: email, password: password});
     if (!user) {
@@ -78,18 +75,12 @@ export async function getUser(email: string, password: string): Promise<IUserInf
             "try again."
         );
     }
-
-    return {
-        id: user._id,
-        email: user.email,
-        key: user.key,
-        root: user.root,
-        recipes: user.recipes,
-        folders: user.folders,
-    };
+    return user;
 }
 
-export async function validateUserInfo(id: string, key: string): Promise<HydratedDocument<IUser>> {
+export async function validateUserInfo(id: string, key: string)
+    : Promise<HydratedDocument<IUser, IUserMethods>>
+{
     // search for the user by ID
     const user = await User.findById(id);
     if (!user) {

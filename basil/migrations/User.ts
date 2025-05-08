@@ -15,6 +15,13 @@ export default class UserMigration {
             this.applyMigration(user);
             return true;
         }
+        // Migration 1: Add field "devices" for user device tokens
+        else if (user.schemaVersion === 0) {
+            user.schemaVersion = 1;
+            user.devices = [];
+            this.applyMigration(user);
+            return true;
+        }
         return false;
     }
 

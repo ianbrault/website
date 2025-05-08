@@ -2,7 +2,7 @@
 ** basil/models/User.ts
 */
 
-import { model, Schema, Types } from "mongoose";
+import { model, HydratedDocument, Model, Schema, Types } from "mongoose";
 
 export interface IUser {
     schemaVersion: Number;
@@ -12,6 +12,7 @@ export interface IUser {
     root: string;
     recipes: Schema.Types.Mixed;
     folders: Schema.Types.Mixed;
+    devices: string[];
 }
 
 export interface IUserInfo {
@@ -23,7 +24,20 @@ export interface IUserInfo {
     folders: Schema.Types.Mixed;
 }
 
-const userSchema = new Schema<IUser>({
+export interface IUserMethods {
+    info(): IUserInfo;
+    containsDevice(device: string): boolean;
+}
+
+export type UserDocument = HydratedDocument<IUser, IUserMethods>;
+
+interface UserModel extends Model<IUser, {}, IUserMethods> {
+    createUser(email: string | null, password: string | null): Promise<UserDocument>;
+    getById(id: string | null, key: string | null): Promise<UserDocument>;
+    getByEmail(email: string | null, password: string | null): Promise<UserDocument>;
+}
+
+const userSchema = new Schema<IUser, UserModel, IUserMethods>({
     schemaVersion: {
         type: Number,
         required: true,
@@ -34,7 +48,7 @@ const userSchema = new Schema<IUser>({
         required: true,
     },
     password: {
-        type: String,  // base64-encoded
+        type: String,
         required: true,
     },
     key: {
@@ -44,6 +58,62 @@ const userSchema = new Schema<IUser>({
     root: String,
     recipes: Schema.Types.Mixed,
     folders: Schema.Types.Mixed,
+    devices: [String],
 });
 
-export default model<IUser>("User", userSchema);
+userSchema.method("info", function info() {
+    return {
+        id: this._id,
+        email: this.email,
+        key: this.key,
+        root: this.root,
+        recipes: this.recipes,
+        folders: this.folders,
+    };
+});
+
+userSchema.static("createUser", async function createUser(email: string | null, password: string | null): Promise<UserDocument> {
+    // check for a pre-existing user with the same email
+    const existing = await this.findOne({email: email});
+    if (existing !== null) {
+        throw Error("A user with the given email address already exists.");
+    }
+    const user = new this({
+        email: email,
+        password: password,
+        key: crypto.randomUUID().toString().toUpperCase(),
+        root: null,
+        recipes: [],
+        folders: [],
+        devices: [],
+    });
+    await user.save();
+    return user;
+});
+
+userSchema.static("getById", async function getById(id: string | null, key: string | null): Promise<UserDocument> {
+    // search for the user by ID
+    const user = await this.findById(id);
+    if (!user) {
+        throw Error(`invalid user ID ${id}`);
+    }
+    // then assert that the provided key matches
+    if (user.key != key) {
+        throw Error("invalid user key");
+    }
+    return user;
+});
+
+userSchema.static("getByEmail", async function getByEmail(email: string | null, password: string | null): Promise<UserDocument> {
+    // search for the user matching the provided email/password
+    const user = await this.findOne({email: email, password: password});
+    if (!user) {
+        throw Error(
+            "The email address or password you entered is incorrect. Please " +
+            "try again."
+        );
+    }
+    return user;
+});
+
+export default model<IUser, UserModel>("User", userSchema);

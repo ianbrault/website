@@ -22,7 +22,8 @@ router.post("/basil/register", async (req, res) => {
         // create the user model
         const userInfo = await createUser(
             req.body.email, req.body.password,
-            req.body.root, req.body.recipes, req.body.folders
+            req.body.root, req.body.recipes, req.body.folders,
+            req.body.device
         );
         debug(`POST /basil/register: response: ${JSON.stringify(userInfo)}`);
         res.send(userInfo);
@@ -37,9 +38,14 @@ router.post("/basil/login", async (req, res) => {
 
     try {
         // retrieve the user info
-        const userInfo = await getUser(req.body.email, req.body.password);
-        debug(`POST /basil/login: response: ${JSON.stringify(userInfo)}`);
-        res.send(userInfo);
+        const user = await getUser(req.body.email, req.body.password);
+        // if this is a new device for the user, add the token to the device list
+        if (req.body.device && !user.containsDevice(req.body.device)) {
+            user.devices.push(req.body.device);
+            await user.save();
+        }
+        debug(`POST /basil/login: response: ${JSON.stringify(user.info())}`);
+        res.send(user.info());
     } catch(err) {
         error(`POST /basil/login: ${err.message}`);
         res.status(400).send(err.message);
@@ -51,7 +57,12 @@ router.post("/basil/user/poke", async (req, res) => {
 
     try {
         // validate the provided user info
-        await validateUserInfo(req.body.id, req.body.key);
+        const user = await validateUserInfo(req.body.id, req.body.key);
+        // if this is a new device for the user, add the token to the device list
+        if (req.body.device && !user.containsDevice(req.body.device)) {
+            user.devices.push(req.body.device);
+            await user.save();
+        }
         debug("POST /basil/user/poke: 200");
         res.sendStatus(200);
     } catch(err) {
