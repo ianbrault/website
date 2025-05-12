@@ -13,6 +13,7 @@ import router from "./router.ts";
 import { info, setPrefix } from "./utils/log.ts";
 import { projectDirectory, staticDirectory } from "./utils/path.ts";
 
+import BasilWSServer from "./basil/server/server.ts";
 import UserMigration from "./basil/migrations/User.ts";
 
 // parse command-line arguments
@@ -46,7 +47,13 @@ info(`connected to database at ${dbURL}`);
 await UserMigration.migrate();
 
 // start the HTTPS server
-app.listen(port, () => info(`server running on https://127.0.0.1:${port}`));
+app.listen(
+    port,
+    () => info(`server running on https://localhost:${port}`)
+);
+
+// start the Basil WebSocket server
+new BasilWSServer();
 
 // gracefully handle Ctrl+C
 process.once("SIGTERM", (_) => {

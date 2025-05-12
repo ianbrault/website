@@ -1,17 +1,16 @@
 /*
-** basil/router.ts
+** basil/router/v1.ts
 */
 
 import express from "express";
 
+import User from "../models/User.ts";
 import {
-    createUser,
     deleteUser,
-    getUser,
     updateUser,
     validateUserInfo
-} from "./models/utils.ts";
-import { debug, error, info } from "../utils/log.ts";
+} from "../models/utils.ts";
+import { debug, error, info } from "../../utils/log.ts";
 
 const router = express.Router();
 
@@ -20,13 +19,13 @@ router.post("/basil/register", async (req, res) => {
 
     try {
         // create the user model
-        const userInfo = await createUser(
+        const user = await User.createUser(
             req.body.email, req.body.password,
             req.body.root, req.body.recipes, req.body.folders,
             req.body.device
         );
-        debug(`POST /basil/register: response: ${JSON.stringify(userInfo)}`);
-        res.send(userInfo);
+        debug(`POST /basil/register: response: ${JSON.stringify(user.info())}`);
+        res.send(user.info());
     } catch(err) {
         error(`POST /basil/register: ${err.message}`);
         res.status(400).send(err.message);
@@ -38,7 +37,7 @@ router.post("/basil/login", async (req, res) => {
 
     try {
         // retrieve the user info
-        const user = await getUser(req.body.email, req.body.password);
+        const user = await User.getByEmail(req.body.email, req.body.password);
         // if this is a new device for the user, add the token to the device list
         if (req.body.device && !user.containsDevice(req.body.device)) {
             user.devices.push(req.body.device);

@@ -5,7 +5,7 @@
 import express from "express";
 
 import archive from "./archive/router.ts";
-import basil from "./basil/router.ts";
+import basil from "./basil/router/base.ts";
 import home from "./home/router.ts";
 import random from "./random/router.ts";
 import sleeper from "./sleeper/router.ts";
