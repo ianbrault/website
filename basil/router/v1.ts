@@ -4,87 +4,36 @@
 
 import express from "express";
 
-import User from "../models/User.ts";
-import {
-    deleteUser,
-    updateUser,
-    validateUserInfo
-} from "../models/utils.ts";
+import { deleteUser } from "../models/utils.ts";
 import { debug, error, info } from "../../utils/log.ts";
 
 const router = express.Router();
 
-router.post("/basil/register", async (req, res) => {
-    info("POST /basil/register");
+/*
+** NOTE: Basil v1 API is deprecated
+** These routes are left in place to send error messages back to clients and
+** will be removed at a later date.
+*/
+const MESSAGE = "This endpoint has been deprecated. Update to the newest version of the app."
 
-    try {
-        // create the user model
-        const user = await User.createUser(
-            req.body.email, req.body.password,
-            req.body.root, req.body.recipes, req.body.folders,
-            req.body.device
-        );
-        debug(`POST /basil/register: response: ${JSON.stringify(user.info())}`);
-        res.send(user.info());
-    } catch(err) {
-        error(`POST /basil/register: ${err.message}`);
-        res.status(400).send(err.message);
-    }
+router.post("/basil/register", async (_, res) => {
+    info("POST /basil/register: deprecated");
+    res.status(400).send(MESSAGE);
 });
 
-router.post("/basil/login", async (req, res) => {
-    info("POST /basil/login");
-
-    try {
-        // retrieve the user info
-        const user = await User.getByEmail(req.body.email, req.body.password);
-        // if this is a new device for the user, add the token to the device list
-        if (req.body.device && !user.containsDevice(req.body.device)) {
-            user.devices.push(req.body.device);
-            await user.save();
-        }
-        debug(`POST /basil/login: response: ${JSON.stringify(user.info())}`);
-        res.send(user.info());
-    } catch(err) {
-        error(`POST /basil/login: ${err.message}`);
-        res.status(400).send(err.message);
-    }
+router.post("/basil/login", async (_, res) => {
+    info("POST /basil/login: deprecated");
+    res.status(400).send(MESSAGE);
 });
 
-router.post("/basil/user/poke", async (req, res) => {
-    info("POST /basil/user/poke");
-
-    try {
-        // validate the provided user info
-        const user = await validateUserInfo(req.body.id, req.body.key);
-        // if this is a new device for the user, add the token to the device list
-        if (req.body.device && !user.containsDevice(req.body.device)) {
-            user.devices.push(req.body.device);
-            await user.save();
-        }
-        debug("POST /basil/user/poke: 200");
-        res.sendStatus(200);
-    } catch(err) {
-        error(`POST /basil/user/poke: ${err.message}`);
-        res.status(400).send(err.message);
-    }
+router.post("/basil/user/poke", async (_, res) => {
+    info("POST /basil/user/poke: deprecated");
+    res.status(400).send(MESSAGE);
 });
 
-router.post("/basil/user/update", async (req, res) => {
-    info("POST /basil/user/update");
-
-    try {
-        // update the stored user using the provided info
-        await updateUser(
-            req.body.id, req.body.key,
-            req.body.root, req.body.recipes, req.body.folders
-        );
-        debug("POST /basil/user/update: 200");
-        res.sendStatus(200);
-    } catch(err) {
-        error(`POST /basil/user/update: ${err.message}`);
-        res.status(400).send(err.message);
-    }
+router.post("/basil/user/update", async (_, res) => {
+    info("POST /basil/user/update: deprecated");
+    res.status(400).send(MESSAGE);
 });
 
 router.post("/basil/user/delete", async (req, res) => {

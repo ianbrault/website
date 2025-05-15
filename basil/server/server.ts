@@ -7,7 +7,7 @@ import http from "http";
 import { WebSocket, WebSocketServer } from "ws";
 
 import Connection, { ConnectionState } from "./connection.ts";
-import Message, { AuthenticationRequestBody, MessageType } from "./message.ts";
+import Message, { AuthenticationRequestBody, MessageType, UpdateRequestBody } from "./message.ts";
 
 import Token from "../models/Token.ts";
 import User from "../models/User.ts";
@@ -49,7 +49,7 @@ export default class BasilWSServer {
         setTimeout(() => {
             if (connection.state == ConnectionState.NeedsAuthentication) {
                 debug(`basil: connection ${connection.id} unauthenticated after ` +
-                      `${Connection.timeout}s timeout, terminating`);
+                      `${Connection.timeout}ms timeout, terminating`);
                 ws.close(1001, "Authentication timeout");
                 delete this.connections[connection.id];
             }
@@ -76,8 +76,8 @@ export default class BasilWSServer {
     }
 
     onWebSocketError(id: UUID, err: Error) {
-        // FIXME: unimplemented
-        error(`WebSocket error: ${err.message}`);
+        // TODO: consider disconnecting the client if an error occurs
+        error(`basil: connection ${id} error: ${err.message}`);
     }
 
     async onWebSocketMessage(id: UUID, data: ArrayBuffer | Blob | Buffer | Buffer[], isBinary: Boolean) {
@@ -97,6 +97,9 @@ export default class BasilWSServer {
             switch (message.type) {
             case MessageType.AuthenticationRequest:
                 await this.authenticationRequestHandler(connection, message.body as AuthenticationRequestBody);
+                break;
+            case MessageType.UpdateRequest:
+                await this.updateRequestHandler(connection, message.body as UpdateRequestBody);
                 break;
             }
         } catch (err) {
@@ -121,6 +124,7 @@ export default class BasilWSServer {
                 throw new Error(`Token expired at ${token.expiration.toUTCString()}`);
             }
             // User authenticated successfully
+            info(`basil: connection ${connection.id} authenticated user ${user.email}`);
             connection.state = ConnectionState.Authenticated;
             connection.userId = user.id;
             const message = new Message(MessageType.Success, null);
@@ -129,6 +133,25 @@ export default class BasilWSServer {
             error(`basil: connection ${connection.id} authentication failure: ${err.message}`);
             // Send an error message back to the client
             const message = new Message(MessageType.AuthenticationError, err.message);
+            connection.socket.send(message.serialize());
+        }
+    }
+
+    async updateRequestHandler(connection: Connection, body: UpdateRequestBody) {
+        try {
+            const user = await User.getById(connection.userId);
+            user.root = body.root;
+            user.recipes = body.recipes;
+            user.folders = body.folders;
+            await user.save();
+            // User updated successfully
+            info(`basil: connection ${connection.id} updated user ${user.email}`);
+            const message = new Message(MessageType.Success, null);
+            connection.socket.send(message.serialize());
+        } catch (err) {
+            error(`basil: connection ${connection.id} update failure: ${err.message}`);
+            // Send an error message back to the client
+            const message = new Message(MessageType.UpdateError, err.message);
             connection.socket.send(message.serialize());
         }
     }

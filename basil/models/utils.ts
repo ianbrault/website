@@ -3,7 +3,7 @@
 */
 
 import { createHash } from "crypto";
-import { HydratedDocument, Schema } from "mongoose";
+import { HydratedDocument } from "mongoose";
 
 import User, { IUser, IUserMethods } from "./User.ts";
 
@@ -25,22 +25,6 @@ export async function validateUserInfo(id: string, key: string)
         throw new Error("invalid user key");
     }
     return user;
-}
-
-// TODO: remove with v1 deprecation
-export async function updateUser(
-    id: string,
-    key: string,
-    root: string,
-    recipes: Schema.Types.Mixed,
-    folders: Schema.Types.Mixed
-) {
-    // retrieve the user and validate the key
-    const user = await validateUserInfo(id, key);
-    user.root = root;
-    user.recipes = recipes;
-    user.folders = folders;
-    await user.save();
 }
 
 // TODO: remove with v1 deprecation

@@ -2,10 +2,14 @@
 ** basil/server/message.ts
 */
 
+import { Schema } from "mongoose";
+
 export const enum MessageType {
     Success               = 200,
     AuthenticationRequest = 201,
+    UpdateRequest         = 202,
     AuthenticationError   = 401,
+    UpdateError           = 402,
 }
 
 export interface AuthenticationRequestBody {
@@ -13,7 +17,13 @@ export interface AuthenticationRequestBody {
     token: string
 };
 
-type MessageBody = AuthenticationRequestBody | string | null;
+export interface UpdateRequestBody {
+    root: string
+    recipes: Schema.Types.Mixed
+    folders: Schema.Types.Mixed
+};
+
+type MessageBody = AuthenticationRequestBody | UpdateRequestBody | string | null;
 
 class ParseError extends Error {}
 
@@ -55,14 +65,23 @@ export default class Message {
             throw new ParseError(`Invalid message type: ${typeof data}`);
         }
 
+        let body: MessageBody;
         // parse the message body using the given type
         Message.validateKeys(obj, ["type", "body"]);
         switch (obj["type"]) {
         case MessageType.AuthenticationRequest:
             Message.validateKeys(obj["body"], ["userId", "token"]);
-            const body = {
+            body = {
                 userId: obj["body"]["userId"],
                 token: obj["body"]["token"],
+            };
+            return new Message(obj["type"], body);
+        case MessageType.UpdateRequest:
+            Message.validateKeys(obj["body"], ["root", "recipes", "folders"]);
+            body = {
+                root: obj["body"]["root"],
+                recipes: obj["body"]["recipes"],
+                folders: obj["body"]["folders"],
             };
             return new Message(obj["type"], body);
         default:

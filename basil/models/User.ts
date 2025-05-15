@@ -44,7 +44,7 @@ interface UserModel extends Model<IUser, {}, IUserMethods> {
         folders: Schema.Types.Mixed,
         device: string | null,
     ): Promise<UserDocument>;
-    getById(id: string | null): Promise<UserDocument>;
+    getById(id: string | undefined | null): Promise<UserDocument>;
     getByEmail(email: string | null, password: string | null): Promise<UserDocument>;
 }
 
@@ -115,7 +115,7 @@ userSchema.static("createUser", async function createUser(
     return user;
 });
 
-userSchema.static("getById", async function getById(id: string | null): Promise<UserDocument> {
+userSchema.static("getById", async function getById(id: string | undefined | null): Promise<UserDocument> {
     const user = await this.findById(id);
     if (!user) {
         throw new Error(`Invalid user ID ${id}`);
