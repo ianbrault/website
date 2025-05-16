@@ -18,7 +18,8 @@ import UserMigration from "./basil/migrations/User.ts";
 
 // parse command-line arguments
 const args = parseArgs(process.argv);
-const port = args.nightly ? 8080 : 3030;
+const serverPort = args.nightly ? 6060 : 3030;
+const socketPort = args.nightly ? 8080 : 4040;
 setPrefix(args.nightly ? "nightly" : "server");
 
 const app = express();
@@ -48,12 +49,12 @@ await UserMigration.migrate();
 
 // start the HTTPS server
 app.listen(
-    port,
-    () => info(`server running on https://localhost:${port}`)
+    serverPort,
+    () => info(`server running on https://localhost:${serverPort}`)
 );
 
 // start the Basil WebSocket server
-new BasilWSServer();
+new BasilWSServer(socketPort);
 
 // gracefully handle Ctrl+C
 process.once("SIGTERM", (_) => {

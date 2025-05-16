@@ -36,7 +36,7 @@ Starting the server:
 $ ./scripts/start.sh
 # Start the nightly server.
 # Run this from the `nightly` branch of the repository; it will open a separate
-# webserver on port 8080 which nginx forwards to from ".../nightly/"
+# webserver which nginx forwards to from ".../nightly/"
 $ git checkout nightly && git pull
 $ ./scripts/start.sh --nightly
 ```

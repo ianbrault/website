@@ -16,12 +16,11 @@ import { debug, error, info } from "../../utils/log.ts";
 export default class BasilWSServer {
     private wss: WebSocketServer;
     private connections: {[key: UUID]: Connection};
-    private static port: number = 4040;
 
-    constructor() {
+    constructor(port: number) {
         this.wss = new WebSocketServer(
-            {port: BasilWSServer.port},
-            () => info(`Basil WebSocket server running on wss://localhost:${BasilWSServer.port}`)
+            {port: port},
+            () => info(`Basil WebSocket server running on wss://localhost:${port}`)
         );
         this.connections = {};
         this.wss.on("connection", (ws, req) => this.onConnection(ws, req));
