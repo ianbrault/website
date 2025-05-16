@@ -143,6 +143,8 @@ export default class BasilWSServer {
             user.root = body.root;
             user.recipes = body.recipes;
             user.folders = body.folders;
+            // bump the sequence count
+            user.sequence = user.sequence + 1;
             await user.save();
             // User updated successfully
             info(`basil: connection ${connection.id} updated user ${user.email}`);

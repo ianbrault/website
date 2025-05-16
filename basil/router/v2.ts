@@ -82,6 +82,7 @@ router.post("/basil/v2/user/authenticate", async (req, res) => {
             root: user.root,
             recipes: user.recipes,
             folders: user.folders,
+            sequence: user.sequence,
             token: token.id,
         };
         debug(`POST /basil/v2/user/authenticate: response: ${JSON.stringify(body)}`);

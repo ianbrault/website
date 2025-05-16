@@ -22,6 +22,13 @@ export default class UserMigration {
             this.applyMigration(user);
             return true;
         }
+        // Migration 2: Add field "sequence" for a data version sequence number
+        else if (user.schemaVersion === 1) {
+            user.schemaVersion = 2;
+            user.sequence = 0;
+            this.applyMigration(user);
+            return true;
+        }
         return false;
     }
 

@@ -2,34 +2,24 @@
 ** basil/models/User.ts
 */
 
-import { model, HydratedDocument, Model, Schema, Types } from "mongoose";
+import { model, HydratedDocument, Model, Schema } from "mongoose";
 
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 export interface IUser {
-    schemaVersion: Number;
+    schemaVersion: number;
     email: string;
     password: string;
     root: string;
     recipes: Schema.Types.Mixed;
     folders: Schema.Types.Mixed;
     devices: string[];
-    // deprecated fields, remove at a later date
-    key: string;
-}
-
-export interface IUserInfo {
-    id: Types.ObjectId;
-    email: string;
-    root: string;
-    recipes: Schema.Types.Mixed;
-    folders: Schema.Types.Mixed;
+    sequence: number;
     // deprecated fields, remove at a later date
     key: string;
 }
 
 export interface IUserMethods {
-    info(): IUserInfo;  // TODO: remove with v1 deprecation
     containsDevice(device: string): boolean;
 }
 
@@ -66,20 +56,9 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
     recipes: Schema.Types.Mixed,
     folders: Schema.Types.Mixed,
     devices: [String],
+    sequence: Number,
     // deprecated fields, remove at a later date
     key: String,
-});
-
-// TODO: remove with v1 deprecation
-userSchema.method("info", function info(): IUserInfo {
-    return {
-        id: this._id,
-        email: this.email,
-        root: this.root,
-        recipes: this.recipes,
-        folders: this.folders,
-        key: this.key,
-    };
 });
 
 userSchema.method("containsDevice", function containsDevice(device: string): boolean {
@@ -108,6 +87,7 @@ userSchema.static("createUser", async function createUser(
         recipes: recipes,
         folders: folders,
         devices: devices,
+        sequence: 0,
         // deprecated, remove at a later date
         key: crypto.randomUUID().toString().toUpperCase(),
     });
