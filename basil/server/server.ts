@@ -28,22 +28,11 @@ export default class BasilWSServer {
     }
 
     async onConnection(ws: WebSocket, req: http.IncomingMessage) {
-        if (!req.url) {
-            ws.close(1008, "Missing URL");
-            return;
-        }
-        const url = new URL(`ws://localhost${req.url}`);
-        info(`basil: client connected: ${url.pathname}`);
-        // only accept connections for /basil
-        if (url.pathname !== "/basil") {
-            error(`basil: invalid URL path: ${url.pathname}`);
-            ws.close(1008, `Invalid URL: ${url.pathname}`);
-            return;
-        }
-
         // Track the connection
         let connection = new Connection(ws);
         this.connections[connection.id] = connection;
+        info(`basil: client connected: ${connection.id}`);
+
         // Terminate the connection if the user does not authenticate in the defined timeout period
         setTimeout(() => {
             if (connection.state == ConnectionState.NeedsAuthentication) {
@@ -53,6 +42,7 @@ export default class BasilWSServer {
                 delete this.connections[connection.id];
             }
         }, Connection.timeout);
+
         // Configure handlers
         ws.on("close", (code, reason) => {
             this.onWebSocketClose(connection.id, code, reason);

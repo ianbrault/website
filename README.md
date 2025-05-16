@@ -38,7 +38,7 @@ $ ./scripts/start.sh
 # Run this from the `nightly` branch of the repository; it will open a separate
 # webserver which nginx forwards to from ".../nightly/"
 $ git checkout nightly && git pull
-$ ./scripts/start.sh --nightly
+$ ./scripts/start.sh nightly
 ```
 
 Check for running server processes:
