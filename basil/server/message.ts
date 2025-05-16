@@ -8,6 +8,7 @@ export const enum MessageType {
     Success               = 200,
     AuthenticationRequest = 201,
     UpdateRequest         = 202,
+    SyncRequest           = 203,
     AuthenticationError   = 401,
     UpdateError           = 402,
 }
@@ -23,7 +24,14 @@ export interface UpdateRequestBody {
     folders: Schema.Types.Mixed
 };
 
-type MessageBody = AuthenticationRequestBody | UpdateRequestBody | string | null;
+export interface SyncRequestBody {
+    root: string
+    recipes: Schema.Types.Mixed
+    folders: Schema.Types.Mixed
+    sequence: number
+};
+
+type MessageBody = AuthenticationRequestBody | UpdateRequestBody | SyncRequestBody | string | null;
 
 class ParseError extends Error {}
 

@@ -128,12 +128,12 @@ export default class BasilWSServer {
             connection.state = ConnectionState.Authenticated;
             connection.userId = user.id;
             const message = new Message(MessageType.Success, null);
-            connection.socket.send(message.serialize());
+            connection.send(message);
         } catch (err) {
             error(`basil: connection ${connection.id} authentication failure: ${err.message}`);
             // Send an error message back to the client
             const message = new Message(MessageType.AuthenticationError, err.message);
-            connection.socket.send(message.serialize());
+            connection.send(message);
         }
     }
 
@@ -149,12 +149,31 @@ export default class BasilWSServer {
             // User updated successfully
             info(`basil: connection ${connection.id} updated user ${user.email}`);
             const message = new Message(MessageType.Success, null);
-            connection.socket.send(message.serialize());
+            connection.send(message);
+            // Notify any other connected clients that an update was made
+            await this.notifyClients(user.id, [connection.id]);
         } catch (err) {
             error(`basil: connection ${connection.id} update failure: ${err.message}`);
             // Send an error message back to the client
             const message = new Message(MessageType.UpdateError, err.message);
-            connection.socket.send(message.serialize());
+            connection.send(message);
+        }
+    }
+
+    async notifyClients(userId: string, excluding: UUID[] = []) {
+        const user = await User.getById(userId);
+        const body = {
+            root: user.root,
+            recipes: user.recipes,
+            folders: user.folders,
+            sequence: user.sequence,
+        };
+        const message = new Message(MessageType.SyncRequest, body);
+        for (const connection of Object.values(this.connections)) {
+            if ((connection.userId !== userId) || (excluding.find((id) => id === connection.id))) {
+                continue;
+            }
+            connection.send(message);
         }
     }
 }
