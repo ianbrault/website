@@ -13,7 +13,7 @@ import router from "./router.ts";
 import { info, setPrefix } from "./utils/log.ts";
 import { projectDirectory, staticDirectory } from "./utils/path.ts";
 
-import BasilWSServer from "./basil/server/server.ts";
+import * as BasilServer from "./basil/server/server.ts";
 import UserMigration from "./basil/migrations/User.ts";
 
 // parse command-line arguments
@@ -54,7 +54,7 @@ app.listen(
 );
 
 // start the Basil WebSocket server
-new BasilWSServer(socketPort);
+BasilServer.createServer(socketPort);
 
 // gracefully handle Ctrl+C
 process.once("SIGTERM", (_) => {

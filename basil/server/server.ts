@@ -13,7 +13,7 @@ import Token from "../models/Token.ts";
 import User from "../models/User.ts";
 import { debug, error, info } from "../../utils/log.ts";
 
-export default class BasilWSServer {
+class BasilWSServer {
     private wss: WebSocketServer;
     private connections: {[key: UUID]: Connection};
 
@@ -165,4 +165,10 @@ export default class BasilWSServer {
             connection.send(message);
         }
     }
+}
+
+export let server: BasilWSServer | undefined = undefined;
+
+export function createServer(port: number) {
+    server = new BasilWSServer(port);
 }

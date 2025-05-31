@@ -7,6 +7,9 @@ import express from "express";
 import Token from "../models/Token.ts";
 import User from "../models/User.ts";
 import { hashPassword } from "../models/utils.ts";
+
+import { server } from "../server/server.ts";
+
 import { debug, error, info } from "../../utils/log.ts";
 
 const router = express.Router();
@@ -93,5 +96,40 @@ router.post("/basil/v2/user/authenticate", async (req, res) => {
         res.status(401).send(err.message);
     }
 });
+
+router.post("/basil/v2/user/update", async (req, res) => {
+    info("POST /basil/v2/user/update");
+
+    // this endpoint is added to allow command-line tools to push updates for users
+    // requires a token so user must be authenticated prior to calling this endpoint
+    try {
+        const user = await User.getById(req.body.userId);
+        const token = await Token.getById(req.body.token);
+        // verify that the token is valid for the user
+        if (token.user != user.id) {
+            throw new Error(`Token does not match for user ${req.body.userId}`);
+        }
+        // verify that the token has not expired
+        const now = new Date();
+        if (now > token.expiration) {
+            throw new Error(`Token expired at ${token.expiration.toUTCString()}`);
+        }
+        // update the user info
+        user.root = req.body.root;
+        user.recipes = req.body.recipes;
+        user.folders = req.body.folders;
+        // bump the sequence count
+        user.sequence = user.sequence + 1;
+        await user.save();
+        debug("POST /basil/v2/user/update: 200");
+        res.sendStatus(200);
+        // notify any clients that are connected to the WebSocket server
+        await server?.notifyClients(user.id);
+    } catch(err) {
+        error(`POST /basil/v2/user/update: ${err.message}`);
+        res.status(400).send(err.message);
+    }
+});
+
 
 export default router;
