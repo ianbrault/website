@@ -13,7 +13,7 @@ interface HFlexProps {
 }
 
 export default function HFlex(
-    {className, alignItems = "normal", justifyContent = "flex_start", gap = 0, children}: HFlexProps
+    {className, alignItems = "normal", justifyContent = "flex-start", gap = 0, children}: HFlexProps
 ) {
     return (
         <div
@@ -23,7 +23,7 @@ export default function HFlex(
                 flexDirection: "row",
                 alignItems: alignItems,
                 justifyContent: justifyContent,
-                gap: `${gap}px`,
+                gap: gap ? `${gap}px` : undefined,
             }}
         >
             {children}

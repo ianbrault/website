@@ -3,6 +3,7 @@
 */
 
 import Image from "next/image";
+import Link from "next/link";
 import HFlex from "@/components/HFlex";
 import VFlex from "@/components/VFlex";
 
@@ -34,9 +35,9 @@ export default function Home() {
                 <p className={styles.subtext}><i>NASA Jet Propulsion Laboratory</i></p>
             </VFlex>
             <HFlex gap={8}>
-                <a className={styles.link} href="/projects">Projects</a>
+                <Link className={styles.link} href="/projects">Projects</Link>
                 <p className={styles.text}>•</p>
-                <a className={styles.link} href="/resume">Resume</a>
+                <Link className={styles.link} href="/resume">Resume</Link>
             </HFlex>
             <VFlex gap={10}>
                 <p className={styles.subheading}>Links</p>

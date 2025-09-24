@@ -13,7 +13,7 @@ interface VFlexProps {
 }
 
 export default function VFlex(
-    {className, alignItems = "normal", justifyContent = "flex_start", gap = 0, children}: VFlexProps
+    {className, alignItems = "normal", justifyContent = "flex-start", gap = 0, children}: VFlexProps
 ) {
     return (
         <div
@@ -23,7 +23,7 @@ export default function VFlex(
                 flexDirection: "column",
                 alignItems: alignItems,
                 justifyContent: justifyContent,
-                gap: `${gap}px`,
+                gap: gap ? `${gap}px` : undefined,
             }}
         >
             {children}
