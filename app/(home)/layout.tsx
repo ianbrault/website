@@ -1,5 +1,5 @@
 /*
-** app/layout.tsx
+** app/(home)/layout.tsx
 */
 
 import type { Metadata } from "next";

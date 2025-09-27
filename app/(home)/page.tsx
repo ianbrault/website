@@ -1,5 +1,5 @@
 /*
-** app/page.tsx
+** app/(home)/page.tsx
 */
 
 import Image from "next/image";

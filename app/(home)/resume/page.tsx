@@ -1,5 +1,5 @@
 /*
-** app/resume/page.tsx
+** app/(home)/resume/page.tsx
 */
 
 import { Metadata } from "next";
