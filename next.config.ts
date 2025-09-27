@@ -6,6 +6,12 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
+    allowedDevOrigins: [
+        "brault.dev",
+        "*.brault.dev",
+        "test.brault.dev",
+        "*.test.brault.dev",
+    ],
     reactStrictMode: true,
     images: {
         remotePatterns: [

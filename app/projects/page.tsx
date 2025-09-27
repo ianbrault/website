@@ -29,7 +29,7 @@ interface ProjectItemProps {
 }
 
 function ProjectItem({project}: ProjectItemProps) {
-    const imageSize = 50;
+    const imageSize = 40;
     return (
         <div className={styles.projectGrid}>
             <Image
@@ -60,13 +60,13 @@ export default function Projects() {
         {
             name: "Personal Website",
             description: "this one",
-            image: "/images/react.png",
+            image: "/images/typescript.png",
             href: "https://github.com/ianbrault/website",
             tags: ["Typescript", "React", "NextJS"],
         },
         {
             name: "case_iterable",
-            nameElement: <><span className={styles.project_name_mono}>case_iterable</span> crate</>,
+            nameElement: <><span className={styles.projectNameMono}>case_iterable</span> crate</>,
             description: "procedural macro to iterate over enum variants ala Swift",
             image: "/images/rust.png",
             href: "https://crates.io/crates/case_iterable",
@@ -94,11 +94,11 @@ export default function Projects() {
             tags: ["Rust"],
         },
         {
-            name: "Bruin Bash 2018",
-            description: "teaser site for UCLA's 2018 Bruin Bash concert",
-            image: "/images/ucla.jpg",
-            href: "/archive/bbash18-teaser",
-            tags: ["Javascript"],
+            name: "UCLA CEC Web Development",
+            description: "websites for UCLA's Campus Events Commission",
+            image: "/images/cec.png",
+            href: "/cec_portfolio.pdf",
+            tags: ["Javascript", "React"],
         },
     ];
     const openSource = [
@@ -110,7 +110,14 @@ export default function Projects() {
             tags: ["C++"],
         },
         {
-            name: "F-Prime Vorago",
+            name: "fprime-baremetal",
+            description: "F-Prime support package for baremetal environments",
+            image: "/images/fprime.png",
+            href: "https://github.com/fprime-community/fprime-baremetal",
+            tags: ["C++"],
+        },
+        {
+            name: "fprime-vorago",
             description: "F-Prime board support package for Vorago microcontrollers",
             image: "/images/fprime.png",
             href: "https://github.com/fprime-community/fprime-vorago",
