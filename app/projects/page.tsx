@@ -5,6 +5,8 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
+import Header from "@/components/Header";
 import VFlex from "@/components/VFlex";
 
 import styles from "./page.module.css";
@@ -15,7 +17,7 @@ export const metadata: Metadata = {
 
 interface Project {
     name: string;
-    name_element?: React.ReactNode;
+    nameElement?: React.ReactNode;
     description: string;
     image: string;
     href: string;
@@ -27,21 +29,21 @@ interface ProjectItemProps {
 }
 
 function ProjectItem({project}: ProjectItemProps) {
-    const image_size = 50;
+    const imageSize = 50;
     return (
-        <div className={styles.project_grid}>
+        <div className={styles.projectGrid}>
             <Image
-                className={styles.project_image}
+                className={styles.projectImage}
                 src={project.image}
                 alt={project.name}
-                width={image_size} height={image_size}
+                width={imageSize} height={imageSize}
                 quality={85}
             />
-            <Link className={styles.project_name} href={project.href} target="_blank">
-                {project.name_element !== undefined ? project.name_element : project.name}
+            <Link className={styles.projectName} href={project.href} target="_blank">
+                {project.nameElement !== undefined ? project.nameElement : project.name}
             </Link>
-            <p className={styles.project_description}>{project.description}</p>
-            <p className={styles.project_tags}>{project.tags.join(", ")}</p>
+            <p className={styles.projectDescription}>{project.description}</p>
+            <p className={styles.projectTags}>{project.tags.join(", ")}</p>
         </div>
     );
 }
@@ -64,7 +66,7 @@ export default function Projects() {
         },
         {
             name: "case_iterable",
-            name_element: <><span className={styles.project_name_mono}>case_iterable</span> crate</>,
+            nameElement: <><span className={styles.project_name_mono}>case_iterable</span> crate</>,
             description: "procedural macro to iterate over enum variants ala Swift",
             image: "/images/rust.png",
             href: "https://crates.io/crates/case_iterable",
@@ -99,7 +101,7 @@ export default function Projects() {
             tags: ["Javascript"],
         },
     ];
-    const open_source = [
+    const openSource = [
         {
             name: "F-Prime",
             description: "flight software and embedded systems framework",
@@ -115,19 +117,19 @@ export default function Projects() {
             tags: ["C++"],
         },
     ];
-    const project_list = projects.map((project, i) => (
+    const projectList = projects.map((project, i) => (
         <ProjectItem key={i} project={project}/>
     ));
-    const open_source_list = open_source.map((project, i) => (
+    const openSourceList = openSource.map((project, i) => (
         <ProjectItem key={i} project={project}/>
     ));
 
     return (
         <VFlex className={styles.wrapper}>
-            <p className={styles.title}>Projects</p>
-            {project_list}
+            <Header text="Projects" homeButton/>
+            {projectList}
             <p className={styles.subheading}>Open-source contributions</p>
-            {open_source_list}
+            {openSourceList}
         </VFlex>
     );
 }

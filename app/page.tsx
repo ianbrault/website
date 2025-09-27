@@ -4,6 +4,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+
+import Header from "@/components/Header";
 import HFlex from "@/components/HFlex";
 import VFlex from "@/components/VFlex";
 
@@ -16,11 +18,11 @@ interface ImageLinkProps {
 }
 
 function ImageLink({text, src, href}: ImageLinkProps) {
-    const image_size = 48;
+    const imageSize = 48;
     return (
-        <a className={styles.image_wrapper} href={href}>
-            <Image src={src} alt={text} width={image_size} height={image_size}/>
-            <p className={styles.image_link}>{text}</p>
+        <a className={styles.imageWrapper} href={href}>
+            <Image src={src} alt={text} width={imageSize} height={imageSize}/>
+            <p className={styles.imageLink}>{text}</p>
         </a>
     );
 }
@@ -28,7 +30,7 @@ function ImageLink({text, src, href}: ImageLinkProps) {
 export default function Home() {
     return (
         <VFlex className={styles.wrapper} gap={28}>
-            <p className={styles.title}>Ian Brault</p>
+            <Header text="Ian Brault"/>
             <VFlex gap={7}>
                 <p className={styles.subheading}>Currently</p>
                 <p className={styles.text}>Flight Software Engineer</p>
