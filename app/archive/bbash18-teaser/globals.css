@@ -1,0 +1,22 @@
+/*
+** app/archive/bbash18-teaser/global.css
+*/
+
+:root {
+    --white: rgb(248, 248, 248);
+    --gray: rgb(198, 198, 198);
+    --dark-gray: rgb(140, 140, 140);
+    --darker-gray: rgb(112, 112, 112);
+    --blue: #2748a8;
+}
+
+@font-face {
+    font-family: "LCD Solid";
+    src: url("/fonts/LCD_Solid.ttf") format("truetype")
+}
+
+body {
+    overflow: hidden;
+    margin: 0;
+    padding: 0
+}

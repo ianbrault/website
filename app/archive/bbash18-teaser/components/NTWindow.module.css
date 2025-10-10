@@ -1,0 +1,57 @@
+/*
+** app/archive/bbash18-teaser/components/NTWindow.module.css
+*/
+
+.ntWindow {
+    max-width: 95vw;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: var(--gray);
+    border-width: 2px;
+    border-style: solid;
+    border-top-color: var(--white);
+    border-left-color: var(--white);
+    border-right-color: var(--dark-gray);
+    border-bottom-color: var(--dark-gray);
+    box-shadow: 1px 1px 6px #22222240;
+}
+
+.ntMenuBar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.ntMenuBar:hover {
+    cursor: move;
+}
+
+.ntMenuIcon {
+    pointer-events: none;
+    user-select: none;
+    max-height: 80%;
+    margin-left: 6px;
+}
+
+.ntMenuIconClose {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    width: 20px;
+    margin-right: 6px;
+    background-color: var(--gray);
+    border: 1px outset var(--dark-gray);
+}
+
+.ntMenuIconClose:hover {
+    cursor: pointer;
+}
+
+.ntMenuIconCloseImg {
+    pointer-events: none;
+    height: 60%;
+}

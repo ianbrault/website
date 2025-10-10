@@ -1,0 +1,279 @@
+/*
+** app/archive/bbash18-teaser/page.module.css
+*/
+
+@keyframes pop {
+    0% { transform: scale(1) }
+    50% { transform: scale(1.1) }
+    100% { transform: scale(1) }
+}
+
+@keyframes pop-rotated {
+    0% { transform: rotate(12deg) scale(1) }
+    50% { transform: rotate(12deg) scale(1.3) }
+    100% { transform: rotate(12deg) scale(1) }
+}
+
+@keyframes pop-color {
+    0% {
+        color: var(--blue);
+        transform: scale(1)
+    } 50% {
+        color: #4f78e0;
+        transform: scale(1.3)
+    } 100% {
+        color: var(--blue);
+        transform: scale(1)
+    }
+}
+
+.content {
+    width: 100vw;
+    height: 100vh;
+    transform-origin: center;
+    background-image: url("/images/archive/bruinbash/bg.jpg");
+    background-attachment: fixed;
+    background-color: var(--blue);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.iconContainer {
+    position: fixed;
+    top: 28px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.iconText {
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 8px 0 0 0;
+    opacity: .9;
+}
+
+.paintIcon {
+    pointer-events: none;
+    max-height: 80%;
+    margin-left: 6px;
+}
+
+.paintImage {
+    max-width: 100%;
+    user-select: none;
+}
+
+.bbashLogo {
+    position: absolute;
+    width: 60%;
+    top: 14%;
+    left: 12%;
+    user-select: none;
+}
+
+@media screen and (min-width:768px) {
+    .bbashLogo {
+        top: 10%;
+    }
+}
+
+.starburst {
+    position: absolute;
+    width: 30%;
+    bottom: 21%;
+    right: 4%;
+    cursor: pointer;
+    user-select: none;
+}
+
+.ticketsInfo {
+    z-index: 100;
+    overflow-y: hidden;
+    padding-bottom: 20px;
+}
+
+.ticketsTitle {
+    margin: 20px 0 4px 0;
+    font-family: sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+@media screen and (min-width:768px) {
+    .ticketsTitle {
+        margin: 32px 0 12px 0;
+        font-size: 32px;
+    }
+}
+
+.ticketsInfoP {
+    width: 90%;
+    margin: 6px;
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+@media screen and (min-width:768px) {
+    .ticketsInfoP {
+        margin: 8px;
+        font-size: 16px;
+        line-height: 20px;
+    }
+}
+
+.popupBase {
+    z-index: 101;
+}
+
+.ntBody {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.ntButtonCentered {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.popupContent {
+    width: 100%;
+    display: flex;
+    flex-direction: row
+}
+
+.geneBlock {
+    width: 150px;
+    margin: 20px;
+    border: 3px solid var(--blue);
+}
+
+.wordArt {
+    width: 180px;
+    margin-top: -5px;
+    margin-bottom: -5px;
+    animation: pop-rotated .8s linear infinite;
+}
+
+.bodyText {
+    text-transform: uppercase;
+    width: 100%;
+    margin: 0;
+    font-family: sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+}
+
+.nthVisLogoContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.nthVisLogo {
+    width: 180px;
+    height: 144px;
+}
+
+.nthVisText {
+    width: 90%;
+    padding: 0 5% 0 5%;
+    margin: 8px 0 8px 0;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: 600;
+    color: #222;
+}
+
+.nthVisStyledText {
+    width: 100%;
+    margin: 10px 0 10px 0;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    animation: pop-color .8s linear infinite;
+}
+
+.emphasisBlue {
+    font-size: 20px;
+    color: #0096a1;
+}
+
+.emphasisRed {
+    font-size: 18px;
+    color: #f15c28;
+}
+
+.scuseMeImgContainer {
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.scuseMeImg {
+    width: 158px;
+    height: 160px;
+}
+
+.scuseMeText {
+    width: 86%;
+    padding: 0 7% 0 7%;
+    margin: 20px 0 8px 0;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #222;
+}
+
+.freshmanContainer {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.freshmanImg {
+    margin: 10px 10px 0 20px;
+    width: 120px;
+    animation: pop .8s linear infinite;
+}
+
+.freshmanText {
+    margin: 0;
+    width: 240px;
+    font-family: sans-serif;
+    font-size: 18px;
+    line-height: 26px;
+    font-weight: 600;
+    color: #222;
+}
+
+.emphasisDarkBlue {
+    font-size: 20px;
+    color: var(--blue);
+}
+
+.emphasisRedBig {
+    font-size: 20px;
+    color: #f15c28;
+}

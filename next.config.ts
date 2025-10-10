@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             new URL("https://*.githubusercontent.com/**"),
         ],
-        qualities: [75, 85],
+        qualities: [75, 85, 100],
     },
     turbopack: {
         root: path.join(__dirname, "."),

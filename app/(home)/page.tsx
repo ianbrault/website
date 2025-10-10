@@ -44,9 +44,9 @@ export default function Home() {
             <VFlex gap={10}>
                 <p className={styles.subheading}>Links</p>
                 <HFlex gap={28}>
-                    <ImageLink text="GitHub" src="/images/github.png" href="https://github.com/ianbrault"/>
-                    <ImageLink text="LinkedIn" src="/images/linkedin.png" href="https://www.linkedin.com/in/ianbrault/"/>
-                    <ImageLink text="Email" src="/images/fastmail.png" href="mailto:ian@brault.dev"/>
+                    <ImageLink text="GitHub" src="/images/logos/github.png" href="https://github.com/ianbrault"/>
+                    <ImageLink text="LinkedIn" src="/images/logos/linkedin.png" href="https://www.linkedin.com/in/ianbrault/"/>
+                    <ImageLink text="Email" src="/images/logos/fastmail.png" href="mailto:ian@brault.dev"/>
                 </HFlex>
             </VFlex>
         </VFlex>
