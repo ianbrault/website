@@ -1,0 +1,18 @@
+/*
+** app/archive/faroutfest/globals.css
+*/
+
+@font-face {
+    font-family: "Filson Soft Medium";
+    src: url("/fonts/filson_soft_medium.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "Filson Soft Book";
+    src: url("/fonts/filson_soft_book.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Good Dog";
+    src: url("/fonts/good_dog.ttf") format("truetype");
+}
