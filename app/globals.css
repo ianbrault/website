@@ -1,20 +1,30 @@
 /*
-** app/(home)/globals.css
+** app/globals.css
 */
 
 :root {
+    --white: #FFFFFF;
+    --black: #000000;
+    --blue: #007AFFFF;
+    --red: #FF3B30FF;
+
     --background: #FFFFFF;
     --text: #000000;
     --secondary-text: #8A8A8E;
-    --blue: #3478F6;
+
+    --title-size: 40px;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
+        --white: #FFFFFF;
+        --black: #000000;
+        --blue: #0A84FFFF;
+        --red: #FF453AFF;
+
         --background: #000000;
         --text: #FFFFFF;
         --secondary-text: #8D8D93;
-        --blue: #3B82F7;
     }
 }
 

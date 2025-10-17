@@ -1,0 +1,20 @@
+/*
+** app/sleeper/[userId]/[leagueId]/page.module.css
+*/
+
+.leagueWrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.statsWrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 64px;
+}
+
+.gridBreak {
+    flex-basis: 100%;
+    height: 0;
+}

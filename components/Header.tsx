@@ -15,21 +15,20 @@ interface HeaderProps {
 export default function Header({ text, homeButton, className }: HeaderProps) {
     const textStyle = {
         fontWeight: "bold",
-        fontSize: "40px",
+        fontSize: "var(--title-size)",
     };
     const linkTextStyle = {
         fontSize: "14px",
     };
 
-    const homeButtonElement = (
-        <Link href="/">
-            <p style={linkTextStyle}>{"< Home"}</p>
-        </Link>
-    );
     return (
         <VFlex className={className} gap={4}>
             <p style={textStyle}>{text}</p>
-            {homeButton && homeButtonElement}
+            {homeButton &&
+                <Link href="/">
+                    <p style={linkTextStyle}>{"< Home"}</p>
+                </Link>
+            }
         </VFlex>
     )
 }

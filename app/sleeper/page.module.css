@@ -1,0 +1,27 @@
+/*
+** app/sleeper/page.module.css
+*/
+
+.userInput {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.usernameInput {
+    width: 256px;
+}
+
+.userButton {
+    align-self: center;
+    margin: 6px;
+    width: 128px;
+}
+
+.errorText {
+    width: 256px;
+    margin: 4px;
+    text-align: center;
+    color: var(--red);
+}

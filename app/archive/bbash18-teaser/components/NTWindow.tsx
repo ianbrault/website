@@ -2,6 +2,8 @@
 ** app/archive/bbash18-teaser/components/NTWindow.tsx
 */
 
+/* eslint-disable @next/next/no-img-element */
+
 "use client";
 
 import React, { forwardRef } from "react";

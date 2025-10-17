@@ -6,7 +6,7 @@
 - [x] Projects page
 - [x] Archive: Bruin Bash teaser
 - [x] Archive: Faroutfest
-- [ ] Sleeper Stats
+- [x] Sleeper Stats
 - [ ] Basil
 - [ ] Random sites
 
