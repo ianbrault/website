@@ -25,7 +25,7 @@ export interface IUserMethods {
 
 export type UserDocument = HydratedDocument<IUser, IUserMethods>;
 
-interface UserModel extends Model<IUser, {}, IUserMethods> {
+interface UserModel extends Model<IUser, object, IUserMethods> {
     createUser(
         email: string | null,
         password: string | null,

@@ -11,7 +11,7 @@ interface Client {
     promise: Promise<mongoose.Mongoose> | null;
 }
 
-let cached: Client = { connection: null, promise: null };
+const cached: Client = { connection: null, promise: null };
 
 async function connect() {
     if (cached.connection) {

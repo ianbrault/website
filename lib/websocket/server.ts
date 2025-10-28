@@ -28,7 +28,7 @@ class BasilWSServer {
 
     async onConnection(ws: WebSocket, req: http.IncomingMessage) {
         // Track the connection
-        let connection = new Connection(ws);
+        const connection = new Connection(ws);
         this.connections[connection.id] = connection;
         console.info(`basil: client connected: ${connection.id}`);
 
@@ -59,7 +59,7 @@ class BasilWSServer {
         console.error(`basil: WebSocket server error: ${err.message}`);
     }
 
-    onWebSocketClose(id: UUID, code: Number, reason: Buffer) {
+    onWebSocketClose(id: UUID, code: number, reason: Buffer) {
         console.info(`basil: connection ${id} closed: ${code}: ${reason.toString()}`);
         delete this.connections[id];
     }
@@ -69,7 +69,7 @@ class BasilWSServer {
         console.error(`basil: connection ${id} error: ${err.message}`);
     }
 
-    async onWebSocketMessage(id: UUID, data: ArrayBuffer | Blob | Buffer | Buffer[], isBinary: Boolean) {
+    async onWebSocketMessage(id: UUID, data: ArrayBuffer | Blob | Buffer | Buffer[], isBinary: boolean) {
         const connection = this.connections[id];
 
         // Messages must be in binary format

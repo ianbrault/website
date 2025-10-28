@@ -8,16 +8,16 @@ const SCHEMA_VERSION = 0;
 const EXPIRATION = 3600 * 1000;  // 1 hour
 
 export interface IToken {
-    schemaVersion: Number;
+    schemaVersion: number;
     user: Types.ObjectId;
     expiration: Date;
 }
 
-export interface ITokenMethods {}
+export type ITokenMethods = object;
 
 export type TokenDocument = HydratedDocument<IToken, ITokenMethods>;
 
-interface TokenModel extends Model<IToken, {}, ITokenMethods> {
+interface TokenModel extends Model<IToken, object, ITokenMethods> {
     getById(id: string | null): Promise<TokenDocument>;
     issue(user: ObjectId): Promise<TokenDocument>;
 }

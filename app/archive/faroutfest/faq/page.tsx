@@ -2,6 +2,8 @@
 ** app/archive/faroutfest/faq/page.tsx
 */
 
+/* eslint-disable @next/next/no-img-element */
+
 import Link from "next/link";
 
 import "../styles/faroutfest_faq.css";
@@ -10,7 +12,7 @@ export default function Faq() {
     return (
         <>
             <Link href="/archive/faroutfest">
-                <img id="logo" src="/images/archive/faroutfest/logo_new.png"/>
+                <img id="logo" src="/images/archive/faroutfest/logo_new.png" alt="Far Out Fest"/>
             </Link>
             <svg width="100%">
                 <text id="title" x="50%" dy="1em">frequently asked questions</text>

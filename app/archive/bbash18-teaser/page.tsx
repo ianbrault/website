@@ -2,6 +2,8 @@
 ** archive/bbash18-teaser/page.tsx
 */
 
+/* eslint-disable @next/next/no-img-element */
+
 "use client";
 
 import Image from "next/image";
@@ -308,15 +310,6 @@ export default function BruinBashTeaser() {
             x: Math.floor(Math.random() * (window.innerWidth - width)),
             y: Math.floor(Math.random() * (window.innerHeight - 48 - height)),
         };
-        /*
-        console.log("before", popupWindows);
-        const nextPopupWindows = [
-            ...popupWindows,
-            {style: style, position: position},
-        ];
-        console.log("after", nextPopupWindows);
-        setPopupWindows(nextPopupWindows);
-        */
         setPopupWindows([
             ...popupWindows,
             {style: style, position: position},
@@ -364,7 +357,7 @@ export default function BruinBashTeaser() {
                 left={paintWindowPosition.x}
                 preventClose
             >
-                <img className={styles.paintImage} src="/images/archive/bruinbash/paint.jpg" onLoad={onPaintLoad}/>
+                <img className={styles.paintImage} src="/images/archive/bruinbash/paint.jpg" onLoad={onPaintLoad} alt=""/>
                 <img className={styles.bbashLogo} src="/images/archive/bruinbash/new_logo.png" alt="Bruin Bash"/>
                 <img className={styles.starburst} onClick={createPopup} src="/images/archive/bruinbash/starburst2.png" alt="Tickets"/>
             </NTWindow>

@@ -52,7 +52,7 @@ export default class Message {
         return Buffer.from(JSON.stringify(data));
     }
 
-    private static validateKeys(object: Object, keys: string[]) {
+    private static validateKeys(object: object, keys: string[]) {
         for (const key of keys) {
             if (!object.hasOwnProperty(key)) {
                 throw new ParseError(`Missing key '${key}'`);
@@ -61,7 +61,7 @@ export default class Message {
     }
 
     static async parse(data: ArrayBuffer | Blob | Buffer | Buffer[]): Promise<Message> {
-        var obj: any;  // eslint-disable-line @typescript-eslint/no-explicit-any
+        let obj: any;  // eslint-disable-line @typescript-eslint/no-explicit-any
         if (data instanceof ArrayBuffer) {
             obj = JSON.parse(new TextDecoder().decode(data));
         } else if (data instanceof Blob) {

@@ -3,6 +3,7 @@
 */
 
 import { HydratedDocument } from "mongoose";
+import Migration from "@/lib/migrations/base";
 import User, { IUser } from "@/lib/models/basil/User";
 
 export default class UserMigration extends Migration {
@@ -32,8 +33,8 @@ export default class UserMigration extends Migration {
 
     async migrate(): Promise<void> {
         // Query all users and apply migrations, where applicable
-        let users = await User.find({});
-        let migrated: HydratedDocument<IUser>[] = [];
+        const users = await User.find({});
+        const migrated: HydratedDocument<IUser>[] = [];
         for (const user of users) {
             if (this.applyMigration(user)) {
                 migrated.push(user);

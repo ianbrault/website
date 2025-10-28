@@ -2,6 +2,8 @@
 ** app/archive/faroutfest/page.tsx
 */
 
+/* eslint-disable @next/next/no-img-element */
+
 import Link from "next/link";
 import Script from "next/script";
 

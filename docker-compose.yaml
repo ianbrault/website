@@ -1,0 +1,28 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    ports:
+      - "443:3000"
+      - "3000:3000"
+      - "4000:4000"
+    depends_on:
+      backend:
+        condition: service_started
+    environment:
+      MONGODB_URL: mongodb://mongodb:27017
+      WEBSOCKET_PORT: 4000
+
+  backend:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - db-data:/data/db
+
+volumes:
+  db-data:
