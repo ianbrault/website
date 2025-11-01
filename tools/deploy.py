@@ -14,6 +14,22 @@ email = "ian@brault.dev"
 
 signal.signal(signal.SIGINT, lambda *args: sys.exit(1))
 
+parser = argparse.ArgumentParser(description="Deploy script")
+parser.add_argument(
+    "-m", "--mode",
+    choices=["development", "production"],
+    default="production",
+    help="Deployment mode [%(default)s]"
+)
+parser.add_argument(
+    "-d", "--development",
+    action="store_true",
+    help="Alias for --mode=development"
+)
+args = parser.parse_args(sys.argv[1:])
+if args.development:
+    args.mode = "development"
+
 # Nginx config with reverse proxy, SSL support, rate limiting, and streaming support
 nginx_configuration = f"""\
 limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;
@@ -60,21 +76,9 @@ server {{
 """
 
 
-parser = argparse.ArgumentParser(description="Deploy script")
-parser.add_argument(
-    "-m", "--mode",
-    choices=["development", "production"],
-    default="production",
-    help="Deployment mode [%(default)s]"
-)
-parser.add_argument(
-    "-d", "--development",
-    action="store_true",
-    help="Alias for --mode=development"
-)
-args = parser.parse_args(sys.argv[1:])
-if args.development:
-    args.mode = "development"
+class PlatformError(Exception):
+    def __init__(self):
+        super().__init__(f"Unsupported platform: {sys.platform}")
 
 
 def file_exists(path: str) -> bool:
@@ -109,44 +113,60 @@ def shell_output(command: str) -> str:
     return proc.stdout.decode()
 
 
-def install_packages(*args):
+def package_manager_update():
+    if sys.platform == "linux":
+        shell("apt update", sudo=True)
+    elif sys.platform == "darwin":
+        shell("brew update")
+    else:
+        raise PlatformError()
+
+
+def package_manager_upgrade():
+    if sys.platform == "linux":
+        shell("apt upgrade", sudo=True)
+    elif sys.platform == "darwin":
+        shell("brew upgrade")
+    else:
+        raise PlatformError()
+
+
+def package_manager_install(*args):
     package_list = " ".join(args)
     if sys.platform == "linux":
         shell(f"apt install {package_list} -y", sudo=True)
     elif sys.platform == "darwin":
         shell(f"brew install {package_list}")
     else:
-        raise NotImplementedError(f"unsupported platform: {sys.platform}")
+        raise PlatformError()
 
 
-def upgrade_packages():
-    if sys.platform == "linux":
-        shell("apt update", sudo=True)
-        shell("apt upgrade -y", sudo=True)
-    elif sys.platform == "darwin":
-        shell("brew update")
-        shell("brew upgrade")
+def package_manager_add_gpg(url: str, path: str):
+    if sys.platform == "linux" or sys.platform == "darwin":
+        proc = shell(f"curl -fsSL {url}", capture_output=True)
+        shell(f"gpg --dearmor -o {path}", sudo=True, input=proc.stdout)
     else:
-        raise NotImplementedError(f"unsupported platform: {sys.platform}")
+        raise PlatformError()
 
 
-def configure_swap_space(size: str):
-    shell(f"fallocate -l {size} /swapfile", sudo=True)
-    shell("chmod 600 /swapfile", sudo=True)
-    shell("mkswap /swapfile", sudo=True)
-    shell("swapon /swapfile", sudo=True)
-    write_to_file("/etc/fstab", "/swapfile none swap sw 0 0\n", mode="a")
+def configure_swap_space(filepath: str, size: str):
+    path = pathlib.Path(filepath)
+    if not path.exists():
+        shell(f"fallocate -l {size} {path}", sudo=True)
+        shell(f"chmod 600 {path}", sudo=True)
+        shell(f"mkswap {path}", sudo=True)
+        shell(f"swapon {path}", sudo=True)
+        write_to_file("/etc/fstab", f"{path} none swap sw 0 0\n", mode="a")
 
 
 def install_docker():
     if sys.platform == "linux":
-        install_packages(
+        package_manager_install(
             "apt-transport-https", "ca-certificates", "curl", "software-properties-common"
         )
-        gpg_key = shell_output("curl -fsSL https://download.docker.com/linux/ubuntu/gpg")
-        shell(
-            "gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg",
-            sudo=True, input=gpg_key,
+        package_manager_add_gpg(
+            "https://download.docker.com/linux/ubuntu/gpg",
+            "/usr/share/keyrings/docker-archive-keyring.gpg"
         )
         dpkg_arch = shell_output("dpkg --print-architecture")
         lsb_release = shell_output("lsb_release -cs")
@@ -156,17 +176,32 @@ def install_docker():
             f"https://download.docker.com/linux/ubuntu {lsb_release} stable",
             mode="a",
         )
-        shell("apt update", sudo=True)
+        package_manager_update()
         shell("apt-cache policy docker-ce")
-        install_packages("docker-ce")
+        package_manager_install("docker-ce", "docker-compose")
     elif sys.platform == "darwin":
-        install_packages("docker")
+        package_manager_install("docker")
     else:
-        raise NotImplementedError(f"unsupported platform: {sys.platform}")
+        raise PlatformError()
+
+
+def install_mongodb_tools():
+    if sys.platform == "linux":
+        package_manager_install("gnupg", "curl")
+        package_manager_add_gpg(
+            "https://pgp.mongodb.com/server-7.0.asc",
+            "/usr/share/keyrings/mongodb-server-7.0.gpg",
+        )
+        package_manager_update()
+        package_manager_install("mongodb-org-tools")
+    elif sys.platform == "darwin":
+        package_manager_install("mongodb-database-tools")
+    else:
+        raise PlatformError()
 
 
 def configure_nginx():
-    install_packages("nginx")
+    package_manager_install("nginx")
     # Remove old configuration files
     shell(f"rm -f /etc/nginx/sites-available/{domain}", sudo=True)
     shell(f"rm -f /etc/nginx/sites-enabled/{domain}", sudo=True)
@@ -179,7 +214,7 @@ def configure_nginx():
         sudo=True
     )
     # Obtain SSL certificate using Certbot standalone mode
-    install_packages("certbot", "python3-certbot-nginx")
+    package_manager_install("certbot", "python3-certbot-nginx")
     if (
         not file_exists(f"/etc/letsencrypt/live/{domain}/fullchain.pem") or
         not file_exists(f"/etc/letsencrypt/live/{domain}/privkey.pem")
@@ -204,14 +239,16 @@ def configure_nginx():
 
 def run():
     # Update package list and upgrade existing packages (production)
-    if args.mode == "production":
-        upgrade_packages()
+    package_manager_update()
+    package_manager_upgrade()
     # Configure swap space (Linux droplet)
     if sys.platform == "linux":
-        configure_swap_space("1G")
-    # Ensure that Docker is installed
+        configure_swap_space("/swapfile", "1G")
+    # Install Docker
     if not shell_checked("docker -v"):
         install_docker()
+    # Install MongoDB tools
+    install_mongodb_tools()
     # Configure nginx (production, Linux droplet)
     if args.mode == "production" and sys.platform == "linux":
         configure_nginx()

@@ -1,22 +1,31 @@
-# Get NPM packages
-FROM node:24-alpine AS builder
-RUN apk add --no-cache libc6-compat
+FROM node:24-alpine
 
+# Install packages
+RUN apk update && \
+    apk upgrade && \
+    apk add \
+        libc6-compat \
+        bash \
+        git \
+        mongodb-tools
+
+# Set up webserver directory
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY . .
 
-RUN npm ci --only=production && npm run build
+# Copy local scripts
+COPY tools/dbdump.sh /usr/local/bin/dbdump
+COPY tools/dbrestore.sh /usr/local/bin/dbrestore
 
-# Production image, copy all the files and run next
-FROM node:24-alpine AS runner
-WORKDIR /app
+# Configure environment
 ENV NODE_ENV=production
 
-RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
-COPY --from=builder --chown=nextjs:nodejs /app .
+RUN npm ci --only=production && npm run build
 
-USER nextjs
 EXPOSE 3000
+EXPOSE 4000
 
 CMD ["npm", "start"]
+
+WORKDIR /root/
