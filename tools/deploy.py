@@ -12,19 +12,18 @@ cwd = pathlib.Path(__file__).parent.resolve()
 domain = "test.brault.dev"
 email = "ian@brault.dev"
 
-signal.signal(signal.SIGINT, lambda *args: sys.exit(1))
+signal.signal(signal.SIGINT, lambda _signum, _frame: sys.exit(1))
 
 parser = argparse.ArgumentParser(description="Deploy script")
 parser.add_argument(
-    "-m", "--mode",
+    "-m",
+    "--mode",
     choices=["development", "production"],
     default="production",
-    help="Deployment mode [%(default)s]"
+    help="Deployment mode [%(default)s]",
 )
 parser.add_argument(
-    "-d", "--development",
-    action="store_true",
-    help="Alias for --mode=development"
+    "-d", "--development", action="store_true", help="Alias for --mode=development"
 )
 args = parser.parse_args(sys.argv[1:])
 if args.development:
@@ -85,7 +84,7 @@ def file_exists(path: str) -> bool:
     return pathlib.Path(path).exists()
 
 
-def write_to_file(path: str, contents: str, mode="w"):
+def write_to_file(path: str, contents: str, mode: str = "w"):
     with pathlib.Path(path).open(mode) as f:
         f.write(contents)
 
@@ -93,14 +92,21 @@ def write_to_file(path: str, contents: str, mode="w"):
 def shell(
     command: str,
     sudo: bool = False,
+    background: bool = False,
     check: bool = True,
     capture_output: bool = False,
-    input: typing.Optional[str] = None,
-) -> subprocess.CompletedProcess:
+    input: typing.Optional[bytes] = None,
+) -> subprocess.CompletedProcess[bytes]:
     command_args = command.split(" ")
     if sudo:
         command_args.insert(0, "sudo")
-    return subprocess.run(command_args, check=check, capture_output=capture_output, input=input)
+    if background:
+        subprocess.Popen(command_args)
+        return subprocess.CompletedProcess(command_args, 0)
+    else:
+        return subprocess.run(
+            command_args, check=check, capture_output=capture_output, input=input
+        )
 
 
 def shell_checked(command: str) -> bool:
@@ -131,7 +137,7 @@ def package_manager_upgrade():
         raise PlatformError()
 
 
-def package_manager_install(*args):
+def package_manager_install(*args: str):
     package_list = " ".join(args)
     if sys.platform == "linux":
         shell(f"apt install {package_list} -y", sudo=True)
@@ -162,11 +168,14 @@ def configure_swap_space(filepath: str, size: str):
 def install_docker():
     if sys.platform == "linux":
         package_manager_install(
-            "apt-transport-https", "ca-certificates", "curl", "software-properties-common"
+            "apt-transport-https",
+            "ca-certificates",
+            "curl",
+            "software-properties-common",
         )
         package_manager_add_gpg(
             "https://download.docker.com/linux/ubuntu/gpg",
-            "/usr/share/keyrings/docker-archive-keyring.gpg"
+            "/usr/share/keyrings/docker-archive-keyring.gpg",
         )
         dpkg_arch = shell_output("dpkg --print-architecture")
         lsb_release = shell_output("lsb_release -cs")
@@ -185,21 +194,6 @@ def install_docker():
         raise PlatformError()
 
 
-def install_mongodb_tools():
-    if sys.platform == "linux":
-        package_manager_install("gnupg", "curl")
-        package_manager_add_gpg(
-            "https://pgp.mongodb.com/server-7.0.asc",
-            "/usr/share/keyrings/mongodb-server-7.0.gpg",
-        )
-        package_manager_update()
-        package_manager_install("mongodb-org-tools")
-    elif sys.platform == "darwin":
-        package_manager_install("mongodb-database-tools")
-    else:
-        raise PlatformError()
-
-
 def configure_nginx():
     package_manager_install("nginx")
     # Remove old configuration files
@@ -211,25 +205,24 @@ def configure_nginx():
     write_to_file(f"/etc/nginx/sites-available/{domain}", nginx_configuration)
     shell(
         f"ln -s /etc/nginx/sites-available/{domain} /etc/nginx/sites-enabled/{domain}",
-        sudo=True
+        sudo=True,
     )
     # Obtain SSL certificate using Certbot standalone mode
     package_manager_install("certbot", "python3-certbot-nginx")
-    if (
-        not file_exists(f"/etc/letsencrypt/live/{domain}/fullchain.pem") or
-        not file_exists(f"/etc/letsencrypt/live/{domain}/privkey.pem")
-    ):
+    if not file_exists(
+        f"/etc/letsencrypt/live/{domain}/fullchain.pem"
+    ) or not file_exists(f"/etc/letsencrypt/live/{domain}/privkey.pem"):
         shell(
             f"certbot certonly --nginx -d {domain} -d www.{domain} --non-interactive --agree-tos "
             f"-m {email}",
-            sudo=True
+            sudo=True,
         )
     # Ensure SSL files exist or generate them
     if not file_exists("/etc/letsencrypt/options-ssl-nginx.conf"):
         shell(
             "wget https://raw.githubusercontent.com/certbot/certbot/refs/heads/main/certbot-nginx/"
             "src/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf -P /etc/letsencrypt/",
-            sudo=True
+            sudo=True,
         )
     if not file_exists("/etc/letsencrypt/ssl-dhparams.pem"):
         shell("openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048", sudo=True)
@@ -238,22 +231,20 @@ def configure_nginx():
 
 
 def run():
-    # Update package list and upgrade existing packages (production)
-    package_manager_update()
-    package_manager_upgrade()
     # Configure swap space (Linux droplet)
     if sys.platform == "linux":
         configure_swap_space("/swapfile", "1G")
+    # Update package list and upgrade existing packages
+    package_manager_update()
+    package_manager_upgrade()
     # Install Docker
     if not shell_checked("docker -v"):
         install_docker()
-    # Install MongoDB tools
-    install_mongodb_tools()
     # Configure nginx (production, Linux droplet)
     if args.mode == "production" and sys.platform == "linux":
         configure_nginx()
     # Start the container images
-    shell("docker-compose up")
+    shell("docker compose up -d", background=True)
 
 
 if __name__ == "__main__":
