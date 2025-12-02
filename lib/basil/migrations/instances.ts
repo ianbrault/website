@@ -2,8 +2,8 @@
 ** lib/migrations/instances.ts
 */
 
-import Migration from "./base";
-import UserMigration from "./basil/User";
+import { Migration } from "@/lib/db/base";
+import UserMigration from "./User";
 
 const migrations: Migration[] = [
     new UserMigration(),

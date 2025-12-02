@@ -4,18 +4,17 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-import { server } from "@/lib/websocket/server";
-import Token from "@/lib/models/basil/Token";
-import User from "@/lib/models/basil/User";
+import BasilDB from "@/lib/basil/db";
 
 export async function POST(request: NextRequest) {
     // This endpoint is added to allow command-line tools to push updates for users, it requires a
     // token so the user must be authenticated prior to calling this endpoint
     const body = await request.json();
+    const db = await BasilDB.getDriver();
 
     try {
-        const user = await User.getById(body.userId);
-        const token = await Token.getById(body.token);
+        const user = await db.users.find(body.userId);
+        const token = await db.tokens.find(body.token);
         // Verify that the token is valid for the user
         if (token.user != user.id) {
             throw new Error(`Token does not match for user ${body.userId}`);
@@ -29,14 +28,14 @@ export async function POST(request: NextRequest) {
         user.root = body.root;
         user.recipes = body.recipes;
         user.folders = body.folders;
-        // Bump the sequence count
-        user.sequence = user.sequence + 1;
-        await user.save();
+        await db.users.update(user);
         // Notify any clients that are connected to the WebSocket server
-        await server?.notifyClients(user.id);
+        // FIXME: notify via localhost WebSocket client connection
+        // await server?.notifyClients(user.id);
         return new NextResponse();
     } catch(err) {
         const message = (err as Error).message;
-        return NextResponse.json(null, { status: 400, statusText: message });
+        console.error(`basil/v2/user/update: error: ${message}`);
+        return NextResponse.json({ error: message }, { status: 400 });
     }
 }

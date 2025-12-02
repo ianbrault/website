@@ -3,6 +3,7 @@
 */
 
 import { UUID } from "crypto";
+import { ObjectId } from "mongodb";
 import { WebSocket } from "ws";
 
 import Message from "./Message";
@@ -15,10 +16,10 @@ export enum ConnectionState {
 export default class Connection {
     static timeout = 3600 * 1000;  // 1 hour
 
-    id: UUID
-    socket: WebSocket
-    state: ConnectionState
-    userId: string | undefined
+    id: UUID;
+    socket: WebSocket;
+    state: ConnectionState;
+    userId: ObjectId | undefined;
 
     constructor(socket: WebSocket) {
         this.id = crypto.randomUUID() as UUID;
@@ -29,7 +30,7 @@ export default class Connection {
 
     send(message: Message) {
         console.debug(
-            `basil: connection ${this.id} send: ${message.type}: ${JSON.stringify(message.body)}`
+            `connection ${this.id} send: ${message.type}: ${JSON.stringify(message.body)}`
         );
         this.socket.send(message.serialize());
     }

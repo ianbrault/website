@@ -4,26 +4,26 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-import Token from "@/lib/models/basil/Token";
-import User from "@/lib/models/basil/User";
-import { hashPassword } from "@/lib/models/basil/utils";
+import BasilDB from "@/lib/basil/db";
+import { hashPassword } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
     const body = await request.json();
+    const db = await BasilDB.getDriver();
 
     // Hash the password
-    const password = body.password ? hashPassword(body.password) : null;
+    const password = body.password ? hashPassword(body.password) : undefined;
     // Then create the user model
     try {
-        const user = await User.createUser(
+        const user = await db.users.create(
             body.email, password,
             body.root, body.recipes, body.folders,
             body.device
         );
         // Generate a new token for the user
         // The token is used to authenticate with the WebSocket server and expires within 1 hour
-        const token = await Token.issue(user.id);
-        // send authentication info back to the user
+        const token = await db.tokens.create(user.id);
+        // Send authentication info back to the user
         const response = {
             id: user.id,
             email: user.email,
@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(response);
     } catch(err) {
         const message = (err as Error).message;
-        return NextResponse.json(null, { status: 400, statusText: message });
+        console.error(`basil/v2/user/create: error: ${message}`);
+        return NextResponse.json({ error: message }, { status: 400 });
     }
 }

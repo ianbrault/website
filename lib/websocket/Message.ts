@@ -2,8 +2,6 @@
 ** basil/server/message.ts
 */
 
-import { Schema } from "mongoose";
-
 export const enum MessageType {
     Success               = 200,
     AuthenticationRequest = 201,
@@ -14,21 +12,21 @@ export const enum MessageType {
 }
 
 export interface AuthenticationRequestBody {
-    userId: string
-    token: string
+    userId: string;
+    token: string;
 };
 
 export interface UpdateRequestBody {
-    root: string
-    recipes: Schema.Types.Mixed
-    folders: Schema.Types.Mixed
+    root: string;
+    recipes: object[];
+    folders: object[];
 };
 
 export interface SyncRequestBody {
-    root: string
-    recipes: Schema.Types.Mixed
-    folders: Schema.Types.Mixed
-    sequence: number
+    root: string;
+    recipes: object[];
+    folders: object[];
+    sequence: number;
 };
 
 type MessageBody = AuthenticationRequestBody | UpdateRequestBody | SyncRequestBody | string | null;
@@ -36,12 +34,12 @@ type MessageBody = AuthenticationRequestBody | UpdateRequestBody | SyncRequestBo
 class ParseError extends Error {}
 
 export default class Message {
-    type: MessageType
-    body: MessageBody
+    type: MessageType;
+    body: MessageBody;
 
     constructor(type: MessageType, body: MessageBody) {
-        this.type = type
-        this.body = body
+        this.type = type;
+        this.body = body;
     }
 
     serialize(): Buffer {
