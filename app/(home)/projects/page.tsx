@@ -83,7 +83,7 @@ export default function Projects() {
             name: "NYT Cooking Downloader",
             description: "downloads recipes from NYT Cooking into Apple Notes",
             image: "/images/logos/nyt_cooking.png",
-            href: "https://github.com/ianbrault/nyt_cooking",
+            href: "https://github.com/ianbrault/nyt_recipe",
             tags: ["Python"],
         },
         {
