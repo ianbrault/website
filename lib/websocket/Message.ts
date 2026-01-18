@@ -7,6 +7,7 @@ export const enum MessageType {
     AuthenticationRequest = 201,
     UpdateRequest         = 202,
     SyncRequest           = 203,
+    NotifyRequest         = 204,
     AuthenticationError   = 401,
     UpdateError           = 402,
 }
@@ -29,7 +30,11 @@ export interface SyncRequestBody {
     sequence: number;
 };
 
-type MessageBody = AuthenticationRequestBody | UpdateRequestBody | SyncRequestBody | string | null;
+export interface NotifyRequestBody {
+    userId: string;
+}
+
+type MessageBody = AuthenticationRequestBody | UpdateRequestBody | SyncRequestBody | NotifyRequestBody | string | null;
 
 class ParseError extends Error {}
 
@@ -75,6 +80,8 @@ export default class Message {
         // parse the message body using the given type
         Message.validateKeys(obj, ["type", "body"]);
         switch (obj["type"]) {
+        case MessageType.Success:
+            return new Message(obj["type"], null);
         case MessageType.AuthenticationRequest:
             Message.validateKeys(obj["body"], ["userId", "token"]);
             body = {
@@ -88,6 +95,12 @@ export default class Message {
                 root: obj["body"]["root"],
                 recipes: obj["body"]["recipes"],
                 folders: obj["body"]["folders"],
+            };
+            return new Message(obj["type"], body);
+        case MessageType.NotifyRequest:
+            Message.validateKeys(obj["body"], ["userId"]);
+            body = {
+                userId: obj["body"]["userId"],
             };
             return new Message(obj["type"], body);
         default:

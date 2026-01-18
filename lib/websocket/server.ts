@@ -8,7 +8,7 @@ import { ObjectId } from "mongodb";
 import { WebSocket, WebSocketServer } from "ws";
 
 import Connection, { ConnectionState } from "./Connection";
-import Message, { AuthenticationRequestBody, MessageType, UpdateRequestBody } from "./Message";
+import Message, { AuthenticationRequestBody, MessageType, NotifyRequestBody, UpdateRequestBody } from "./Message";
 
 import BasilDB from "@/lib/basil/db";
 
@@ -26,7 +26,7 @@ export default class BasilWSServer {
         this.wss.on("error", (err) => this.onServerError(err));
     }
 
-    async onConnection(ws: WebSocket, _: http.IncomingMessage) {
+    async onConnection(ws: WebSocket, _: http.IncomingMessage) { // eslint-disable-line @typescript-eslint/no-unused-vars
         // Track the connection
         const connection = new Connection(ws);
         this.connections[connection.id] = connection;
@@ -36,7 +36,7 @@ export default class BasilWSServer {
         setTimeout(() => {
             if (connection.state == ConnectionState.NeedsAuthentication) {
                 console.debug(
-                    `connection ${connection.id} unauthenticated after ${Connection.timeout}ms, terminating`
+                    `Connection ${connection.id} unauthenticated after ${Connection.timeout}ms, terminating`
                 );
                 ws.close(1001, "Authentication timeout");
                 delete this.connections[connection.id];
@@ -60,7 +60,7 @@ export default class BasilWSServer {
     }
 
     onWebSocketClose(id: UUID, code: number, reason: Buffer) {
-        console.info(`connection ${id} closed: ${code}: ${reason.toString()}`);
+        console.info(`Connection ${id} closed: ${code}: ${reason.toString()}`);
         delete this.connections[id];
     }
 
@@ -74,7 +74,7 @@ export default class BasilWSServer {
 
         // Messages must be in binary format
         if (!isBinary) {
-            console.error(`connection ${id} received non-binary message, terminating`);
+            console.error(`Connection ${id} received non-binary message, terminating`);
             connection?.socket.close(1003, "Data must be binary");
             delete this.connections[id];
             return;
@@ -90,11 +90,14 @@ export default class BasilWSServer {
             case MessageType.UpdateRequest:
                 await this.updateRequestHandler(connection, message.body as UpdateRequestBody);
                 break;
+            case MessageType.NotifyRequest:
+                await this.notifyRequestHandler(connection, message.body as NotifyRequestBody);
+                break;
             }
         } catch (err) {
             const error_message = (err as Error).message;
             // Invalid message, terminate connection
-            console.error(`connection ${id} received invalid message: ${error_message}`);
+            console.error(`Connection ${id} received invalid message: ${error_message}`);
             connection?.socket.close(1007, error_message);
             delete this.connections[id];
         }
@@ -115,14 +118,14 @@ export default class BasilWSServer {
                 throw new Error(`Token expired at ${token.expiration.toUTCString()}`);
             }
             // User authenticated successfully
-            console.info(`connection ${connection.id} authenticated user ${user.email}`);
+            console.info(`Connection ${connection.id} authenticated user ${user.email}`);
             connection.state = ConnectionState.Authenticated;
             connection.userId = user.id;
             const message = new Message(MessageType.Success, null);
             connection.send(message);
         } catch (err) {
             const error_message = (err as Error).message;
-            console.error(`connection ${connection.id} authentication failure: ${error_message}`);
+            console.error(`Connection ${connection.id} authentication failure: ${error_message}`);
             // Send an error message back to the client
             const message = new Message(MessageType.AuthenticationError, error_message);
             connection.send(message);
@@ -130,6 +133,16 @@ export default class BasilWSServer {
     }
 
     async updateRequestHandler(connection: Connection, body: UpdateRequestBody) {
+        // User must be authenticated
+        if (connection.state != ConnectionState.Authenticated) {
+            console.error(
+                `Connection ${connection.id} update request received while unauthenticated, terminating`
+            );
+            connection?.socket.close(1008, "Connection not authenticated");
+            delete this.connections[connection.id];
+            return;
+        }
+
         const db = await BasilDB.getDriver();
         try {
             const user = await db.users.find(connection.userId);
@@ -138,14 +151,29 @@ export default class BasilWSServer {
             user.folders = body.folders;
             await db.users.update(user);
             // User updated successfully
-            console.info(`connection ${connection.id} updated user ${user.email}`);
+            console.info(`Connection ${connection.id} updated user ${user.email}`);
             const message = new Message(MessageType.Success, null);
             connection.send(message);
             // Notify any other connected clients that an update was made
             await this.notifyClients(user.id, [connection.id]);
         } catch (err) {
             const error_message = (err as Error).message;
-            console.error(`connection ${connection.id} update failure: ${error_message}`);
+            console.error(`Connection ${connection.id} update failure: ${error_message}`);
+            // Send an error message back to the client
+            const message = new Message(MessageType.UpdateError, error_message);
+            connection.send(message);
+        }
+    }
+
+    async notifyRequestHandler(connection: Connection, body: NotifyRequestBody) {
+        try {
+            const userId = new ObjectId(body.userId);
+            await this.notifyClients(userId);
+            // Users notified successfully
+            const message = new Message(MessageType.Success, null);
+            connection.send(message);
+        } catch (err) {
+            const error_message = (err as Error).message;
             // Send an error message back to the client
             const message = new Message(MessageType.UpdateError, error_message);
             connection.send(message);
