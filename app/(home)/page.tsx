@@ -2,53 +2,51 @@
 ** app/(home)/page.tsx
 */
 
-import Image from "next/image";
 import Link from "next/link";
 
 import Header from "@/components/Header";
-import HFlex from "@/components/HFlex";
 import VFlex from "@/components/VFlex";
+import ProfilePicture from "./components/ProfilePicture";
 
 import styles from "./page.module.css";
 
-interface ImageLinkProps {
-    text: string;
-    src: string;
-    href: string;
-}
-
-function ImageLink({text, src, href}: ImageLinkProps) {
-    const imageSize = 48;
-    return (
-        <a className={styles.imageWrapper} href={href}>
-            <Image src={src} alt={text} width={imageSize} height={imageSize}/>
-            <p className={styles.imageLink}>{text}</p>
-        </a>
-    );
-}
-
 export default function Home() {
     return (
-        <VFlex className={styles.wrapper} gap={28}>
-            <Header text="Ian Brault"/>
-            <VFlex gap={7}>
-                <p className={styles.subheading}>Currently</p>
-                <p className={styles.text}>Flight Software Engineer</p>
-                <p className={styles.subtext}><i>NASA Jet Propulsion Laboratory</i></p>
+        <>
+            <ProfilePicture />
+            <Header className={styles.header} text="Ian Brault" />
+            <VFlex className={styles.textWrapper} gap={20}>
+                <p className={styles.text}>
+                    Flight Software Engineer at the <b>NASA Jet Propulsion Laboratory</b>.
+                    Writing software for <Link href="https://www.jpl.nasa.gov/missions/mars-sample-return-msr/" target="_blank">Mars Sample Return</Link>.
+                    Wrote software for <Link href="https://www.jpl.nasa.gov/missions/europa-clipper/" target="_blank">Europa Clipper</Link>, currently en route to Jupiter.
+                    Interested in all things embedded software, operating systems, compilers, and the Lakers.
+                </p>
+                <p className={styles.text}>For more information:</p>
+                <ul className={styles.linkList}>
+                    <li className={styles.list}>
+                        <Link href="/resume">Resume</Link>
+                    </li>
+                    <li className={styles.list}>
+                        <Link href="/projects">Projects</Link>
+                    </li>
+                </ul>
+                <p className={styles.text}>You can find me online at:</p>
+                <ul className={styles.linkList}>
+                    <li className={styles.list}>
+                        GitHub: <Link href="https://github.com/ianbrault" target="_blank">https://github.com/ianbrault</Link>
+                    </li>
+                    <li className={styles.list}>
+                        LinkedIn: <Link href="https://www.linkedin.com/in/ianbrault" target="_blank">https://www.linkedin.com/in/ianbrault</Link>
+                    </li>
+                    <li className={styles.list}>
+                        Email: <Link href="mailto:ian@brault.dev" target="_blank">ian@brault.dev</Link>
+                    </li>
+                    <li className={styles.list}>
+                        Bluesky: <Link href="https://bsky.app/profile/ianbrault.bsky.social" target="_blank">https://bsky.app/profile/ianbrault.bsky.social</Link>
+                    </li>
+                </ul>
             </VFlex>
-            <HFlex gap={8}>
-                <Link className={styles.link} href="/projects">Projects</Link>
-                <p className={styles.text}>•</p>
-                <Link className={styles.link} href="/resume">Resume</Link>
-            </HFlex>
-            <VFlex gap={10}>
-                <p className={styles.subheading}>Links</p>
-                <HFlex gap={28}>
-                    <ImageLink text="GitHub" src="/images/logos/github.png" href="https://github.com/ianbrault"/>
-                    <ImageLink text="LinkedIn" src="/images/logos/linkedin.png" href="https://www.linkedin.com/in/ianbrault/"/>
-                    <ImageLink text="Email" src="/images/logos/fastmail.png" href="mailto:ian@brault.dev"/>
-                </HFlex>
-            </VFlex>
-        </VFlex>
+        </>
     );
 }

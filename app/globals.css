@@ -5,8 +5,9 @@
 :root {
     --white: #FFFFFF;
     --black: #000000;
-    --blue: #007AFFFF;
     --red: #FF3B30FF;
+    --green: #34C759FF;
+    --blue: #007AFFFF;
 
     --background: #FFFFFF;
     --text: #000000;
@@ -19,8 +20,9 @@
     :root {
         --white: #FFFFFF;
         --black: #000000;
-        --blue: #0A84FFFF;
         --red: #FF453AFF;
+        --green: #30D158FF;
+        --blue: #0A84FFFF;
 
         --background: #000000;
         --text: #FFFFFF;

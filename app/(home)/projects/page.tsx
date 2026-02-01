@@ -3,8 +3,8 @@
 */
 
 import { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import React from "react";
 
 import Header from "@/components/Header";
 import VFlex from "@/components/VFlex";
@@ -15,128 +15,61 @@ export const metadata: Metadata = {
     title: "Projects",
 };
 
-interface Project {
-    name: string;
-    nameElement?: React.ReactNode;
-    description: string;
-    image: string;
+interface ListLinkProps {
     href: string;
-    tags: string[];
+    text: string;
+    target?: string;
+    monospace?: boolean;
 }
 
-interface ProjectItemProps {
-    project: Project;
-}
-
-function ProjectItem({project}: ProjectItemProps) {
-    const imageSize = 40;
-    return (
-        <div className={styles.projectGrid}>
-            <Image
-                className={styles.projectImage}
-                src={project.image}
-                alt={project.name}
-                width={imageSize} height={imageSize}
-                quality={85}
-            />
-            <Link className={styles.projectName} href={project.href} target="_blank">
-                {project.nameElement !== undefined ? project.nameElement : project.name}
-            </Link>
-            <p className={styles.projectDescription}>{project.description}</p>
-            <p className={styles.projectTags}>{project.tags.join(", ")}</p>
-        </div>
-    );
+function ListLink({ href, text, target = "_blank", monospace = false, }: ListLinkProps) {
+    const style: React.CSSProperties = {};
+    if (monospace) {
+        style.fontFamily = "monospace";
+        style.fontSize = "16px";
+    }
+    return <Link href={href} target={target} style={style}>{text}</Link>;
 }
 
 export default function Projects() {
-    const projects = [
-        {
-            name: "Basil",
-            description: "iOS app to store recipes and more",
-            image: "https://raw.githubusercontent.com/ianbrault/basil/refs/heads/master/Images/AppIcon.png",
-            href: "https://github.com/ianbrault/basil",
-            tags: ["iOS", "Swift"],
-        },
-        {
-            name: "Personal Website",
-            description: "this one",
-            image: "/images/logos/typescript.png",
-            href: "https://github.com/ianbrault/website",
-            tags: ["Typescript", "React", "NextJS"],
-        },
-        {
-            name: "case_iterable",
-            nameElement: <><span className={styles.projectNameMono}>case_iterable</span> crate</>,
-            description: "procedural macro to iterate over enum variants ala Swift",
-            image: "/images/logos/rust.png",
-            href: "https://crates.io/crates/case_iterable",
-            tags: ["Rust"],
-        },
-        {
-            name: "Sleeper Stats",
-            description: "dashboard for Sleeper fantasy football statistics",
-            image: "/images/logos/sleeper.jpg",
-            href: "/sleeper",
-            tags: ["Typescript", "React"],
-        },
-        {
-            name: "NYT Cooking Downloader",
-            description: "downloads recipes from NYT Cooking into Apple Notes",
-            image: "/images/logos/nyt_cooking.png",
-            href: "https://github.com/ianbrault/nyt_recipe",
-            tags: ["Python"],
-        },
-        {
-            name: "Advent of Code",
-            description: "solutions implemented in Rust",
-            image: "/images/logos/rust.png",
-            href: "https://github.com/ianbrault/aoc",
-            tags: ["Rust"],
-        },
-        {
-            name: "UCLA CEC Web Development",
-            description: "websites for UCLA's Campus Events Commission",
-            image: "/images/logos/cec.png",
-            href: "/cec_portfolio.pdf",
-            tags: ["Javascript", "React"],
-        },
-    ];
-    const openSource = [
-        {
-            name: "F-Prime",
-            description: "flight software and embedded systems framework",
-            image: "/images/logos/nasa.png",
-            href: "https://github.com/nasa/fprime",
-            tags: ["C++"],
-        },
-        {
-            name: "fprime-baremetal",
-            description: "F-Prime support package for baremetal environments",
-            image: "/images/logos/fprime.png",
-            href: "https://github.com/fprime-community/fprime-baremetal",
-            tags: ["C++"],
-        },
-        {
-            name: "fprime-vorago",
-            description: "F-Prime board support package for Vorago microcontrollers",
-            image: "/images/logos/fprime.png",
-            href: "https://github.com/fprime-community/fprime-vorago",
-            tags: ["C++"],
-        },
-    ];
-    const projectList = projects.map((project, i) => (
-        <ProjectItem key={i} project={project}/>
-    ));
-    const openSourceList = openSource.map((project, i) => (
-        <ProjectItem key={i} project={project}/>
-    ));
-
     return (
-        <VFlex className={styles.wrapper}>
-            <Header text="Projects" homeButton/>
-            {projectList}
-            <p className={styles.subheading}>Open-source contributions</p>
-            {openSourceList}
-        </VFlex>
+        <>
+            <Header text="Projects" homeButton />
+            <VFlex gap={20}>
+                <p className={styles.text}>Some projects I have worked on:</p>
+                <ul className={styles.linkList}>
+                    <li className={styles.list}>
+                        <ListLink text="Basil" href="https://github.com/ianbrault/basil" />, an iOS app to store recipes and more
+                    </li>
+                    <li className={styles.list}>
+                        The source code for <ListLink text="this website" href="https://github.com/ianbrault/website" />
+                    </li>
+                    <li className={styles.list}>
+                        <ListLink text="case_iterable" monospace href="https://crates.io/crates/case_iterable" />, a Rust procedural macro to iterate over enum variants in the same manner as Swift
+                    </li>
+                    <li className={styles.list}>
+                        <ListLink text="Sleeper Stats" href="/sleeper" />, a dashboard for Sleeper fantasy football statistics
+                    </li>
+                    <li className={styles.list}>
+                        My <ListLink text="Advent of Code" href="https://github.com/ianbrault/aoc" /> solutions implemented in Rust
+                    </li>
+                    <li className={styles.list}>
+                        Some <ListLink text="websites" href="/cec_portfolio.pdf" />{" I worked on for UCLA's Campus Events Commission"}
+                    </li>
+                </ul>
+                <p className={styles.text}>Some open-source projects I have contributed to:</p>
+                <ul className={styles.linkList}>
+                    <li className={styles.list}>
+                        <ListLink text="fprime" monospace href="https://github.com/nasa/fprime" />{", NASA's flight software and embedded systems framework"}
+                    </li>
+                    <li className={styles.list}>
+                        <ListLink text="fprime-vorago" monospace href="https://github.com/fprime-community/fprime-vorago" />, an fprime board support package for Vorago microcontrollers
+                    </li>
+                    <li className={styles.list}>
+                        <ListLink text="fprime-baremetal" monospace href="https://github.com/fprime-community/fprime-baremetal" />, an fprime support package for baremetal environments
+                    </li>
+                </ul>
+            </VFlex>
+        </>
     );
 }

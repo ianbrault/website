@@ -5,7 +5,6 @@
 import { Metadata } from "next";
 
 import Header from "@/components/Header";
-import VFlex from "@/components/VFlex";
 
 import styles from "./page.module.css";
 
@@ -15,9 +14,9 @@ export const metadata: Metadata = {
 
 export default function Resume() {
     return (
-        <VFlex className={styles.wrapper} gap={30}>
-            <Header text="Resume" homeButton/>
+        <>
+            <Header text="Resume" homeButton />
             <p>Coming soon...</p>
-        </VFlex>
+        </>
     );
 }

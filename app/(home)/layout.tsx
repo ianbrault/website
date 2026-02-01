@@ -4,6 +4,8 @@
 
 import type { Metadata } from "next";
 
+import VFlex from "@/components/VFlex";
+
 import "../globals.css";
 
 export const metadata: Metadata = {
@@ -14,7 +16,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang="en">
             <body>
-                {children}
+                <VFlex
+                    style={{
+                        maxWidth: "70ch",
+                        width: "fit-content",
+                        padding: "4em 0",
+                        margin: "auto",
+                    }}
+                    gap={28}
+                >
+                    {children}
+                </VFlex>
             </body>
         </html>
     );

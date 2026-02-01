@@ -1,0 +1,24 @@
+/*
+** app/(home)/components/ProfilePicture.module.css
+*/
+
+.profilePictureWrapper {
+    align-self: center;
+    display: grid;
+}
+
+.profilePicture, .profilePictureShadow {
+    border-radius: 16px;
+    grid-column: 1;
+    grid-row: 1;
+    transition: transform 250ms ease-out;
+}
+
+.profilePicture {
+    z-index: 100;
+}
+
+.profilePictureShadow {
+    background-color: var(--green);
+    opacity: 0.40;
+}

@@ -26,7 +26,7 @@ export default function Header({ text, homeButton, className }: HeaderProps) {
             <p style={textStyle}>{text}</p>
             {homeButton &&
                 <Link href="/">
-                    <p style={linkTextStyle}>{"< Home"}</p>
+                    <p style={linkTextStyle}>Home</p>
                 </Link>
             }
         </VFlex>
