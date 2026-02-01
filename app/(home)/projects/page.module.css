@@ -1,0 +1,12 @@
+/*
+** app/(home)/projects/page.module.css
+*/
+
+.text, .list {
+    font-size: 18px;
+    line-height: 1.5em;
+}
+
+.linkList {
+    padding-left: 4ch;
+}

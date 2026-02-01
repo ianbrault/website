@@ -1,0 +1,46 @@
+/*
+** app/sleeper/[userId]/[leagueId]/components/GameStatView.module.css
+*/
+
+.statWrapper {
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    margin: 20px 0;
+}
+
+.statTitle {
+    font-weight: 600;
+    margin: 4px 0;
+}
+
+.statGrid {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-template-rows: repeat(3, auto);
+    column-gap: 20px;
+    row-gap: 4px;
+}
+
+.statGrid > p {
+    margin: 0;
+}
+
+.statGrid > p:nth-child(even) {
+    text-align: right;
+}
+
+.statGrid > p:last-child {
+    font-size: 0.8rem;
+    color: var(--secondary-text);
+}
+
+.gridBold {
+    font-weight: 600;
+}
+
+@media only screen and (max-width: 768px) {
+    .statWrapper {
+        margin: 12px 0;
+    }
+}

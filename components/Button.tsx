@@ -2,26 +2,30 @@
 ** components/Button.tsx
 */
 
-import React from "react";
-
-import "./styles/Button.css";
-
 interface ButtonProps {
+    className?: string;
     message: string;
     onClick?: () => void;
-    className?: string;
 }
 
-export default function Button({ message, onClick = undefined, className = "" }: ButtonProps) {
-    const classes = ["components--button"];
-    if (className) {
-        classes.push(className);
-    }
-
+export default function Button({ className, message, onClick }: ButtonProps) {
     return (
         <button
+            className={className}
             onClick={onClick}
-            className={classes.join(" ")}
+            style={{
+                appearance: "none",
+                MozAppearance: "none",
+                WebkitAppearance: "none",
+                fontSize: "0.9rem",
+                fontWeight: "bold",
+                backgroundColor: "var(--blue)",
+                color: "var(--white)",
+                border: "none",
+                borderRadius: 6,
+                padding: "8px 20px",
+                cursor: "pointer",
+            }}
         >
             {message}
         </button>

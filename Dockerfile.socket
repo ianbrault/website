@@ -1,0 +1,22 @@
+# Dockerfile.socket
+
+FROM node:24-alpine
+
+RUN apk update && \
+    apk upgrade && \
+    apk add \
+        libc6-compat \
+        bash \
+        git
+RUN npm install -g tsx
+
+WORKDIR /socket
+COPY package.json package-lock.json ./
+COPY . .
+
+ENV NODE_ENV=production
+EXPOSE 4000
+
+RUN npm ci --only=production
+
+CMD ["npm", "run", "socket"]

@@ -1,0 +1,29 @@
+/*
+** app/sleeper/[userId]/components/LeagueForm.module.css
+*/
+
+.leagueInput {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.leagueLabel {
+    font-size: 1rem;
+    margin-bottom: 4px;
+    color: var(--secondary-text);
+}
+
+.leagueButton {
+    align-self: center;
+    margin: 8px;
+    width: 128px;
+}
+
+.errorText {
+    width: 256px;
+    margin: 4px;
+    text-align: center;
+    color: var(--red);
+}

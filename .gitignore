@@ -1,13 +1,12 @@
-node_modules
-dist
-__pycache__
+**build
+**node_modules
+**out
+**.next
+**.DS_Store
 
-.mongodb.log*
-
-**/.venv
-*.env
+coverage
+next-env.d.ts
 *.pem
-*.key
-
-.vscode
-*.swp
+npm-debug.log*
+.env*
+*.tsbuildinfo

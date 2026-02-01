@@ -2,22 +2,18 @@
 ** components/TextInput.tsx
 */
 
-import React from "react";
+"use client";
 
-import "./styles/TextInput.css";
+import React, { useState } from "react";
 
 interface TextInputProps {
+    className?: string;
     label: string;
     onChange: (text: string) => void;
-    className: string;
 }
 
-export default function TextInput({ label, onChange, className = "" }: TextInputProps) {
-    const [text, setText] = React.useState("");
-    const classes = ["components--text-input--input"];
-    if (className) {
-        classes.push(className);
-    }
+export default function TextInput({ className, label, onChange }: TextInputProps) {
+    const [text, setText] = useState("");
 
     function onInputChange(event: React.ChangeEvent<HTMLInputElement>) {
         setText(event.target.value);
@@ -26,12 +22,28 @@ export default function TextInput({ label, onChange, className = "" }: TextInput
 
     return (
         <>
-            <label className="components--text-input--label">{label}</label>
+            <label
+                style={{
+                    fontSize: "1rem",
+                    color: "var(--secondary-text)",
+                }}
+            >
+                {label}
+            </label>
             <input
                 type="text"
-                className={classes.join(" ")}
                 value={text}
+                className={className}
                 onChange={onInputChange}
+                style={{
+                    appearance: "none",
+                    MozAppearance: "none",
+                    WebkitAppearance: "none",
+                    fontSize: "1rem",
+                    border: "1px solid black",
+                    borderRadius: 6,
+                    padding: "4px 8px",
+                }}
             />
         </>
     );

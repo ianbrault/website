@@ -1,0 +1,24 @@
+/*
+** app/(home)/page.module.css
+*/
+
+.header {
+    align-self: center;
+}
+
+.textWrapper {
+    padding: 0 2ch;
+}
+
+.text, .list {
+    font-size: 18px;
+    line-height: 1.5em;
+}
+
+.text {
+    text-align: justify;
+}
+
+.linkList {
+    padding-left: 4ch;
+}

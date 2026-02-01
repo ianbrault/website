@@ -1,0 +1,43 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+      args:
+        - MONGODB_URL=mongodb://mongodb:27017
+    container_name: server
+    ports:
+      - "3000:3000"
+    depends_on:
+      database:
+        condition: service_started
+    environment:
+      MONGODB_URL: mongodb://mongodb:27017
+      PORT: 3000
+
+  socket:
+    build:
+      context: .
+      dockerfile: Dockerfile.socket
+    container_name: socket
+    ports:
+      - "4000:4000"
+    depends_on:
+      database:
+        condition: service_started
+    environment:
+      MONGODB_URL: mongodb://mongodb:27017
+      PORT: 4000
+
+  database:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - db-data:/data/db
+    command: mongod --quiet --logpath /dev/null
+
+volumes:
+  db-data:

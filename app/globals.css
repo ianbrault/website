@@ -1,0 +1,60 @@
+/*
+** app/globals.css
+*/
+
+:root {
+    --white: #FFFFFF;
+    --black: #000000;
+    --red: #FF3B30FF;
+    --green: #34C759FF;
+    --blue: #007AFFFF;
+
+    --background: #FFFFFF;
+    --text: #000000;
+    --secondary-text: #8A8A8E;
+
+    --title-size: 40px;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --white: #FFFFFF;
+        --black: #000000;
+        --red: #FF453AFF;
+        --green: #30D158FF;
+        --blue: #0A84FFFF;
+
+        --background: #000000;
+        --text: #FFFFFF;
+        --secondary-text: #8D8D93;
+    }
+}
+
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    color: var(--blue);
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    html {
+        color-scheme: dark;
+    }
+}

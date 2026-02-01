@@ -4,8 +4,6 @@
 
 import React from "react";
 
-import "./styles/RadioInput.css";
-
 interface RadioInputProps {
     value: string;
     label: string;
@@ -13,14 +11,22 @@ interface RadioInputProps {
     onChange: (selection: string) => void;
 }
 
-export default function LeagueSelector({ value, label, checked, onChange }: RadioInputProps) {
+export default function RadioInput({ value, label, checked, onChange }: RadioInputProps) {
 
     function onSelectionChange(event: React.ChangeEvent<HTMLInputElement>) {
         onChange(event.target.value);
     }
 
     return (
-        <label className="components--radio-input--label">
+        <label
+            style={{
+                display: "grid",
+                alignItems: "center",
+                gridTemplateColumns: "1em auto",
+                gap: "0.5em",
+                fontSize: "1rem",
+            }}
+        >
             <input
                 type="radio"
                 value={value}

@@ -1,0 +1,53 @@
+/*
+** app/sleeper/[userId]/[leagueId]/components/StatsListView.module.css
+*/
+
+.statsListWrapper {
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    margin: 20px 0;
+}
+
+.statsListTitle {
+    font-weight: 600;
+    margin: 4px 0;
+}
+
+.statsListGrid {
+    display: grid;
+    column-gap: 16px;
+    row-gap: 4px;
+}
+
+.gridHeader {
+    font-weight: 600;
+    color: var(--secondary-text);
+    margin: 4px 0;
+    text-align: right;
+}
+
+.gridHeader:nth-child(2) {
+    text-align: left;
+}
+
+.gridItemIndex {
+    margin: 0;
+    text-align: right;
+}
+
+.gridItem {
+    margin: 0;
+    text-align: right;
+}
+
+.gridItemName {
+    margin: 0;
+    text-align: left;
+}
+
+@media only screen and (max-width: 768px) {
+    .statsListWrapper {
+        margin: 12px 0;
+    }
+}
