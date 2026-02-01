@@ -25,7 +25,7 @@ export default function Home() {
                 <p className={styles.text}>For more information:</p>
                 <ul className={styles.linkList}>
                     <li className={styles.list}>
-                        <Link href="/resume">Resume</Link>
+                        <Link href="/Resume.pdf" target="_blank">Resume</Link>
                     </li>
                     <li className={styles.list}>
                         <Link href="/projects">Projects</Link>
