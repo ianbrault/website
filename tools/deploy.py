@@ -9,7 +9,7 @@ import sys
 import typing
 
 cwd = pathlib.Path(__file__).parent.resolve()
-domain = "test.brault.dev"
+domain = "brault.dev"
 email = "ian@brault.dev"
 
 signal.signal(signal.SIGINT, lambda _signum, _frame: sys.exit(1))

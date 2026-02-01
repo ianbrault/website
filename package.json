@@ -6,6 +6,8 @@
     "scripts": {
         "dev": "next dev --turbopack",
         "build": "next build --turbopack",
+        "dbexport": "mongoexport --db=basil --collection=users --out=users.json mongodb://mongodb:27017 && mongoexport --db=basil --collection=tokens --out=tokens.json mongodb://mongodb:27017",
+        "dbimport": "mongoimport --db=basil --collection=users mongodb://mongodb:27017 users.json && mongoexport --db=basil --collection=tokens mongodb://mongodb:27017 tokens.json",
         "socket": "tsx socket/main.ts",
         "start": "next start",
         "lint": "eslint"
