@@ -6,6 +6,7 @@ import {
     ByYear,
     LeagueInfo,
     Matchup,
+    NflState,
     Roster,
     Transaction,
     User,
@@ -14,7 +15,6 @@ import {
     getLeagueRosters,
     getLeagueTransactions,
     getLeagueUsers,
-    getNflState,
 } from "./api";
 
 // Interfaces
@@ -167,7 +167,7 @@ function summarizeGameInfo(
     return info;
 }
 
-function getGameStats(rosters: Roster[], matchups: {[year: number]: Matchup[][]}): GameStats[] {
+function getGameStats(rosters: Roster[], matchups: { [year: number]: Matchup[][] }): GameStats[] {
     const stats: GameStats[] = [];
 
     // iterate over years in order so that matchups are chronological
@@ -320,11 +320,9 @@ function getTransactionStats(
     return stats;
 }
 
-export async function getLeagueStats(leagueID: string): Promise<Info> {
+export async function getLeagueStats(leagueID: string, nflState: NflState): Promise<Info> {
     // get league info across all years for the selected league
-    const leagueData = await getLeagueInfo(leagueID);
-    // get the NFL state to determine the progress of the current year
-    const nflState = await getNflState();
+    const leagueData = await getLeagueInfo(leagueID, nflState);
     // get league user info for the selected league
     const users = await getLeagueUsers(leagueID);
     // get league roster info for the selected league

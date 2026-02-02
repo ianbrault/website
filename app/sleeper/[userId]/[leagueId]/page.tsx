@@ -2,6 +2,7 @@
 ** app/sleeper/[userId]/[leagueId]/page.tsx
 */
 
+import { getNflState } from "../../api";
 import { getLeagueStats, userIdToName } from "../../utils";
 
 import Header from "@/components/Header";
@@ -40,14 +41,15 @@ interface FAAB {
 
 interface SleeperLeagueProps {
     params: Promise<{ userId: string; leagueId: string }>;
+    searchParams: Promise<{ [key: string]: string | undefined }>;
 }
 
 export default async function SleeperUser({ params }: SleeperLeagueProps) {
     const { leagueId } = await params;
-    const currentYear = new Date().getFullYear();
 
-    const info = await getLeagueStats(leagueId);
-    const leagueName = info.league[currentYear].name;
+    const nflState = await getNflState();
+    const info = await getLeagueStats(leagueId, nflState);
+    const leagueName = info.league[nflState.season].name;
 
     /*
     ** win percentage
@@ -168,7 +170,7 @@ export default async function SleeperUser({ params }: SleeperLeagueProps) {
 
     return (
         <section className={styles.leagueWrapper}>
-            <Header text={leagueName}/>
+            <Header text={leagueName} />
             <div className={styles.statsWrapper}>
                 <GameStatView
                     info={info}
@@ -192,7 +194,7 @@ export default async function SleeperUser({ params }: SleeperLeagueProps) {
                     title="Closest Game"
                     game={info.matchups.closestGame}
                 />
-                <div className={styles.gridBreak}/>
+                <div className={styles.gridBreak} />
                 <StatsListView
                     title="Win Percentage"
                     headers={winPctHeaders}

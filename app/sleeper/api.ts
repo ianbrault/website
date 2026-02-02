@@ -6,7 +6,7 @@ const BaseURL = "https://api.sleeper.app/v1";
 
 // Interfaces
 
-export type ByYear<T> = {[year: number]: T};
+export type ByYear<T> = { [year: number]: T };
 
 export interface League {
     id: string;
@@ -33,6 +33,8 @@ export interface Matchup {
 
 export interface NflState {
     week: number;
+    season: number;
+    season_type: string;
 }
 
 export interface Roster {
@@ -40,7 +42,7 @@ export interface Roster {
 }
 
 export interface Transaction {
-    adds: {[playerID: number]: number};
+    adds: { [playerID: number]: number };
     creator: string;
     rosterIDs: number[];
     status: string;
@@ -71,24 +73,28 @@ async function get(url: string): Promise<any> {  // eslint-disable-line @typescr
     return await getNoAwait(url);
 }
 
-/*
-** TODO: future endpoints
-** drafts: /league/<id>/drafts
-** draft picks: /draft/<id>/picks
-*/
+// Endpoints
+// TODO: future work
+// drafts: /league/<id>/drafts
+// draft picks: /draft/<id>/picks
 
 /*
-** gets the current NFL state
+** Gets the current NFL state
 */
 export async function getNflState(): Promise<NflState> {
     return await get("/state/nfl")
-        .then((res) => ({
-            week: res.week,
-        }));
+        .then((res) => {
+            const season = Number.parseInt(res.season);
+            return {
+                week: res.week,
+                season: season,
+                season_type: res.season_type,
+            };
+        });
 }
 
 /*
-** gets the user data associated with the given username
+** Gets the user data associated with the given username
 */
 export async function getUserID(username: string): Promise<string> {
     return get(`/user/${username}`)
@@ -96,11 +102,11 @@ export async function getUserID(username: string): Promise<string> {
 }
 
 /*
-** gets all NFL league data from the current year for the given user ID
+** Gets all NFL league data from the current year for the given user ID
 */
 export async function getUserCurrentLeagues(userID: string): Promise<League[]> {
-    const currentYear = new Date().getFullYear();
-    return await get(`/user/${userID}/leagues/nfl/${currentYear}`)
+    const nflState = await getNflState();
+    return await get(`/user/${userID}/leagues/nfl/${nflState.season}`)
         .then((res) => res.map((league: any) => ({  // eslint-disable-line @typescript-eslint/no-explicit-any
             id: league.league_id,
             name: league.name,
@@ -108,14 +114,17 @@ export async function getUserCurrentLeagues(userID: string): Promise<League[]> {
 }
 
 /*
-** gets all NFL league data from all years for the given league ID
+** Gets all NFL league data from all years for the given league ID
 */
-export async function getLeagueInfo(leagueID: string): Promise<ByYear<LeagueInfo>> {
+export async function getLeagueInfo(
+    leagueID: string,
+    nflState: NflState,
+): Promise<ByYear<LeagueInfo>> {
     const info: ByYear<LeagueInfo> = {};
     // start from the current year and work backwards
     let id = leagueID;
-    let currentYear = new Date().getFullYear();
-    while (id !== undefined && id !== "0") {
+    let currentYear = nflState.season;
+    while (id !== undefined && id !== null && id !== "0") {
         const yearInfo = await get(`/league/${id}`).then((league) => ({
             name: league.name,
             previousLeagueID: league.previous_league_id,
@@ -132,7 +141,7 @@ export async function getLeagueInfo(leagueID: string): Promise<ByYear<LeagueInfo
 }
 
 /*
-** gets all user info for the given league ID
+** Gets all user info for the given league ID
 */
 export async function getLeagueUsers(leagueID: string): Promise<User[]> {
     return await get(`/league/${leagueID}/users`)
@@ -143,7 +152,7 @@ export async function getLeagueUsers(leagueID: string): Promise<User[]> {
 }
 
 /*
-** gets all roster info for the given league ID
+** Gets all roster info for the given league ID
 */
 export async function getLeagueRosters(leagueID: string): Promise<Roster[]> {
     return await get(`/league/${leagueID}/rosters`)
@@ -153,7 +162,7 @@ export async function getLeagueRosters(leagueID: string): Promise<Roster[]> {
 }
 
 /*
-** gets all matchup info for the given league ID
+** Gets all matchup info for the given league ID
 */
 export async function getLeagueMatchups(
     leagueID: string,
@@ -166,16 +175,14 @@ export async function getLeagueMatchups(
     const promiseYears: number[] = [];
     // start from the current year and work backwards
     let id = leagueID;
-    const currentYear = new Date().getFullYear();
+    const currentYear = nflState.season;
     let year = currentYear;
-    while (id !== undefined && id !== "0") {
+    while (id !== undefined && id !== null && id !== "0") {
         const nWeeks = leagueInfo[year].settings.playoffWeekStart - 1;
         let end = nWeeks;
         if (year == currentYear) {
             if (leagueInfo[year].status == "in_season") {
                 end = nflState.week - 1;
-            } else {
-                end = nflState.week;
             }
         }
         for (let week = 1; week <= end; week++) {
@@ -206,7 +213,7 @@ export async function getLeagueMatchups(
 }
 
 /*
-** gets all transaction info for the given league ID
+** Gets all transaction info for the given league ID
 */
 export async function getLeagueTransactions(
     leagueID: string,
@@ -219,9 +226,9 @@ export async function getLeagueTransactions(
     const promiseYears: number[] = [];
     // start from the current year and work backwards
     let id = leagueID;
-    const currentYear = new Date().getFullYear();
+    const currentYear = nflState.season;
     let year = currentYear;
-    while (id !== undefined && id !== "0") {
+    while (id !== undefined && id !== null && id !== "0") {
         const nWeeks = leagueInfo[year].settings.playoffWeekStart - 1;
         let end = nWeeks;
         if (year == currentYear) {
