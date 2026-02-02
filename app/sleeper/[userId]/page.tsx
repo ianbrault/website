@@ -17,11 +17,11 @@ export default async function SleeperUser({ params }: SleeperUserProps) {
     let error = "";
     try {
         leagues = await getUserCurrentLeagues(userId);
-    } catch(err) {
+    } catch (err) {
         error = `${err}`;
     }
 
     return (
-        <LeagueForm userId={userId} leagues={leagues} error={error}/>
+        <LeagueForm userId={userId} leagues={leagues} error={error} />
     );
 }

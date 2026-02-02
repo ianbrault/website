@@ -39,7 +39,7 @@ export default function LeagueForm({ userId, leagues, error }: LeagueFormProps) 
                     onChange={setSelection}
                 />
             ))}
-            <Button message="Submit" className={styles.leagueButton}/>
+            <Button message="Submit" className={styles.leagueButton} />
             {error.length > 0 && <p className={styles.errorText}>{error}</p>}
         </form>
     );

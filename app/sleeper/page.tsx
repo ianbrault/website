@@ -50,8 +50,8 @@ export default function Sleeper() {
                 label="Enter your username:"
                 onChange={setUsername}
             />
-            <Button className={styles.userButton} message="Submit"/>
-            <LoadingBar loading={loading}/>
+            <Button className={styles.userButton} message="Submit" />
+            <LoadingBar loading={loading} />
             {error.length > 0 && <p className={styles.errorText}>{error}</p>}
         </form>
     );

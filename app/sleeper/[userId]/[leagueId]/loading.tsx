@@ -21,7 +21,7 @@ export default function Loading() {
             >
                 Loading league info...
             </p>
-            <LoadingBar loading={true}/>
+            <LoadingBar loading={true} />
         </div>
     );
 }
