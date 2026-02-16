@@ -6,8 +6,6 @@
     "scripts": {
         "dev": "next dev --turbopack",
         "build": "next build --turbopack",
-        "dbexport": "mongoexport --db=basil --collection=users --out=users.json mongodb://mongodb:27017 && mongoexport --db=basil --collection=tokens --out=tokens.json mongodb://mongodb:27017",
-        "dbimport": "mongoimport --db=basil --collection=users mongodb://mongodb:27017 users.json && mongoexport --db=basil --collection=tokens mongodb://mongodb:27017 tokens.json",
         "socket": "tsx socket/main.ts",
         "start": "next start",
         "lint": "eslint"
@@ -17,6 +15,7 @@
         "next": "^16.1.5",
         "react": "19.1.0",
         "react-dom": "19.1.0",
+        "typescript": "^5.9.2",
         "ws": "^8.18.3"
     },
     "devDependencies": {
@@ -26,7 +25,6 @@
         "@types/react-dom": "^19",
         "@types/ws": "^8.18.1",
         "eslint": "^9",
-        "eslint-config-next": "15.5.3",
-        "typescript": "^5.9.2"
+        "eslint-config-next": "15.5.3"
     }
 }
