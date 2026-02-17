@@ -9,6 +9,7 @@ use crate::db::{
 use crate::server::{ErrorResponse, ServerState};
 use crate::utils;
 
+use anyhow::Result;
 use axum::{
     Json, Router,
     extract::State,
@@ -16,7 +17,8 @@ use axum::{
     routing::post,
 };
 use bson::doc;
-use log::{debug, error, info};
+use log::{debug, info};
+use route_macro::route;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -46,40 +48,24 @@ struct CreateUserResponse {
     token: Uuid,
 }
 
-async fn create_user(state: State<ServerState>, Json(body): Json<CreateUserBody>) -> Response {
+#[route]
+async fn create_user(state: State<ServerState>, Json(body): Json<CreateUserBody>) -> Result<Response> {
     info!("/basil/v2/user/create");
     let token_collection = state.database.collection::<Token>(DatabaseHandle::Basil);
     let user_collection = state.database.collection::<User>(DatabaseHandle::Basil);
 
     // Check for a pre-existing user with the same email
-    match user_collection
-        .find_one(doc! { "email": &body.email })
-        .await
-    {
-        Ok(maybe_user) => {
-            if maybe_user.is_some() {
-                info!("A user with email {} already exists", body.email);
-                return ErrorResponse::bad_request(format!(
-                    "A user with email \"{}\" already exists",
-                    body.email
-                ))
-                .into_response();
-            }
-        }
-        Err(error) => {
-            error!("Failed to query for duplicate users: {}", error.to_string());
-            return ErrorResponse::internal_error(error.into()).into_response();
-        }
-    };
+    if user_collection.find_one(doc! { "email": &body.email }).await?.is_some() {
+        info!("A user with email {} already exists", body.email);
+        return Ok(ErrorResponse::bad_request(format!(
+            "A user with email \"{}\" already exists",
+            body.email
+        ))
+        .into_response());
+    }
 
     // Create the user model
-    let hashed_password = match utils::hash_password(body.password) {
-        Ok(hash) => hash,
-        Err(error) => {
-            error!("Failed to hash password: {}", error.to_string());
-            return ErrorResponse::internal_error(error).into_response();
-        }
-    };
+    let hashed_password = utils::hash_password(body.password)?;
     let devices = if let Some(device) = body.device {
         vec![device]
     } else {
@@ -99,31 +85,21 @@ async fn create_user(state: State<ServerState>, Json(body): Json<CreateUserBody>
     let token = Token::new(user._id);
     debug!("New token for user: {:?}", token);
     let token_id = token._id;
-    if let Err(error) = token_collection.insert_one(token).await {
-        error!("Failed to insert new token: {}", error.to_string());
-        return ErrorResponse::internal_error(error.into()).into_response();
-    }
+    token_collection.insert_one(token).await?;
 
     // Insert the user model and return the details in the response
-    match user_collection.insert_one(user.clone()).await {
-        Ok(_) => {
-            info!("Created new user {}", user._id);
-            let response = CreateUserResponse {
-                id: user._id,
-                email: user.email,
-                root: user.root,
-                recipes: user.recipes,
-                folders: user.folders,
-                sequence: user.sequence,
-                token: token_id,
-            };
-            Json(response).into_response()
-        }
-        Err(error) => {
-            error!("Failed to insert new user: {}", error.to_string());
-            ErrorResponse::internal_error(error.into()).into_response()
-        }
-    }
+    user_collection.insert_one(user.clone()).await?;
+    info!("Created new user {}", user._id);
+    let response = CreateUserResponse {
+        id: user._id,
+        email: user.email,
+        root: user.root,
+        recipes: user.recipes,
+        folders: user.folders,
+        sequence: user.sequence,
+        token: token_id,
+    };
+    Ok(Json(response).into_response())
 }
 
 pub fn router(state: ServerState) -> Router {

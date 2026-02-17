@@ -11,4 +11,4 @@ npm-debug.log*
 .env*
 *.tsbuildinfo
 
-db/target
+**target
