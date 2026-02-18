@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize)]
-pub struct RouteRequest {
+pub struct Request {
     email: String,
     password: String,
     root: Uuid,
@@ -36,7 +36,7 @@ pub struct RouteRequest {
 }
 
 #[route]
-pub async fn route(state: State<ServerState>, Json(body): Json<RouteRequest>) -> Result<Response> {
+pub async fn route(state: State<ServerState>, Json(body): Json<Request>) -> Result<Response> {
     info!("/basil/v2/user/create");
 
     // Check for a pre-existing user with the same email

@@ -19,7 +19,7 @@ use route_macro::route;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
-pub struct RouteRequest {
+pub struct Request {
     email: String,
     password: String,
     #[serde(default)]
@@ -27,7 +27,7 @@ pub struct RouteRequest {
 }
 
 #[route]
-pub async fn route(state: State<ServerState>, Json(body): Json<RouteRequest>) -> Result<Response> {
+pub async fn route(state: State<ServerState>, Json(body): Json<Request>) -> Result<Response> {
     info!("/basil/v2/user/delete");
 
     // Find the user matching the given email
@@ -47,6 +47,7 @@ pub async fn route(state: State<ServerState>, Json(body): Json<RouteRequest>) ->
             .collection::<User>(DatabaseHandle::Basil)
             .delete_one(doc! { "_id": user._id })
             .await?;
+        info!("Deleted user {}", user._id);
 
         Ok(StatusCode::OK.into_response())
     } else {

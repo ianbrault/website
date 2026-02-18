@@ -21,7 +21,7 @@ use route_macro::route;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
-pub struct RouteRequest {
+pub struct Request {
     email: String,
     password: String,
     #[serde(default)]
@@ -29,7 +29,7 @@ pub struct RouteRequest {
 }
 
 #[route]
-pub async fn route(state: State<ServerState>, Json(body): Json<RouteRequest>) -> Result<Response> {
+pub async fn route(state: State<ServerState>, Json(body): Json<Request>) -> Result<Response> {
     info!("/basil/v2/user/authenticate");
 
     // Find the user matching the given email

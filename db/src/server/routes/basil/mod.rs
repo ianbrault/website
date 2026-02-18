@@ -5,6 +5,7 @@
 mod authenticate_user;
 mod create_user;
 mod delete_user;
+mod ping;
 
 use crate::db::{Connection, DatabaseHandle, models::basil::Token};
 use crate::server::ServerState;
@@ -56,5 +57,6 @@ pub fn router(state: ServerState) -> Router {
         .route("/v2/user/authenticate", post(authenticate_user::route))
         .route("/v2/user/create", post(create_user::route))
         .route("/v2/user/delete", post(delete_user::route))
+        .route("/v2/user/ping", post(ping::route))
         .with_state(state)
 }

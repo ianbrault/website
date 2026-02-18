@@ -23,14 +23,16 @@ pub struct Token {
 }
 
 impl Token {
+    pub fn expiration_from_now() -> DateTime {
+        DateTime::now().saturating_add_millis(VALIDITY_DURATION)
+    }
+
     pub fn new(user_id: Uuid) -> Self {
-        // Tokens expire 1 hour from creation
-        let expiration = DateTime::now().saturating_add_millis(VALIDITY_DURATION);
         Self {
             _id: Uuid::new_v4(),
             schema_version: SCHEMA_VERSION,
             user_id,
-            expiration,
+            expiration: Self::expiration_from_now(),
         }
     }
 }
