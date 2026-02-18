@@ -57,6 +57,8 @@ async fn main_inner(args: Args) -> Result<()> {
     // Run the webserver
     server::run(database, args.port).await?;
 
+    // TODO: set up a periodic task to clear out expired tokens
+
     Ok(())
 }
 

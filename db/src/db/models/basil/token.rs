@@ -14,7 +14,7 @@ const SCHEMA_VERSION: usize = 0;
 const VALIDITY_DURATION: i64 = 60 * 60 * 1000;
 
 /// User model
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Token {
     pub _id: Uuid,
     schema_version: usize,

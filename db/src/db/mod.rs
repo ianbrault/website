@@ -5,9 +5,10 @@
 pub mod models;
 
 use anyhow::Result;
-use bson::doc;
+use bson::{doc, Document};
 use log::info;
-use mongodb::{Client, Collection};
+use mongodb::{Client, Collection, results::InsertOneResult};
+use serde::{de::DeserializeOwned, Serialize};
 
 /// Individual databases within MongoDB
 pub enum DatabaseHandle {
@@ -43,10 +44,29 @@ impl Connection {
         Ok(Self { client })
     }
 
+    /// Return the collection for the model type from the database
     pub fn collection<T>(&self, handle: DatabaseHandle) -> Collection<T>
     where
         T: DatabaseCollection + Send + Sync,
     {
         self.client.database(handle.value()).collection(&T::name())
+    }
+
+    /// Find a model in the database using the given query
+    pub async fn find_one<T>(&self, handle: DatabaseHandle, query: Document) -> Result<Option<T>>
+    where
+        T: DatabaseCollection + DeserializeOwned + Send + Sync,
+    {
+        let result = self.collection::<T>(handle).find_one(query).await?;
+        Ok(result)
+    }
+
+    /// Insert a model into its collection in the database
+    pub async fn insert<T>(&self, handle: DatabaseHandle, model: T) -> Result<InsertOneResult>
+    where
+        T: DatabaseCollection + Send + Serialize + Sync,
+    {
+        let result = self.collection::<T>(handle).insert_one(model).await?;
+        Ok(result)
     }
 }
