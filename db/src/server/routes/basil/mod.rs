@@ -4,12 +4,18 @@
 
 mod authenticate_user;
 mod create_user;
+mod delete_user;
 
 use crate::db::{Connection, DatabaseHandle, models::basil::Token};
 use crate::server::ServerState;
 
 use anyhow::Result;
-use axum::{Router, routing::post};
+use axum::{
+    Router,
+    http::StatusCode,
+    response::{IntoResponse, Response},
+    routing::post,
+};
 use log::debug;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -36,9 +42,19 @@ pub async fn generate_token(database: &Connection, user_id: Uuid) -> Result<Toke
     Ok(token)
 }
 
+/// Common response for an invalid username/password
+fn invalid_login_response() -> Response {
+    (
+        StatusCode::BAD_REQUEST,
+        "Invalid email/password".to_string(),
+    )
+        .into_response()
+}
+
 pub fn router(state: ServerState) -> Router {
     Router::new()
         .route("/v2/user/authenticate", post(authenticate_user::route))
         .route("/v2/user/create", post(create_user::route))
+        .route("/v2/user/delete", post(delete_user::route))
         .with_state(state)
 }
