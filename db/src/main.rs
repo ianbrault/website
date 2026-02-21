@@ -4,7 +4,7 @@
 
 mod db;
 mod server;
-mod utils;
+mod types;
 
 use anyhow::Result;
 use clap::Parser;
@@ -57,7 +57,8 @@ async fn main_inner(args: Args) -> Result<()> {
     // Run the webserver
     server::run(database, args.port).await?;
 
-    // TODO: set up a periodic task to clear out expired tokens
+    // TODO: set up a periodic task to clear out expired tokens, and maybe do some sanity-checks
+    // like removing orphaned (non-reachable) recipes/folders
 
     Ok(())
 }

@@ -7,5 +7,7 @@ pub mod recipe;
 pub mod token;
 pub mod user;
 
+pub use folder::Folder;
+pub use recipe::Recipe;
 pub use token::Token;
-pub use user::User;
+pub use user::{Action, ActionType, ItemType, User};

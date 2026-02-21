@@ -9,7 +9,7 @@ use bson::{Document, doc};
 use log::info;
 use mongodb::{
     Client, Collection,
-    results::{InsertOneResult, UpdateResult},
+    results::{DeleteResult, InsertOneResult, UpdateResult},
 };
 use serde::{Serialize, de::DeserializeOwned};
 
@@ -29,6 +29,7 @@ impl DatabaseHandle {
 /// Database collection trait, this should be implemented for model structs
 pub trait DatabaseCollection {
     fn name() -> String;
+    fn id_query(&self) -> Document;
 }
 
 /// MongoDB database connection
@@ -90,6 +91,31 @@ impl Connection {
             .collection::<T>(handle)
             .update_one(query, update)
             .await?;
+        Ok(result)
+    }
+
+    /// Replace a model in the database, using an ID match query
+    pub async fn replace_one<T>(&self, handle: DatabaseHandle, model: T) -> Result<UpdateResult>
+    where
+        T: DatabaseCollection + Send + Serialize + Sync,
+    {
+        let result = self
+            .collection::<T>(handle)
+            .replace_one(model.id_query(), model)
+            .await?;
+        Ok(result)
+    }
+
+    /// Delete a model from the database
+    pub async fn delete_one<T>(
+        &self,
+        handle: DatabaseHandle,
+        query: Document,
+    ) -> Result<DeleteResult>
+    where
+        T: DatabaseCollection + Send + Sync,
+    {
+        let result = self.collection::<T>(handle).delete_one(query).await?;
         Ok(result)
     }
 }
