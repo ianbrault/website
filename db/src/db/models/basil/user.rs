@@ -72,9 +72,10 @@ impl User {
         recipes: Vec<Uuid>,
         folders: Vec<Uuid>,
         device: String,
+        timestamp: DateTime,
     ) -> Self {
         let mut devices = HashMap::new();
-        devices.insert(device, DateTime::now());
+        devices.insert(device, timestamp);
         Self {
             _id: Uuid::new_v4(),
             schema_version: SCHEMA_VERSION,
@@ -88,12 +89,24 @@ impl User {
         }
     }
 
-    pub fn device_pinged(&mut self, device: String, timestamp: DateTime) {
-        self.devices.insert(device, timestamp);
+    pub fn device_pinged(&mut self, device: String, timestamp: DateTime) -> Option<DateTime> {
+        self.devices.insert(device, timestamp)
     }
 
     pub fn add_action(&mut self, action: Action) {
         self.action_journal.push(action)
+    }
+
+    pub fn actions_since(&self, timestamp: Option<DateTime>) -> Vec<Action> {
+        if let Some(timestamp) = timestamp {
+            self.action_journal
+                .iter()
+                .filter(|a| a.timestamp >= timestamp)
+                .cloned()
+                .collect()
+        } else {
+            self.action_journal.iter().cloned().collect()
+        }
     }
 
     pub fn remove_folder(&mut self, folder: Uuid) {

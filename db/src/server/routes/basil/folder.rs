@@ -75,6 +75,8 @@ async fn create_route(
             let action = Action::new(timestamp, ItemType::Folder, ActionType::Modify, parent_id);
             user.add_action(action);
         }
+        // Track the timestamp as the last ping for this device
+        user.device_pinged(body.device, timestamp);
         // Store the updated user
         state
             .database
@@ -92,6 +94,7 @@ async fn create_route(
 pub struct DeleteRequest {
     user_id: Uuid,
     token_id: Uuid,
+    device: String,
     folder_id: Uuid,
 }
 
@@ -135,6 +138,8 @@ async fn delete_route(
             user.add_action(action);
         }
 
+        // Track the timestamp as the last ping for this device
+        user.device_pinged(body.device, timestamp);
         // Store the updated user
         state
             .database
@@ -158,6 +163,7 @@ async fn delete_route(
 pub struct ModifyRequest {
     user_id: Uuid,
     token_id: Uuid,
+    device: String,
     folder_id: Uuid,
     name: String,
 }
@@ -191,6 +197,8 @@ async fn modify_route(
             // Add the modify folder action to the journal
             let action = Action::new(timestamp, ItemType::Folder, ActionType::Modify, folder_id);
             user.add_action(action);
+            // Track the timestamp as the last ping for this device
+            user.device_pinged(body.device, timestamp);
             // Store the updated user
             state
                 .database

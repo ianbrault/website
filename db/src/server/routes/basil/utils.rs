@@ -24,8 +24,8 @@ pub fn hash_password(password: String) -> Result<String> {
 }
 
 /// Verify that a password matches the expected hash value
-pub fn verify_password(password: String, expected: String) -> bool {
-    if let Ok(parsed_hash) = PasswordHash::new(&expected) {
+pub fn verify_password(password: String, expected: &str) -> bool {
+    if let Ok(parsed_hash) = PasswordHash::new(expected) {
         Scrypt
             .verify_password(password.as_bytes(), &parsed_hash)
             .is_ok()
@@ -35,8 +35,12 @@ pub fn verify_password(password: String, expected: String) -> bool {
 }
 
 /// Generate a new token for the given user ID and insert it into the database
-pub async fn generate_token(database: &Connection, user_id: Uuid) -> Result<Token> {
-    let token = Token::new(user_id);
+pub async fn generate_token(
+    database: &Connection,
+    user_id: Uuid,
+    timestamp: DateTime,
+) -> Result<Token> {
+    let token = Token::new(user_id, timestamp);
     database
         .insert(DatabaseHandle::Basil, token.clone())
         .await?;

@@ -5,7 +5,7 @@
 use super::utils;
 use crate::db::{
     DatabaseCollection, DatabaseHandle,
-    models::basil::{Token, User},
+    models::basil::{Action, Token, User},
 };
 use crate::server::ServerState;
 
@@ -37,8 +37,7 @@ fn invalid_login_response() -> Response {
 pub struct AuthenticateRequest {
     email: String,
     password: String,
-    #[serde(default)]
-    device: Option<String>,
+    device: String,
 }
 
 /// Response body for authenticate user route
@@ -59,20 +58,29 @@ pub async fn authenticate_route(
     Json(body): Json<AuthenticateRequest>,
 ) -> Result<Response> {
     info!("/basil/v2/user/authenticate");
+    let timestamp = DateTime::now();
 
     // Find the user matching the given email
-    if let Some(user) = state
+    if let Some(mut user) = state
         .database
         .find_one::<User>(DatabaseHandle::Basil, doc! { "email": &body.email })
         .await?
     {
         // Compare the passwords
-        if !utils::verify_password(body.password, user.password) {
+        if !utils::verify_password(body.password, &user.password) {
             return Ok(invalid_login_response());
         }
 
         // Generate a new token for the user
-        let token = utils::generate_token(&state.database, user._id).await?;
+        let token = utils::generate_token(&state.database, user._id, timestamp).await?;
+
+        // Track the timestamp as the last ping for this device
+        user.device_pinged(body.device, timestamp);
+        // Store the updated user
+        state
+            .database
+            .replace_one(DatabaseHandle::Basil, user.clone())
+            .await?;
 
         let response = AuthenticateResponse {
             id: user._id,
@@ -119,6 +127,7 @@ pub async fn create_route(
     Json(body): Json<CreateRequest>,
 ) -> Result<Response> {
     info!("/basil/v2/user/create");
+    let timestamp = DateTime::now();
 
     // Check for a pre-existing user with the same email
     if state
@@ -144,6 +153,7 @@ pub async fn create_route(
         body.recipes,
         body.folders,
         body.device,
+        timestamp,
     );
     debug!("Created user: {:?}", user);
 
@@ -155,7 +165,7 @@ pub async fn create_route(
     info!("Created new user {}", user._id);
 
     // Generate a new token for the user
-    let token = utils::generate_token(&state.database, user._id).await?;
+    let token = utils::generate_token(&state.database, user._id, timestamp).await?;
 
     let response = CreateResponse {
         id: user._id,
@@ -190,7 +200,7 @@ pub async fn delete_route(
         .await?
     {
         // Compare the passwords
-        if !utils::verify_password(body.password, user.password) {
+        if !utils::verify_password(body.password, &user.password) {
             return Ok(invalid_login_response());
         }
 
@@ -216,6 +226,12 @@ pub struct PingRequest {
     device: String,
 }
 
+/// Response body for ping route
+#[derive(Serialize, Deserialize)]
+pub struct PingResponse {
+    actions: Vec<Action>,
+}
+
 /// Ping route
 #[route]
 pub async fn ping_route(
@@ -239,11 +255,17 @@ pub async fn ping_route(
             .await?;
 
         // Store the time that the user pinged from this device
-        // FIXME: use the previous time to find all actions that need to be sent back to the user
-        user.device_pinged(body.device, timestamp);
-        state.database.replace_one(DatabaseHandle::Basil, user).await?;
+        let previous_timestamp = user.device_pinged(body.device, timestamp);
+        // Find all actions that have occurred since the device last pinged the server
+        let actions = user.actions_since(previous_timestamp);
+        // Store the updated user
+        state
+            .database
+            .replace_one(DatabaseHandle::Basil, user)
+            .await?;
 
-        Ok(StatusCode::OK.into_response())
+        let response = PingResponse { actions };
+        Ok(Json(response).into_response())
     } else {
         Ok((StatusCode::BAD_REQUEST, "Invalid token".to_string()).into_response())
     }

@@ -28,6 +28,7 @@ use uuid::Uuid;
 pub struct CreateRequest {
     user_id: Uuid,
     token_id: Uuid,
+    device: String,
     title: String,
     parent: Option<Uuid>,
     ingredients: Vec<String>,
@@ -82,6 +83,8 @@ async fn create_route(
             let action = Action::new(timestamp, ItemType::Folder, ActionType::Modify, parent_id);
             user.add_action(action);
         }
+        // Track the timestamp as the last ping for this device
+        user.device_pinged(body.device, timestamp);
         // Store the updated user
         state
             .database
@@ -99,6 +102,7 @@ async fn create_route(
 pub struct DeleteRequest {
     user_id: Uuid,
     token_id: Uuid,
+    device: String,
     recipe_id: Uuid,
 }
 
@@ -142,6 +146,8 @@ async fn delete_route(
             user.add_action(action);
         }
 
+        // Track the timestamp as the last ping for this device
+        user.device_pinged(body.device, timestamp);
         // Store the updated user
         state
             .database
@@ -165,6 +171,7 @@ async fn delete_route(
 pub struct ModifyRequest {
     user_id: Uuid,
     token_id: Uuid,
+    device: String,
     recipe_id: Uuid,
     title: String,
     ingredients: Vec<String>,
@@ -202,6 +209,8 @@ async fn modify_route(
             // Add the modify recipe action to the journal
             let action = Action::new(timestamp, ItemType::Recipe, ActionType::Modify, recipe_id);
             user.add_action(action);
+            // Track the timestamp as the last ping for this device
+            user.device_pinged(body.device, timestamp);
             // Store the updated user
             state
                 .database

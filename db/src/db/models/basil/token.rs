@@ -27,12 +27,12 @@ impl Token {
         now.saturating_add_millis(VALIDITY_DURATION)
     }
 
-    pub fn new(user_id: Uuid) -> Self {
+    pub fn new(user_id: Uuid, timestamp: DateTime) -> Self {
         Self {
             _id: Uuid::new_v4(),
             schema_version: SCHEMA_VERSION,
             user_id,
-            expiration: Self::expiration(DateTime::now()),
+            expiration: Self::expiration(timestamp),
         }
     }
 
