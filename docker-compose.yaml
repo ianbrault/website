@@ -1,25 +1,29 @@
 services:
-  server:
+  app:
     build:
       context: .
-      dockerfile: Dockerfile.server
+      dockerfile: Dockerfile.app
       args:
         - MONGODB_URL=mongodb://database:27017
-    container_name: server
+        - PORT=3000
+    container_name: app
     ports:
       - "3000:3000"
     depends_on:
-      database:
+      db:
         condition: service_started
     environment:
       MONGODB_URL: mongodb://database:27017
       PORT: 3000
 
-  socket:
+  db:
     build:
       context: .
-      dockerfile: Dockerfile.socket
-    container_name: socket
+      dockerfile: Dockerfile.db
+      args:
+        - MONGODB_URL=mongodb://database:27017
+        - PORT=4000
+    container_name: db
     ports:
       - "4000:4000"
     depends_on:

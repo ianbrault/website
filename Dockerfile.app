@@ -1,9 +1,14 @@
-# Dockerfile.server
+# Dockerfile.app
 
 FROM node:24-alpine
 
 ARG MONGODB_URL
-ENV MONGODB_URL $MONGODB_URL
+ARG PORT
+
+ENV MONGODB_URL=${MONGODB_URL}
+ENV NODE_ENV=production
+
+EXPOSE ${PORT}
 
 RUN apk update && \
     apk upgrade && \
@@ -15,9 +20,6 @@ RUN apk update && \
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY . .
-
-ENV NODE_ENV=production
-EXPOSE 3000
 
 RUN npm ci --only=production && npm run build
 

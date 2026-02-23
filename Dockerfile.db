@@ -1,0 +1,35 @@
+# Dockerfile.db
+
+ARG MONGODB_URL
+ARG PORT
+ARG RUST_VERSION=1.91.1
+
+#
+# Build stage
+#
+FROM docker.io/library/rust:${RUST_VERSION}-alpine AS build
+
+WORKDIR /usr/src/db
+
+RUN apk add --no-cache clang lld musl-dev git
+
+COPY db/Cargo.toml db/Cargo.lock ./
+COPY ./db/lib ./lib
+COPY ./db/src ./src
+
+RUN cargo build --release
+
+#
+# Runtime stage
+#
+FROM docker.io/library/alpine:3.18 AS final
+
+ARG PORT
+
+WORKDIR /usr/src/db
+
+COPY --from=build /usr/src/db/target/release/db ./
+
+EXPOSE ${PORT}
+
+CMD ["./db"]
