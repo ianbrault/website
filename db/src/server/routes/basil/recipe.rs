@@ -12,10 +12,10 @@ use crate::server::ServerState;
 use anyhow::Result;
 use axum::{
     Json, Router,
-    extract::State,
+    extract::{Path, State},
     http::StatusCode,
     response::{IntoResponse, Response},
-    routing::post,
+    routing::{get, post},
 };
 use bson::{DateTime, doc};
 use log::info;
@@ -230,10 +230,28 @@ async fn modify_route(
     }
 }
 
+/// Get recipe route
+#[route]
+async fn get_route(state: State<ServerState>, Path(id): Path<String>) -> Result<Response> {
+    info!("/basil/v2/recipe/{}", id);
+
+    let recipe_id = Uuid::parse_str(&id)?;
+    if let Some(recipe) = utils::find_recipe_by_id(&state.database, recipe_id).await? {
+        Ok(Json(recipe).into_response())
+    } else {
+        Ok((
+            StatusCode::BAD_REQUEST,
+            format!("Invalid recipe ID: {}", id),
+        )
+            .into_response())
+    }
+}
+
 pub fn router(state: ServerState) -> Router {
     Router::new()
         .route("/create", post(create_route))
         .route("/delete", post(delete_route))
         .route("/modify", post(modify_route))
+        .route("/{id}", get(get_route))
         .with_state(state)
 }
