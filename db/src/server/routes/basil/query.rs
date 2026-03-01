@@ -6,7 +6,7 @@ use super::utils;
 use crate::db::models::basil::{Folder, Recipe};
 use crate::server::ServerState;
 
-use anyhow::Result;
+use anyhow::{Error, Result};
 use axum::{
     Json, Router,
     extract::State,
@@ -14,6 +14,7 @@ use axum::{
     routing::post,
 };
 use bson::doc;
+use futures::future;
 use log::info;
 use route_macro::route;
 use serde::{Deserialize, Serialize};
@@ -34,6 +35,18 @@ pub struct QueryResponse {
     folders: Vec<Folder>,
 }
 
+async fn join_queries<T, I, F>(queries: I) -> Vec<T>
+where
+    I: Iterator<Item = F>,
+    F: Future<Output = Result<Option<T>, Error>>,
+{
+    future::join_all(queries)
+        .await
+        .into_iter()
+        .filter_map(|f| f.unwrap_or_default())
+        .collect()
+}
+
 /// Query route
 #[route]
 async fn query_route(
@@ -43,18 +56,16 @@ async fn query_route(
     info!("/basil/v2/query");
 
     // Query recipes and folders, handling any errors gracefully
-    let mut recipes = Vec::with_capacity(body.recipes.len());
-    for recipe_id in body.recipes {
-        if let Ok(Some(recipe)) = utils::find_recipe_by_id(&state.database, recipe_id).await {
-            recipes.push(recipe);
-        }
-    }
-    let mut folders = Vec::with_capacity(body.folders.len());
-    for folder_id in body.folders {
-        if let Ok(Some(folder)) = utils::find_folder_by_id(&state.database, folder_id).await {
-            folders.push(folder);
-        }
-    }
+    let recipe_queries = body
+        .recipes
+        .into_iter()
+        .map(|recipe_id| utils::find_recipe_by_id(&state.database, recipe_id));
+    let folder_queries = body
+        .folders
+        .into_iter()
+        .map(|folder_id| utils::find_folder_by_id(&state.database, folder_id));
+    let recipes = join_queries(recipe_queries).await;
+    let folders = join_queries(folder_queries).await;
 
     let response = QueryResponse {
         count: recipes.len() + folders.len(),
