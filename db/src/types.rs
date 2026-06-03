@@ -55,6 +55,7 @@ where
     T: Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // FIXME: debug output should exclude the massive amount of None's in the data
         write!(
             f,
             "CircularBuffer {{ data: {:?}, index: {} }}",

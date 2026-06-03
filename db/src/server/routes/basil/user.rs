@@ -5,23 +5,30 @@
 use super::utils;
 use crate::db::{
     DatabaseCollection, DatabaseHandle,
-    models::basil::{Action, Token, User},
+    models::basil::{Action, Folder, Recipe, Token, User},
 };
 use crate::server::ServerState;
 
 use anyhow::Result;
 use axum::{
     Json, Router,
-    extract::State,
+    extract::{Path, State},
     http::StatusCode,
     response::{IntoResponse, Response},
-    routing::post,
+    routing::{get, post},
 };
-use bson::{DateTime, doc};
+use bson::{DateTime, doc, oid::ObjectId};
 use log::{debug, info};
 use route_macro::route;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
+
+/// Common fields for user authentication (after login)
+#[derive(Deserialize, Serialize)]
+pub struct AuthenticationFields {
+    pub user_id: ObjectId,
+    pub token_id: ObjectId,
+    pub device: String,
+}
 
 /// Common response for an invalid username/password
 fn invalid_login_response() -> Response {
@@ -34,21 +41,21 @@ fn invalid_login_response() -> Response {
 
 /// Request body for authenticate user route
 #[derive(Serialize, Deserialize)]
-pub struct AuthenticateRequest {
+struct AuthenticateRequest {
     email: String,
     password: String,
     device: String,
 }
 
 /// Response body for authenticate user route
-#[derive(Serialize, Deserialize)]
-pub struct AuthenticateResponse {
-    id: Uuid,
+#[derive(Serialize, Debug, Deserialize)]
+struct AuthenticateResponse {
+    id: ObjectId,
     email: String,
-    root: Uuid,
-    recipes: Vec<Uuid>,
-    folders: Vec<Uuid>,
-    token: Uuid,
+    root: ObjectId,
+    recipes: Vec<Recipe>,
+    folders: Vec<Folder>,
+    token: ObjectId,
 }
 
 /// Authenticate user route
@@ -82,14 +89,26 @@ pub async fn authenticate_route(
             .replace_one(DatabaseHandle::Basil, user.clone())
             .await?;
 
+        // Populate the recipes and folders from their IDs
+        let recipes = state
+            .database
+            .find_many_by_id(DatabaseHandle::Basil, user.recipes)
+            .await?;
+        let folders = state
+            .database
+            .find_many_by_id(DatabaseHandle::Basil, user.folders)
+            .await?;
+
+        info!("Successfully authenticated user {} ({})", user.email, user._id);
         let response = AuthenticateResponse {
             id: user._id,
             email: user.email,
             root: user.root,
-            recipes: user.recipes,
-            folders: user.folders,
+            recipes,
+            folders,
             token: token._id,
         };
+        debug!("Authentication response: {:?}", response);
         Ok(Json(response).into_response())
     } else {
         Ok(invalid_login_response())
@@ -98,26 +117,21 @@ pub async fn authenticate_route(
 
 /// Request body for create user route
 #[derive(Serialize, Deserialize)]
-pub struct CreateRequest {
+struct CreateRequest {
+    #[serde(default)]
+    root: Option<ObjectId>,
     email: String,
     password: String,
-    root: Uuid,
-    #[serde(default)]
-    recipes: Vec<Uuid>,
-    #[serde(default)]
-    folders: Vec<Uuid>,
     device: String,
 }
 
 /// Response body for create user route
 #[derive(Serialize, Deserialize)]
-pub struct CreateResponse {
-    id: Uuid,
+struct CreateResponse {
+    id: ObjectId,
     email: String,
-    root: Uuid,
-    recipes: Vec<Uuid>,
-    folders: Vec<Uuid>,
-    token: Uuid,
+    root: ObjectId,
+    token: ObjectId,
 }
 
 /// Create user route
@@ -144,35 +158,44 @@ pub async fn create_route(
             .into_response());
     }
 
+    // Create a root folder for the user
+    let root = if let Some(uuid) = body.root {
+        Folder::new_with_id(uuid, String::new(), None, timestamp)
+    } else {
+        Folder::new(String::new(), None, timestamp)
+    };
+    state
+        .database
+        .insert(DatabaseHandle::Basil, root.clone())
+        .await?;
+    debug!("Root: {:?}", root);
+
     // Create the user model
     let hashed_password = utils::hash_password(body.password)?;
     let user = User::new(
         body.email,
         hashed_password,
-        body.root,
-        body.recipes,
-        body.folders,
+        root._id,
         body.device,
         timestamp,
     );
-    debug!("Created user: {:?}", user);
+    debug!("User: {:?}", user);
 
     // Insert the user model into the database
     state
         .database
         .insert(DatabaseHandle::Basil, user.clone())
         .await?;
-    info!("Created new user {}", user._id);
+    info!("Created new user {} ({})", user.email, user._id);
 
     // Generate a new token for the user
     let token = utils::generate_token(&state.database, user._id, timestamp).await?;
+    debug!("Token: {:?}", token);
 
     let response = CreateResponse {
         id: user._id,
         email: user.email,
         root: user.root,
-        recipes: user.recipes,
-        folders: user.folders,
         token: token._id,
     };
     Ok(Json(response).into_response())
@@ -180,7 +203,7 @@ pub async fn create_route(
 
 /// Request body for delete user route
 #[derive(Serialize, Deserialize)]
-pub struct DeleteRequest {
+struct DeleteRequest {
     email: String,
     password: String,
 }
@@ -220,15 +243,14 @@ pub async fn delete_route(
 
 /// Request body for ping route
 #[derive(Serialize, Deserialize)]
-pub struct PingRequest {
-    user_id: Uuid,
-    token_id: Uuid,
-    device: String,
+struct PingRequest {
+    #[serde(flatten)]
+    authentication: AuthenticationFields,
 }
 
 /// Response body for ping route
 #[derive(Serialize, Deserialize)]
-pub struct PingResponse {
+struct PingResponse {
     actions: Vec<Action>,
 }
 
@@ -243,7 +265,7 @@ pub async fn ping_route(
 
     // Validate the given token
     if let Some((mut user, token)) =
-        utils::validate_user_token(&state.database, body.user_id, body.token_id).await?
+        utils::validate_user_token(&state.database, &body.authentication).await?
     {
         // Bump the expiration time of the token
         let update = doc! {
@@ -251,11 +273,11 @@ pub async fn ping_route(
         };
         state
             .database
-            .update_one::<Token>(DatabaseHandle::Basil, token.id_query(), update)
+            .update_one::<Token>(DatabaseHandle::Basil, doc! { "_id": token.id() }, update)
             .await?;
 
         // Store the time that the user pinged from this device
-        let previous_timestamp = user.device_pinged(body.device, timestamp);
+        let previous_timestamp = user.device_pinged(body.authentication.device, timestamp);
         // Find all actions that have occurred since the device last pinged the server
         let actions = user.actions_since(previous_timestamp);
         // Store the updated user
@@ -271,11 +293,30 @@ pub async fn ping_route(
     }
 }
 
+/// Get user route
+#[route]
+async fn get_route(state: State<ServerState>, Path(id): Path<String>) -> Result<Response> {
+    info!("/basil/v2/user/{}", id);
+
+    let user_id = ObjectId::parse_str(&id)?;
+    debug!("DEBUG: query user ID: {}", user_id);
+    if let Some(user) = state
+        .database
+        .find_one_by_id::<User>(DatabaseHandle::Basil, user_id)
+        .await?
+    {
+        Ok(Json(user).into_response())
+    } else {
+        Ok((StatusCode::BAD_REQUEST, format!("Invalid user ID: {}", id)).into_response())
+    }
+}
+
 pub fn router(state: ServerState) -> Router {
     Router::new()
         .route("/authenticate", post(authenticate_route))
         .route("/create", post(create_route))
         .route("/delete", post(delete_route))
         .route("/ping", post(ping_route))
+        .route("/{id}", get(get_route))
         .with_state(state)
 }

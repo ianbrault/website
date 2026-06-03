@@ -2,12 +2,12 @@
 ** db/src/db/models/basil/user.rs
 */
 
+use super::Action;
 use crate::db::DatabaseCollection;
 use crate::types::CircularBuffer;
 
-use bson::{DateTime, Document, doc};
+use bson::{DateTime, oid::ObjectId};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 use std::collections::HashMap;
 
@@ -16,48 +16,16 @@ const SCHEMA_VERSION: usize = 2;
 /// Size of the user action journal
 const JOURNAL_SIZE: usize = 256;
 
-#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
-pub enum ItemType {
-    Recipe,
-    Folder,
-}
-
-#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
-pub enum ActionType {
-    Create,
-    Modify,
-    Delete,
-}
-
-#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
-pub struct Action {
-    timestamp: DateTime,
-    item: ItemType,
-    action: ActionType,
-    item_id: Uuid,
-}
-
-impl Action {
-    pub fn new(timestamp: DateTime, item: ItemType, action: ActionType, item_id: Uuid) -> Self {
-        Self {
-            timestamp,
-            item,
-            action,
-            item_id,
-        }
-    }
-}
-
 /// User model
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
-    pub _id: Uuid,
+    pub _id: ObjectId,
     schema_version: usize,
     pub email: String,
     pub password: String,
-    pub root: Uuid,
-    pub recipes: Vec<Uuid>,
-    pub folders: Vec<Uuid>,
+    pub root: ObjectId,
+    pub recipes: Vec<ObjectId>,
+    pub folders: Vec<ObjectId>,
     /// Maps devices to the last timestamp they pinged the server
     devices: HashMap<String, DateTime>,
     /// Action journal used to track all actions made for the user
@@ -68,22 +36,20 @@ impl User {
     pub fn new(
         email: String,
         password: String,
-        root: Uuid,
-        recipes: Vec<Uuid>,
-        folders: Vec<Uuid>,
+        root: ObjectId,
         device: String,
         timestamp: DateTime,
     ) -> Self {
         let mut devices = HashMap::new();
         devices.insert(device, timestamp);
         Self {
-            _id: Uuid::new_v4(),
+            _id: ObjectId::new(),
             schema_version: SCHEMA_VERSION,
             email,
             password,
             root,
-            recipes,
-            folders,
+            recipes: Vec::new(),
+            folders: vec![root],
             devices,
             action_journal: CircularBuffer::new(JOURNAL_SIZE),
         }
@@ -94,7 +60,7 @@ impl User {
     }
 
     pub fn add_action(&mut self, action: Action) {
-        self.action_journal.push(action)
+        self.action_journal.push(action);
     }
 
     pub fn actions_since(&self, timestamp: Option<DateTime>) -> Vec<Action> {
@@ -109,13 +75,13 @@ impl User {
         }
     }
 
-    pub fn remove_folder(&mut self, folder: Uuid) {
+    pub fn remove_folder(&mut self, folder: ObjectId) {
         if let Some(index) = self.folders.iter().position(|i| *i == folder) {
             self.folders.remove(index);
         }
     }
 
-    pub fn remove_recipe(&mut self, recipe: Uuid) {
+    pub fn remove_recipe(&mut self, recipe: ObjectId) {
         if let Some(index) = self.recipes.iter().position(|i| *i == recipe) {
             self.recipes.remove(index);
         }
@@ -127,7 +93,7 @@ impl DatabaseCollection for User {
         "users".to_string()
     }
 
-    fn id_query(&self) -> Document {
-        doc! { "_id": self._id }
+    fn id(&self) -> ObjectId {
+        self._id
     }
 }

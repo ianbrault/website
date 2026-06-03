@@ -4,8 +4,9 @@
 
 pub mod models;
 
-use anyhow::Result;
-use bson::{Document, doc};
+use anyhow::{Result, bail};
+use bson::{Document, doc, oid::ObjectId};
+use futures::future;
 use log::info;
 use mongodb::{
     Client, Collection,
@@ -14,6 +15,7 @@ use mongodb::{
 use serde::{Serialize, de::DeserializeOwned};
 
 /// Individual databases within MongoDB
+#[derive(Clone, Copy)]
 pub enum DatabaseHandle {
     Basil,
 }
@@ -29,7 +31,7 @@ impl DatabaseHandle {
 /// Database collection trait, this should be implemented for model structs
 pub trait DatabaseCollection {
     fn name() -> String;
-    fn id_query(&self) -> Document;
+    fn id(&self) -> ObjectId;
 }
 
 /// MongoDB database connection
@@ -68,6 +70,35 @@ impl Connection {
         Ok(result)
     }
 
+    /// Find a model in the database given the ID
+    pub async fn find_one_by_id<T>(&self, handle: DatabaseHandle, id: ObjectId) -> Result<Option<T>>
+    where
+        T: DatabaseCollection + DeserializeOwned + Send + Sync,
+    {
+        self.find_one(handle, doc! { "_id": id }).await
+    }
+
+    /// Find multiple models in the database given their IDs
+    pub async fn find_many_by_id<I, T>(&self, handle: DatabaseHandle, id_list: I) -> Result<Vec<T>>
+    where
+        I: IntoIterator<Item = ObjectId>,
+        T: DatabaseCollection + DeserializeOwned + Send + Sync,
+    {
+        let ids = id_list.into_iter().collect::<Vec<_>>();
+        let queries =
+            future::try_join_all(ids.iter().map(|id| self.find_one_by_id::<T>(handle, *id)))
+                .await?;
+        let mut output = Vec::with_capacity(queries.len());
+        for (query, id) in queries.into_iter().zip(ids) {
+            if let Some(model) = query {
+                output.push(model);
+            } else {
+                bail!("Failed to find a model for ID {}", id);
+            }
+        }
+        Ok(output)
+    }
+
     /// Insert a model into its collection in the database
     pub async fn insert<T>(&self, handle: DatabaseHandle, model: T) -> Result<InsertOneResult>
     where
@@ -101,7 +132,7 @@ impl Connection {
     {
         let result = self
             .collection::<T>(handle)
-            .replace_one(model.id_query(), model)
+            .replace_one(doc! { "_id": model.id() }, model)
             .await?;
         Ok(result)
     }

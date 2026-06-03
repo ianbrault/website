@@ -4,29 +4,52 @@
 
 use crate::db::DatabaseCollection;
 
-use bson::{DateTime, Document, doc};
+use bson::{DateTime, oid::ObjectId};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 /// Recipe schema version
 const SCHEMA_VERSION: usize = 0;
 
 /// Recipe model
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Recipe {
-    pub _id: Uuid,
+    pub _id: ObjectId,
     schema_version: usize,
     pub title: String,
-    pub parent: Option<Uuid>,
+    pub parent: Option<ObjectId>,
     pub ingredients: Vec<String>,
     pub instructions: Vec<String>,
     pub modified: DateTime,
 }
 
 impl Recipe {
-    pub fn new(title: String, parent: Option<Uuid>, ingredients: Vec<String>, instructions: Vec<String>, timestamp: DateTime) -> Self {
+    pub fn new(
+        title: String,
+        parent: Option<ObjectId>,
+        ingredients: Vec<String>,
+        instructions: Vec<String>,
+        timestamp: DateTime,
+    ) -> Self {
+        Self::new_with_id(
+            ObjectId::new(),
+            title,
+            parent,
+            ingredients,
+            instructions,
+            timestamp,
+        )
+    }
+
+    pub fn new_with_id(
+        _id: ObjectId,
+        title: String,
+        parent: Option<ObjectId>,
+        ingredients: Vec<String>,
+        instructions: Vec<String>,
+        timestamp: DateTime,
+    ) -> Self {
         Self {
-            _id: Uuid::new_v4(),
+            _id,
             schema_version: SCHEMA_VERSION,
             title,
             parent,
@@ -42,7 +65,7 @@ impl DatabaseCollection for Recipe {
         "recipes".to_string()
     }
 
-    fn id_query(&self) -> Document {
-        doc! { "_id": self._id }
+    fn id(&self) -> ObjectId {
+        self._id
     }
 }

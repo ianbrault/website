@@ -449,7 +449,6 @@ dependencies = [
  "serde",
  "simplelog",
  "tokio",
- "uuid",
 ]
 
 [[package]]

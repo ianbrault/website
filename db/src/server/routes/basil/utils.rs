@@ -2,19 +2,19 @@
 ** db/src/server/routes/basil/utils.rs
 */
 
+use super::user::AuthenticationFields;
 use crate::db::{
     Connection, DatabaseHandle,
-    models::basil::{Folder, Recipe, Token, User},
+    models::basil::{Folder, Token, User},
 };
 
 use anyhow::Result;
-use bson::{DateTime, doc};
-use log::debug;
+use bson::{DateTime, oid::ObjectId};
+use log::{debug, warn};
 use scrypt::{
     Scrypt,
     password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString, rand_core::OsRng},
 };
-use uuid::Uuid;
 
 /// Hash a password
 pub fn hash_password(password: String) -> Result<String> {
@@ -37,7 +37,7 @@ pub fn verify_password(password: String, expected: &str) -> bool {
 /// Generate a new token for the given user ID and insert it into the database
 pub async fn generate_token(
     database: &Connection,
-    user_id: Uuid,
+    user_id: ObjectId,
     timestamp: DateTime,
 ) -> Result<Token> {
     let token = Token::new(user_id, timestamp);
@@ -48,47 +48,89 @@ pub async fn generate_token(
     Ok(token)
 }
 
-/// Get a folder given the ID
-pub async fn find_folder_by_id(database: &Connection, folder_id: Uuid) -> Result<Option<Folder>> {
-    let result = database
-        .find_one::<Folder>(DatabaseHandle::Basil, doc! { "_id": folder_id })
-        .await?;
-    Ok(result)
+/// Add recipes to a folder given its ID and store the updated folder to the database
+pub async fn add_recipes_to_folder(
+    database: &Connection,
+    folder_id: ObjectId,
+    recipes: Vec<ObjectId>,
+    timestamp: DateTime,
+) -> Result<Option<String>> {
+    if let Some(mut folder) = database
+        .find_one_by_id::<Folder>(DatabaseHandle::Basil, folder_id)
+        .await?
+    {
+        folder.add_recipes(recipes, timestamp);
+        database.replace_one(DatabaseHandle::Basil, folder).await?;
+        Ok(None)
+    } else {
+        Ok(Some(format!("Invalid folder ID {}", folder_id)))
+    }
 }
 
-/// Get a recipe given the ID
-pub async fn find_recipe_by_id(database: &Connection, recipe_id: Uuid) -> Result<Option<Recipe>> {
-    let result = database
-        .find_one::<Recipe>(DatabaseHandle::Basil, doc! { "_id": recipe_id })
-        .await?;
-    Ok(result)
+/// Add subfolders to a folder given its ID and store the updated folder to the database
+/// If the parent could not be found, an error string is returned as Ok
+pub async fn add_subfolders_to_folder(
+    database: &Connection,
+    folder_id: ObjectId,
+    subfolders: Vec<ObjectId>,
+    timestamp: DateTime,
+) -> Result<Option<String>> {
+    if let Some(mut folder) = database
+        .find_one_by_id::<Folder>(DatabaseHandle::Basil, folder_id)
+        .await?
+    {
+        folder.add_subfolders(subfolders, timestamp);
+        database.replace_one(DatabaseHandle::Basil, folder).await?;
+        Ok(None)
+    } else {
+        Ok(Some(format!("Invalid folder ID {}", folder_id)))
+    }
 }
 
 /// Get the user and token matching the given IDs from the database, verify that they are linked to
 /// one another, and verify that the token has not expired
 pub async fn validate_user_token(
     database: &Connection,
-    user_id: Uuid,
-    token_id: Uuid,
+    authentication: &AuthenticationFields,
 ) -> Result<Option<(User, Token)>> {
+    debug!(
+        "Validating token {} for user {}",
+        authentication.token_id, authentication.user_id
+    );
+    let now = DateTime::now();
+
     if let Some(user) = database
-        .find_one::<User>(DatabaseHandle::Basil, doc! { "_id": &user_id })
+        .find_one_by_id::<User>(DatabaseHandle::Basil, authentication.user_id)
         .await?
-        && let Some(token) = database
-            .find_one::<Token>(DatabaseHandle::Basil, doc! { "_id": &token_id })
-            .await?
     {
-        // Verify that the user ID linked to the token matches and that the token has
-        // not expired
-        if user._id == token.user_id && !token.has_expired() {
-            return Ok(Some((user, token)));
+        if let Some(token) = database
+            .find_one_by_id::<Token>(DatabaseHandle::Basil, authentication.token_id)
+            .await?
+        {
+            // Verify that the user ID linked to the token matches and that the token has
+            // not expired
+            if user._id != token.user_id {
+                warn!(
+                    "Token user does not match the given user ID: user ID: {}: token user: {}",
+                    user._id, token.user_id
+                );
+            } else if token.has_expired() {
+                warn!(
+                    "Token has expired: token expiration: {}: now: {}",
+                    token.expiration, now
+                );
+            } else {
+                return Ok(Some((user, token)));
+            }
+        } else {
+            warn!("Failed to find token for ID: {}", authentication.token_id);
         }
+    } else {
+        warn!("Failed to find user for ID: {}", authentication.user_id);
     }
     debug!(
         "Invalid token: user: {}: token: {}: now: {}",
-        user_id,
-        token_id,
-        DateTime::now()
+        authentication.user_id, authentication.token_id, now
     );
     Ok(None)
 }

@@ -2,10 +2,10 @@
 ** db/src/server/routes/basil/recipe.rs
 */
 
-use super::utils;
+use super::{user::AuthenticationFields, utils};
 use crate::db::{
     DatabaseHandle,
-    models::basil::{Action, ActionType, ItemType, Recipe},
+    models::basil::{Action, ActionType, Folder, ItemType, Recipe},
 };
 use crate::server::ServerState;
 
@@ -17,20 +17,20 @@ use axum::{
     response::{IntoResponse, Response},
     routing::{get, post},
 };
-use bson::{DateTime, doc};
+use bson::{DateTime, doc, oid::ObjectId};
 use log::info;
 use route_macro::route;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 /// Request body for create recipe route
-#[derive(Serialize, Deserialize)]
-pub struct CreateRequest {
-    user_id: Uuid,
-    token_id: Uuid,
-    device: String,
+#[derive(Deserialize, Serialize)]
+struct CreateRequest {
+    #[serde(flatten)]
+    authentication: AuthenticationFields,
+    #[serde(default)]
+    uuid: Option<ObjectId>,
     title: String,
-    parent: Option<Uuid>,
+    parent: ObjectId,
     ingredients: Vec<String>,
     instructions: Vec<String>,
 }
@@ -46,64 +46,76 @@ async fn create_route(
 
     // Validate the given token
     if let Some((mut user, _)) =
-        utils::validate_user_token(&state.database, body.user_id, body.token_id).await?
+        utils::validate_user_token(&state.database, &body.authentication).await?
     {
         // Create the recipe
-        let recipe = Recipe::new(
-            body.title,
-            body.parent,
-            body.ingredients,
-            body.instructions,
-            timestamp,
-        );
+        let recipe = if let Some(uuid) = body.uuid {
+            Recipe::new_with_id(
+                uuid,
+                body.title,
+                Some(body.parent),
+                body.ingredients,
+                body.instructions,
+                timestamp,
+            )
+        } else {
+            Recipe::new(
+                body.title,
+                Some(body.parent),
+                body.ingredients,
+                body.instructions,
+                timestamp,
+            )
+        };
         state
             .database
             .insert(DatabaseHandle::Basil, recipe.clone())
             .await?;
 
-        // Link the recipe to its parent folder
-        if let Some(parent_id) = recipe.parent
-            && let Some(mut parent_folder) =
-                utils::find_folder_by_id(&state.database, parent_id).await?
+        // Link the recipe to its parent
+        if let Some(error) =
+            utils::add_recipes_to_folder(&state.database, body.parent, vec![recipe._id], timestamp)
+                .await?
         {
-            parent_folder.add_recipe(recipe._id, timestamp);
-            state
-                .database
-                .replace_one(DatabaseHandle::Basil, parent_folder)
-                .await?;
+            return Ok((StatusCode::BAD_REQUEST, error).into_response());
         }
 
         // Add the recipe to the user
         user.recipes.push(recipe._id);
         // Add the create recipe action to the journal
-        let action = Action::new(timestamp, ItemType::Recipe, ActionType::Create, recipe._id);
-        user.add_action(action);
-        // And add the modify parent folder action to the journal, if the parent exists
-        if let Some(parent_id) = recipe.parent {
-            let action = Action::new(timestamp, ItemType::Folder, ActionType::Modify, parent_id);
-            user.add_action(action);
-        }
+        user.add_action(Action::new(
+            timestamp,
+            ItemType::Recipe,
+            ActionType::Create,
+            recipe._id,
+        ));
+        // And add the modify parent folder action to the journal
+        user.add_action(Action::new(
+            timestamp,
+            ItemType::Folder,
+            ActionType::Modify,
+            body.parent,
+        ));
         // Track the timestamp as the last ping for this device
-        user.device_pinged(body.device, timestamp);
+        user.device_pinged(body.authentication.device, timestamp);
         // Store the updated user
         state
             .database
             .replace_one(DatabaseHandle::Basil, user)
             .await?;
 
-        Ok(StatusCode::OK.into_response())
+        Ok(Json(recipe).into_response())
     } else {
         Ok((StatusCode::BAD_REQUEST, "Invalid token".to_string()).into_response())
     }
 }
 
 /// Request body for delete recipe route
-#[derive(Serialize, Deserialize)]
-pub struct DeleteRequest {
-    user_id: Uuid,
-    token_id: Uuid,
-    device: String,
-    recipe_id: Uuid,
+#[derive(Deserialize, Serialize)]
+struct DeleteRequest {
+    #[serde(flatten)]
+    authentication: AuthenticationFields,
+    recipe_id: ObjectId,
 }
 
 /// Delete recipe route
@@ -117,7 +129,7 @@ async fn delete_route(
 
     // Validate the given token
     if let Some((mut user, _)) =
-        utils::validate_user_token(&state.database, body.user_id, body.token_id).await?
+        utils::validate_user_token(&state.database, &body.authentication).await?
     {
         // Remove the recipe from the user
         user.remove_recipe(body.recipe_id);
@@ -131,10 +143,15 @@ async fn delete_route(
         user.add_action(action);
 
         // Unlink the recipe from its parent folder
-        if let Some(recipe) = utils::find_recipe_by_id(&state.database, body.recipe_id).await?
+        if let Some(recipe) = state
+            .database
+            .find_one_by_id::<Recipe>(DatabaseHandle::Basil, body.recipe_id)
+            .await?
             && let Some(parent_id) = recipe.parent
-            && let Some(mut parent_folder) =
-                utils::find_folder_by_id(&state.database, parent_id).await?
+            && let Some(mut parent_folder) = state
+                .database
+                .find_one_by_id::<Folder>(DatabaseHandle::Basil, parent_id)
+                .await?
         {
             parent_folder.remove_recipe(recipe._id, timestamp);
             state
@@ -147,7 +164,7 @@ async fn delete_route(
         }
 
         // Track the timestamp as the last ping for this device
-        user.device_pinged(body.device, timestamp);
+        user.device_pinged(body.authentication.device, timestamp);
         // Store the updated user
         state
             .database
@@ -167,12 +184,11 @@ async fn delete_route(
 }
 
 /// Request body for modify recipe route
-#[derive(Serialize, Deserialize)]
-pub struct ModifyRequest {
-    user_id: Uuid,
-    token_id: Uuid,
-    device: String,
-    recipe_id: Uuid,
+#[derive(Deserialize, Serialize)]
+struct ModifyRequest {
+    #[serde(flatten)]
+    authentication: AuthenticationFields,
+    recipe_id: ObjectId,
     title: String,
     ingredients: Vec<String>,
     instructions: Vec<String>,
@@ -189,10 +205,14 @@ async fn modify_route(
 
     // Validate the given token
     if let Some((mut user, _)) =
-        utils::validate_user_token(&state.database, body.user_id, body.token_id).await?
+        utils::validate_user_token(&state.database, &body.authentication).await?
     {
         // Get the recipe
-        if let Some(mut recipe) = utils::find_recipe_by_id(&state.database, body.recipe_id).await? {
+        if let Some(mut recipe) = state
+            .database
+            .find_one_by_id::<Recipe>(DatabaseHandle::Basil, body.recipe_id)
+            .await?
+        {
             let recipe_id = recipe._id;
 
             // Modify the recipe
@@ -210,7 +230,7 @@ async fn modify_route(
             let action = Action::new(timestamp, ItemType::Recipe, ActionType::Modify, recipe_id);
             user.add_action(action);
             // Track the timestamp as the last ping for this device
-            user.device_pinged(body.device, timestamp);
+            user.device_pinged(body.authentication.device, timestamp);
             // Store the updated user
             state
                 .database
@@ -235,8 +255,12 @@ async fn modify_route(
 async fn get_route(state: State<ServerState>, Path(id): Path<String>) -> Result<Response> {
     info!("/basil/v2/recipe/{}", id);
 
-    let recipe_id = Uuid::parse_str(&id)?;
-    if let Some(recipe) = utils::find_recipe_by_id(&state.database, recipe_id).await? {
+    let recipe_id = ObjectId::parse_str(&id)?;
+    if let Some(recipe) = state
+        .database
+        .find_one_by_id::<Recipe>(DatabaseHandle::Basil, recipe_id)
+        .await?
+    {
         Ok(Json(recipe).into_response())
     } else {
         Ok((

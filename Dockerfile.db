@@ -32,4 +32,5 @@ COPY --from=build /usr/src/db/target/release/db ./
 
 EXPOSE ${PORT}
 
-CMD ["./db"]
+# CMD ["./db"]
+CMD ["./db", "--debug"]

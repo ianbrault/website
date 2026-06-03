@@ -4,9 +4,8 @@
 
 use crate::db::DatabaseCollection;
 
-use bson::{DateTime, Document, doc};
+use bson::{DateTime, oid::ObjectId};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 /// Token schema version
 const SCHEMA_VERSION: usize = 0;
@@ -16,9 +15,9 @@ const VALIDITY_DURATION: i64 = 60 * 60 * 1000;
 /// Token model
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Token {
-    pub _id: Uuid,
+    pub _id: ObjectId,
     schema_version: usize,
-    pub user_id: Uuid,
+    pub user_id: ObjectId,
     pub expiration: DateTime,
 }
 
@@ -27,9 +26,9 @@ impl Token {
         now.saturating_add_millis(VALIDITY_DURATION)
     }
 
-    pub fn new(user_id: Uuid, timestamp: DateTime) -> Self {
+    pub fn new(user_id: ObjectId, timestamp: DateTime) -> Self {
         Self {
-            _id: Uuid::new_v4(),
+            _id: ObjectId::new(),
             schema_version: SCHEMA_VERSION,
             user_id,
             expiration: Self::expiration(timestamp),
@@ -46,7 +45,7 @@ impl DatabaseCollection for Token {
         "tokens".to_string()
     }
 
-    fn id_query(&self) -> Document {
-        doc! { "_id": self._id }
+    fn id(&self) -> ObjectId {
+        self._id
     }
 }
