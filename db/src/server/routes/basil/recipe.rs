@@ -5,7 +5,7 @@
 use super::{user::AuthenticationFields, utils};
 use crate::db::{
     DatabaseHandle,
-    models::basil::{Action, ActionType, Folder, ItemType, Recipe},
+    models::basil::{Action, ActionType, ItemType, Recipe},
 };
 use crate::server::ServerState;
 
@@ -18,7 +18,7 @@ use axum::{
     routing::{get, post},
 };
 use bson::{DateTime, doc, oid::ObjectId};
-use log::info;
+use log::{debug, info};
 use route_macro::route;
 use serde::{Deserialize, Serialize};
 
@@ -71,6 +71,8 @@ async fn create_route(
             .database
             .insert(DatabaseHandle::Basil, recipe.clone())
             .await?;
+        info!("Created recipe \"{}\" (ID: {})", recipe.title, recipe._id);
+        debug!("{:?}", recipe);
 
         // Link the recipe to its parent
         if let Some(error) =
@@ -131,37 +133,8 @@ async fn delete_route(
     if let Some((mut user, _)) =
         utils::validate_user_token(&state.database, &body.authentication).await?
     {
-        // Remove the recipe from the user
-        user.remove_recipe(body.recipe_id);
-        // Add the delete recipe action to the journal
-        let action = Action::new(
-            timestamp,
-            ItemType::Recipe,
-            ActionType::Delete,
-            body.recipe_id,
-        );
-        user.add_action(action);
-
-        // Unlink the recipe from its parent folder
-        if let Some(recipe) = state
-            .database
-            .find_one_by_id::<Recipe>(DatabaseHandle::Basil, body.recipe_id)
-            .await?
-            && let Some(parent_id) = recipe.parent
-            && let Some(mut parent_folder) = state
-                .database
-                .find_one_by_id::<Folder>(DatabaseHandle::Basil, parent_id)
-                .await?
-        {
-            parent_folder.remove_recipe(recipe._id, timestamp);
-            state
-                .database
-                .replace_one(DatabaseHandle::Basil, parent_folder)
-                .await?;
-            // Add the modify parent folder action to the journal
-            let action = Action::new(timestamp, ItemType::Folder, ActionType::Modify, parent_id);
-            user.add_action(action);
-        }
+        let recipes = vec![body.recipe_id];
+        utils::delete_recipes(&state.database, &mut user, &recipes, timestamp).await?;
 
         // Track the timestamp as the last ping for this device
         user.device_pinged(body.authentication.device, timestamp);
@@ -169,12 +142,6 @@ async fn delete_route(
         state
             .database
             .replace_one(DatabaseHandle::Basil, user)
-            .await?;
-
-        // Remove the recipe from the database
-        state
-            .database
-            .delete_one::<Recipe>(DatabaseHandle::Basil, doc! { "_id": body.recipe_id })
             .await?;
 
         Ok(StatusCode::OK.into_response())

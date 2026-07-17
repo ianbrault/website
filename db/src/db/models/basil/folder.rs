@@ -17,8 +17,8 @@ pub struct Folder {
     schema_version: usize,
     pub name: String,
     pub parent: Option<ObjectId>,
-    recipes: Vec<ObjectId>,
-    subfolders: Vec<ObjectId>,
+    pub recipes: Vec<ObjectId>,
+    pub subfolders: Vec<ObjectId>,
     pub modified: DateTime,
 }
 

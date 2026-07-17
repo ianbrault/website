@@ -5,16 +5,18 @@
 use super::user::AuthenticationFields;
 use crate::db::{
     Connection, DatabaseHandle,
-    models::basil::{Folder, Token, User},
+    models::basil::{Action, ActionType, Folder, ItemType, Recipe, Token, User},
 };
 
 use anyhow::Result;
-use bson::{DateTime, oid::ObjectId};
+use bson::{DateTime, doc, oid::ObjectId};
 use log::{debug, warn};
 use scrypt::{
     Scrypt,
     password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString, rand_core::OsRng},
 };
+
+use std::boxed::Box;
 
 /// Hash a password
 pub fn hash_password(password: String) -> Result<String> {
@@ -85,6 +87,104 @@ pub async fn add_subfolders_to_folder(
     } else {
         Ok(Some(format!("Invalid folder ID {}", folder_id)))
     }
+}
+
+/// Delete the given folders from the provided user and from the database. Recursively deletes
+/// recipes and subfolders inside the given folders. Note that this does not store the updated user
+/// to the database, though
+pub async fn delete_folders(
+    database: &Connection,
+    user: &mut User,
+    folders: &[ObjectId],
+    timestamp: DateTime,
+) -> Result<()> {
+    for folder_id in folders {
+        // Remove the folder from the user
+        user.remove_folder(*folder_id);
+        // Add the delete folder action to the journal
+        let action = Action::new(timestamp, ItemType::Folder, ActionType::Delete, *folder_id);
+        user.add_action(action);
+
+        if let Some(folder) = database
+            .find_one_by_id::<Folder>(DatabaseHandle::Basil, *folder_id)
+            .await?
+        {
+            // Unlink the folder from its parent folder
+            if let Some(parent_id) = folder.parent
+                && let Some(mut parent_folder) = database
+                    .find_one_by_id::<Folder>(DatabaseHandle::Basil, parent_id)
+                    .await?
+            {
+                parent_folder.remove_subfolder(folder._id, timestamp);
+                database
+                    .replace_one(DatabaseHandle::Basil, parent_folder)
+                    .await?;
+                // Add the modify parent folder action to the journal
+                let action =
+                    Action::new(timestamp, ItemType::Folder, ActionType::Modify, parent_id);
+                user.add_action(action);
+            }
+
+            // Remove all recipes and subfolders
+            delete_recipes(database, user, &folder.recipes, timestamp).await?;
+            Box::pin(delete_folders(
+                database,
+                user,
+                &folder.subfolders,
+                timestamp,
+            ))
+            .await?;
+        }
+
+        // Remove the folder from the database
+        database
+            .delete_one::<Folder>(DatabaseHandle::Basil, doc! { "_id": folder_id })
+            .await?;
+    }
+
+    Ok(())
+}
+
+/// Delete the given recipes from the provided user and from the database. Note that this does not
+/// store the updated user to the database, though
+pub async fn delete_recipes(
+    database: &Connection,
+    user: &mut User,
+    recipes: &[ObjectId],
+    timestamp: DateTime,
+) -> Result<()> {
+    for recipe_id in recipes {
+        // Remove the recipe from the user
+        user.remove_recipe(*recipe_id);
+        // Add the delete recipe action to the journal
+        let action = Action::new(timestamp, ItemType::Recipe, ActionType::Delete, *recipe_id);
+        user.add_action(action);
+
+        // Unlink the recipe from its parent folder
+        if let Some(recipe) = database
+            .find_one_by_id::<Recipe>(DatabaseHandle::Basil, *recipe_id)
+            .await?
+            && let Some(parent_id) = recipe.parent
+            && let Some(mut parent_folder) = database
+                .find_one_by_id::<Folder>(DatabaseHandle::Basil, parent_id)
+                .await?
+        {
+            parent_folder.remove_recipe(recipe._id, timestamp);
+            database
+                .replace_one(DatabaseHandle::Basil, parent_folder)
+                .await?;
+            // Add the modify parent folder action to the journal
+            let action = Action::new(timestamp, ItemType::Folder, ActionType::Modify, parent_id);
+            user.add_action(action);
+        }
+
+        // Remove the folder from the database
+        database
+            .delete_one::<Folder>(DatabaseHandle::Basil, doc! { "_id": recipe_id })
+            .await?;
+    }
+
+    Ok(())
 }
 
 /// Get the user and token matching the given IDs from the database, verify that they are linked to

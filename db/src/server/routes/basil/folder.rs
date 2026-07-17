@@ -18,7 +18,7 @@ use axum::{
     routing::{get, post},
 };
 use bson::{DateTime, doc, oid::ObjectId};
-use log::info;
+use log::{debug, info};
 use route_macro::route;
 use serde::{Deserialize, Serialize};
 
@@ -68,6 +68,8 @@ async fn create_route(
         {
             return Ok((StatusCode::BAD_REQUEST, error).into_response());
         }
+        info!("Created folder \"{}\" (ID: {})", folder.name, folder._id);
+        debug!("{:?}", folder);
 
         // Add the folder to the user
         user.folders.push(folder._id);
@@ -120,37 +122,8 @@ async fn delete_route(
     if let Some((mut user, _)) =
         utils::validate_user_token(&state.database, &body.authentication).await?
     {
-        // Remove the folder from the user
-        user.remove_folder(body.folder_id);
-        // Add the delete folder action to the journal
-        let action = Action::new(
-            timestamp,
-            ItemType::Folder,
-            ActionType::Delete,
-            body.folder_id,
-        );
-        user.add_action(action);
-
-        // Unlink the folder from its parent folder
-        if let Some(folder) = state
-            .database
-            .find_one_by_id::<Folder>(DatabaseHandle::Basil, body.folder_id)
-            .await?
-            && let Some(parent_id) = folder.parent
-            && let Some(mut parent_folder) = state
-                .database
-                .find_one_by_id::<Folder>(DatabaseHandle::Basil, parent_id)
-                .await?
-        {
-            parent_folder.remove_subfolder(folder._id, timestamp);
-            state
-                .database
-                .replace_one(DatabaseHandle::Basil, parent_folder)
-                .await?;
-            // Add the modify parent folder action to the journal
-            let action = Action::new(timestamp, ItemType::Folder, ActionType::Modify, parent_id);
-            user.add_action(action);
-        }
+        let folders = vec![body.folder_id];
+        utils::delete_folders(&state.database, &mut user, &folders, timestamp).await?;
 
         // Track the timestamp as the last ping for this device
         user.device_pinged(body.authentication.device, timestamp);
@@ -158,12 +131,6 @@ async fn delete_route(
         state
             .database
             .replace_one(DatabaseHandle::Basil, user)
-            .await?;
-
-        // Remove the folder from the database
-        state
-            .database
-            .delete_one::<Folder>(DatabaseHandle::Basil, doc! { "_id": body.folder_id })
             .await?;
 
         Ok(StatusCode::OK.into_response())

@@ -55,11 +55,16 @@ where
     T: Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        // FIXME: debug output should exclude the massive amount of None's in the data
+        let data_strings = self
+            .data
+            .iter()
+            .flat_map(|maybe_item| maybe_item.as_ref().map(|item| format!("{:?}", item)))
+            .collect::<Vec<_>>();
         write!(
             f,
-            "CircularBuffer {{ data: {:?}, index: {} }}",
-            self.data, self.index
+            "CircularBuffer {{ index: {}, data: [{}] }}",
+            self.index,
+            data_strings.join(",")
         )
     }
 }
