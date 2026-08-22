@@ -1,14 +1,11 @@
-**build
 **node_modules
-**out
 **.next
-**.DS_Store
-
-coverage
 next-env.d.ts
-*.pem
 npm-debug.log*
-.env*
-*.tsbuildinfo
 
 **target
+
+**.venv
+*.egg-info
+
+**.DS_Store
