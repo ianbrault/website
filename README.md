@@ -31,10 +31,12 @@ source .venv/bin/activate
 pip3 install -e .
 ```
 
-<!-- FIXME: incomplete... -->
-
 ## Usage
+
+Ensure that Python dependencies have been installed (see [Python dependencies](#python-dependencies)).
 
 Start the website and all services:
 
-<!-- FIXME: incomplete... -->
+```
+website-start
+```

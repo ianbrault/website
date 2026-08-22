@@ -37,7 +37,14 @@ def print_step(message: str):
 
 def database_is_running() -> bool:
     if sys.platform == "linux":
-        return NotImplemented
+        output = subprocess.check_output(
+            ["sudo", "systemctl", "status", "mongod"]
+        ).decode()
+        LOG.debug(output)
+        for line in output.splitlines():
+            if "Active: active (running)" in line:
+                return True
+        return False
     elif sys.platform == "darwin":
         output = subprocess.check_output(["brew", "services", "list"])
         services = output.decode().splitlines()[1:]
@@ -58,7 +65,7 @@ def start_database():
         return
     LOG.info("Starting mongodb service")
     if sys.platform == "linux":
-        raise NotImplementedError()
+        subprocess.check_call(["sudo", "systemctl", "start", "mongod"])
     elif sys.platform == "darwin":
         subprocess.check_call(
             ["brew", "services", "start", "mongodb/brew/mongodb-community@8.0"]
