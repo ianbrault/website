@@ -4,16 +4,32 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "website"
-version = "0.1.0"
+version = "0.2.0"
 requires-python = ">=3.9"
 readme = "README.md"
 
 dependencies = [
-    "black"
+    "black",
+    "pymongo",
+    "pytest",
+    "requests",
 ]
 
 [project.scripts]
 website-start = "tools.start:main"
+
+[tool.setuptools]
+packages = [
+    "tests",
+    "tools.common",
+]
+
+[tool.pytest]
+log_cli = true
+log_cli_level = "INFO"
+testpaths = [
+    "tests",
+]
 
 [tool.black]
 line-length = 80

@@ -40,3 +40,9 @@ Start the website and all services:
 ```
 website-start
 ```
+
+Run tests:
+
+```
+pytest
+```

@@ -4,15 +4,15 @@
 import argparse
 import logging
 import os
-import pathlib
 import subprocess
 import sys
 import traceback
 
-BASE_DIRECTORY = pathlib.Path(__file__).resolve().absolute().parent.parent
+from tools import common
+
 LOG = logging.getLogger(__name__)
-MONGODB_URL = "mongodb://database:27017"
-MONGODB_PORT = 4000
+MONGODB_URL = "mongodb://127.0.0.1:27017"
+DB_PORT = 4000
 WEB_PORT = 3000
 
 
@@ -29,10 +29,6 @@ def configure_logger(debug: bool = False):
     LOG.setLevel(logging.DEBUG if debug else logging.INFO)
     handler = logging.StreamHandler(sys.stdout)
     LOG.addHandler(handler)
-
-
-def print_step(message: str):
-    LOG.info(f"==== {message}")
 
 
 def database_is_running() -> bool:
@@ -59,7 +55,7 @@ def database_is_running() -> bool:
 
 
 def start_database():
-    print_step("Start database")
+    LOG.info("Start database")
     if database_is_running():
         LOG.info("Database is already running")
         return
@@ -77,31 +73,14 @@ def start_database():
 def start_database_driver(
     build: bool = False, debug: bool = False
 ) -> subprocess.Popen:
-    print_step("Start database driver")
-    driver_path = BASE_DIRECTORY / "db"
-    os.chdir(driver_path)
-    if build:
-        LOG.info("Building database driver")
-        build_command = ["cargo", "build"]
-        if not debug:
-            build_command.append("--release")
-        subprocess.check_call(build_command)
-    LOG.info("Running database driver")
-    binary = driver_path / "target" / ("debug" if debug else "release") / "db"
-    run_command = [
-        binary,
-        "--port",
-        str(MONGODB_PORT),
-        "--mongodb-url",
-        MONGODB_URL,
-    ]
-    if debug:
-        run_command.append("--debug")
-    return subprocess.Popen(run_command)
+    LOG.info("Start database driver")
+    return common.start_database_driver(
+        MONGODB_URL, DB_PORT, build=build, release=not debug, debug=debug
+    )
 
 
 def start_webapp(build: bool = False, debug: bool = False) -> subprocess.Popen:
-    print_step("Start webapp")
+    LOG.info("Start webapp")
     os.environ.update(
         NODE_ENV="production", MONGODB_URL=MONGODB_URL, PORT=str(WEB_PORT)
     )
