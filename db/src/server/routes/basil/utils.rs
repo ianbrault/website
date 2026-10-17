@@ -178,9 +178,9 @@ pub async fn delete_recipes(
             user.add_action(action);
         }
 
-        // Remove the folder from the database
+        // Remove the recipe from the database
         database
-            .delete_one::<Folder>(DatabaseHandle::Basil, doc! { "_id": recipe_id })
+            .delete_one::<Recipe>(DatabaseHandle::Basil, doc! { "_id": recipe_id })
             .await?;
     }
 
