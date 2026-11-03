@@ -101,7 +101,8 @@ async fn create_route(
         // Track the timestamp as the last ping for this device
         user.device_pinged(body.authentication.device, timestamp);
         // Store the updated user
-        state
+        // FIXME: handle result
+        let _ = state
             .database
             .replace_one(DatabaseHandle::Basil, user)
             .await?;

@@ -99,7 +99,10 @@ pub async fn authenticate_route(
             .find_many_by_id(DatabaseHandle::Basil, user.folders)
             .await?;
 
-        info!("Successfully authenticated user {} ({})", user.email, user._id);
+        info!(
+            "Successfully authenticated user {} ({})",
+            user.email, user._id
+        );
         let response = AuthenticateResponse {
             id: user._id,
             email: user.email,
@@ -280,6 +283,11 @@ pub async fn ping_route(
         let previous_timestamp = user.device_pinged(body.authentication.device, timestamp);
         // Find all actions that have occurred since the device last pinged the server
         let actions = user.actions_since(previous_timestamp);
+        debug!(
+            "User has {} actions since previous ping at {:?}",
+            actions.len(),
+            previous_timestamp
+        );
         // Store the updated user
         state
             .database

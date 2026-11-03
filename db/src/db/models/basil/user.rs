@@ -7,6 +7,7 @@ use crate::db::DatabaseCollection;
 use crate::types::CircularBuffer;
 
 use bson::{DateTime, oid::ObjectId};
+use log::debug;
 use serde::{Deserialize, Serialize};
 
 use std::collections::HashMap;
@@ -60,6 +61,7 @@ impl User {
     }
 
     pub fn add_action(&mut self, action: Action) {
+        debug!("Adding action: {:?}", action);
         self.action_journal.push(action);
     }
 
@@ -67,7 +69,7 @@ impl User {
         if let Some(timestamp) = timestamp {
             self.action_journal
                 .iter()
-                .filter(|a| a.timestamp >= timestamp)
+                .filter(|a| a.timestamp > timestamp)
                 .cloned()
                 .collect()
         } else {

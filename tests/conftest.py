@@ -16,9 +16,15 @@ MONGODB_URL = f"mongodb://127.0.0.1:27017"
 
 
 @pytest.fixture(scope="session", autouse=True)
-def database_fixture():
+def database_fixture(request):
+    is_debug = request.config.getoption("--log-cli-level") == "DEBUG"
     proc = tools.start_database_driver(
-        MONGODB_URL, tests.Model.PORT, build=True, release=False, test=True
+        MONGODB_URL,
+        tests.Model.PORT,
+        build=True,
+        release=False,
+        test=True,
+        debug=is_debug,
     )
     # Brief sleep to allow the process to initialize
     time.sleep(1.0)
