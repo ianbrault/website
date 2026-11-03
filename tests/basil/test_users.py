@@ -118,3 +118,47 @@ def test_user_ping():
     verify_action(actions[1], ItemType.Folder, ActionType.Modify, user_a.root)
     verify_action(actions[2], ItemType.Recipe, ActionType.Delete, recipe.id)
     verify_action(actions[3], ItemType.Folder, ActionType.Modify, user_a.root)
+
+
+def test_user_ping_interleaved():
+    user_a = User.create()
+    assert user_a is not None
+    user_b, _, _ = User.authenticate(
+        user_a.email, "foo", device="secondary-device"
+    )
+
+    folder = Folder.create(user_a, "Foo", user_a.root)
+    assert folder is not None
+    actions = user_b.ping()
+    assert len(actions) == 2
+    verify_action(actions[0], ItemType.Folder, ActionType.Create, folder.id)
+    verify_action(actions[1], ItemType.Folder, ActionType.Modify, user_b.root)
+
+    recipe = Recipe.create(user_b, "Bar", user_b.root, ["Test"], ["Test"])
+    assert recipe is not None
+    actions = user_a.ping()
+    assert len(actions) == 2
+    verify_action(actions[0], ItemType.Recipe, ActionType.Create, recipe.id)
+    verify_action(actions[1], ItemType.Folder, ActionType.Modify, user_a.root)
+
+    folder.modify(user_a, "FooFoo")
+    actions = user_b.ping()
+    assert len(actions) == 1
+    verify_action(actions[0], ItemType.Folder, ActionType.Modify, folder.id)
+
+    recipe.modify(user_b, "Bar", ["123"], ["456"])
+    actions = user_a.ping()
+    assert len(actions) == 1
+    verify_action(actions[0], ItemType.Recipe, ActionType.Modify, recipe.id)
+
+    folder.delete(user_a)
+    actions = user_b.ping()
+    assert len(actions) == 2
+    verify_action(actions[0], ItemType.Folder, ActionType.Delete, folder.id)
+    verify_action(actions[1], ItemType.Folder, ActionType.Modify, user_b.root)
+
+    recipe.delete(user_b)
+    actions = user_a.ping()
+    assert len(actions) == 2
+    verify_action(actions[0], ItemType.Recipe, ActionType.Delete, recipe.id)
+    verify_action(actions[1], ItemType.Folder, ActionType.Modify, user_a.root)
