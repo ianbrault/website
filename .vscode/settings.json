@@ -1,0 +1,11 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "db/Cargo.toml"
+    ],
+    "[rust]": {
+        "editor.defaultFormatter": "rust-lang.rust-analyzer"
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    }
+}
