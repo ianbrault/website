@@ -1,8 +1,8 @@
 # tests/conftest.py
 
 import logging
+import os
 import subprocess
-import time
 
 import pytest
 
@@ -26,14 +26,17 @@ def database_fixture(request):
         test=True,
         debug=is_debug,
     )
-    # Brief sleep to allow the process to initialize
-    time.sleep(1.0)
     LOG.info(f"Started database process {proc.pid}")
     yield proc
 
     # Returned from yield, clean up
     LOG.info("Tearing down")
+    # Kill the database process
+    proc.kill()
     # Drop the test database
+    # Skip this if running in CI
+    if os.getenv("CI"):
+        return
     command = [
         "mongosh",
         "--eval",
@@ -43,5 +46,3 @@ def database_fixture(request):
     ]
     LOG.debug(f"Command: {' '.join(command)}")
     subprocess.check_call(command)
-    # Kill the database process
-    proc.kill()

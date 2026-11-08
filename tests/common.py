@@ -1,5 +1,7 @@
 # tests/common.py
 
+from __future__ import annotations
+
 import abc
 import datetime
 import enum
@@ -94,6 +96,9 @@ class Model(abc.ABC):
         return NotImplemented
 
 
+type ObjectIdType = str | dict | bson.objectid.ObjectId | ObjectId
+
+
 class ObjectId(Model):
 
     def __init__(self, object_id: ObjectIdType | None = None):
@@ -126,9 +131,6 @@ class ObjectId(Model):
 
     def serialize(self) -> typing.Any:
         return self.id
-
-
-type ObjectIdType = str | dict | bson.objectid.ObjectId | ObjectId
 
 
 class ModelWithId(Model):

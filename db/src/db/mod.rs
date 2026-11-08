@@ -23,9 +23,9 @@ pub enum DatabaseHandle {
 impl DatabaseHandle {
     fn value(&self) -> &'static str {
         match self {
-            #[cfg(not(feature="test"))]
+            #[cfg(not(feature = "test"))]
             Self::Basil => "basil",
-            #[cfg(feature="test")]
+            #[cfg(feature = "test")]
             Self::Basil => "basil-test",
         }
     }

@@ -47,7 +47,7 @@ function StartMenu({onTicketsMenuClick, onLineupMenuClick}: DockProps) {
 
 export default function Dock({onTicketsMenuClick, onLineupMenuClick}: DockProps) {
     const [menuShown, setMenuShown] = useState(false);
-    const [time, setTime] = useState(Date.now());
+    const [time, setTime] = useState(new Date().getTime());
 
     useEffect(() => {
         const interval = setInterval(() => setTime(Date.now()), 1000);

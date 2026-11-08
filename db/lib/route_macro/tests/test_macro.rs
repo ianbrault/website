@@ -71,4 +71,3 @@ fn test_route_async() {
         Ok(Response(foo))
     }
 }
-
