@@ -43,6 +43,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26.x
+
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.1
         with:
