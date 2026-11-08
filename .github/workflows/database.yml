@@ -1,0 +1,46 @@
+name: Database
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build route macro
+        working-directory: ./db/lib/route_macro
+        run: cargo build --verbose
+
+      - name: Run route macro unit tests
+        working-directory: ./db/lib/route_macro
+        run: cargo test --verbose
+
+      - name: Build database driver
+        working-directory: ./db
+        run: cargo build --verbose
+
+  test:
+    name: Run integration tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Run integration tests
+        run: pytest
