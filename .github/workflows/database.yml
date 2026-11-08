@@ -43,6 +43,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.1
+        with:
+          mongodb-version: 8.0
+
       - name: Install packages
         run: pip install .
 

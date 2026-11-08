@@ -2,7 +2,6 @@
 
 import logging
 import subprocess
-import time
 
 import pytest
 
@@ -26,8 +25,6 @@ def database_fixture(request):
         test=True,
         debug=is_debug,
     )
-    # Brief sleep to allow the process to initialize
-    time.sleep(1.0)
     LOG.info(f"Started database process {proc.pid}")
     yield proc
 
