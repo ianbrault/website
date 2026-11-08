@@ -8,7 +8,7 @@ from tests.common import Folder, Recipe, User
 
 
 @pytest.fixture(scope="module", autouse=True)
-def recipes_user() -> Generator[User]:
+def recipes_user() -> Generator[User, None, None]:
     user = User.create(email="recipes@test.com")
     assert user is not None
     yield user
