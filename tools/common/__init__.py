@@ -12,6 +12,8 @@ def project_directory() -> pathlib.Path:
     """
     Gets an absolute path to the project root directory.
     """
+    if "PROJECT_DIRECTORY" in os.environ:
+        return pathlib.Path(os.environ["PROJECT_DIRECTORY"])
     return pathlib.Path(__file__).resolve().absolute().parent.parent.parent
 
 
