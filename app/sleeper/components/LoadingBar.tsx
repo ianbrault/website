@@ -1,6 +1,6 @@
 /*
-** app/sleeper/components/LoadingBar.tsx
-*/
+ ** app/sleeper/components/LoadingBar.tsx
+ */
 
 import styles from "./LoadingBar.module.css";
 
@@ -13,10 +13,10 @@ export default function LoadingBar({ loading }: LoadingBarProps) {
         <div
             className={styles.loadingBarWrapper}
             style={{
-                display: loading ? "inherit" : "none"
+                display: loading ? "inherit" : "none",
             }}
         >
-            <div className={styles.loadingBarSlider}/>
+            <div className={styles.loadingBarSlider} />
         </div>
     );
 }

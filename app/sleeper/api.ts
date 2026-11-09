@@ -1,6 +1,6 @@
 /*
-** app/sleeper/api.ts
-*/
+ ** app/sleeper/api.ts
+ */
 
 const BaseURL = "https://api.sleeper.app/v1";
 
@@ -57,7 +57,8 @@ export interface User {
 
 // Functions
 
-function getNoAwait(url: string): Promise<any> {  // eslint-disable-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getNoAwait(url: string): Promise<any> {
     return fetch(BaseURL + url)
         .then((res) => res.json())
         .then((body) => {
@@ -66,10 +67,11 @@ function getNoAwait(url: string): Promise<any> {  // eslint-disable-line @typesc
             } else {
                 return body;
             }
-        })
+        });
 }
 
-async function get(url: string): Promise<any> {  // eslint-disable-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function get(url: string): Promise<any> {
     return await getNoAwait(url);
 }
 
@@ -79,43 +81,44 @@ async function get(url: string): Promise<any> {  // eslint-disable-line @typescr
 // draft picks: /draft/<id>/picks
 
 /*
-** Gets the current NFL state
-*/
+ ** Gets the current NFL state
+ */
 export async function getNflState(): Promise<NflState> {
-    return await get("/state/nfl")
-        .then((res) => {
-            const season = Number.parseInt(res.season);
-            return {
-                week: res.week,
-                season: season,
-                season_type: res.season_type,
-            };
-        });
+    return await get("/state/nfl").then((res) => {
+        const season = Number.parseInt(res.season);
+        return {
+            week: res.week,
+            season: season,
+            season_type: res.season_type,
+        };
+    });
 }
 
 /*
-** Gets the user data associated with the given username
-*/
+ ** Gets the user data associated with the given username
+ */
 export async function getUserID(username: string): Promise<string> {
-    return get(`/user/${username}`)
-        .then((res) => res.user_id);
+    return get(`/user/${username}`).then((res) => res.user_id);
 }
 
 /*
-** Gets all NFL league data from the current year for the given user ID
-*/
+ ** Gets all NFL league data from the current year for the given user ID
+ */
 export async function getUserCurrentLeagues(userID: string): Promise<League[]> {
     const nflState = await getNflState();
-    return await get(`/user/${userID}/leagues/nfl/${nflState.season}`)
-        .then((res) => res.map((league: any) => ({  // eslint-disable-line @typescript-eslint/no-explicit-any
-            id: league.league_id,
-            name: league.name,
-        })));
+    return await get(`/user/${userID}/leagues/nfl/${nflState.season}`).then(
+        (res) =>
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            res.map((league: any) => ({
+                id: league.league_id,
+                name: league.name,
+            })),
+    );
 }
 
 /*
-** Gets all NFL league data from all years for the given league ID
-*/
+ ** Gets all NFL league data from all years for the given league ID
+ */
 export async function getLeagueInfo(
     leagueID: string,
     nflState: NflState,
@@ -141,29 +144,33 @@ export async function getLeagueInfo(
 }
 
 /*
-** Gets all user info for the given league ID
-*/
+ ** Gets all user info for the given league ID
+ */
 export async function getLeagueUsers(leagueID: string): Promise<User[]> {
-    return await get(`/league/${leagueID}/users`)
-        .then((res) => res.map((user: any) => ({  // eslint-disable-line @typescript-eslint/no-explicit-any
+    return await get(`/league/${leagueID}/users`).then((res) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        res.map((user: any) => ({
             displayName: user.display_name,
             id: user.user_id,
-        })));
+        })),
+    );
 }
 
 /*
-** Gets all roster info for the given league ID
-*/
+ ** Gets all roster info for the given league ID
+ */
 export async function getLeagueRosters(leagueID: string): Promise<Roster[]> {
-    return await get(`/league/${leagueID}/rosters`)
-        .then((res) => res.map((roster: any) => ({  // eslint-disable-line @typescript-eslint/no-explicit-any
+    return await get(`/league/${leagueID}/rosters`).then((res) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        res.map((roster: any) => ({
             ownerID: roster.owner_id,
-        })));
+        })),
+    );
 }
 
 /*
-** Gets all matchup info for the given league ID
-*/
+ ** Gets all matchup info for the given league ID
+ */
 export async function getLeagueMatchups(
     leagueID: string,
     leagueInfo: ByYear<LeagueInfo>,
@@ -171,7 +178,7 @@ export async function getLeagueMatchups(
 ): Promise<ByYear<Matchup[][]>> {
     const info: ByYear<Matchup[][]> = {};
     // store all the promises and join at the end
-    const promises: Promise<any>[] = [];  // eslint-disable-line @typescript-eslint/no-explicit-any
+    const promises: Promise<any>[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
     const promiseYears: number[] = [];
     // start from the current year and work backwards
     let id = leagueID;
@@ -186,14 +193,18 @@ export async function getLeagueMatchups(
             }
         }
         for (let week = 1; week <= end; week++) {
-            const res = getNoAwait(`/league/${id}/matchups/${week}`).then((res) => res.map((matchup: any) => ({  // eslint-disable-line @typescript-eslint/no-explicit-any
-                matchupID: matchup.matchup_id,
-                players: matchup.players,
-                playersPoints: matchup.players_points,
-                rosterID: matchup.roster_id,
-                starters: matchup.starters,
-                startersPoints: matchup.starters_points,
-            })));
+            const res = getNoAwait(`/league/${id}/matchups/${week}`).then(
+                (res) =>
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    res.map((matchup: any) => ({
+                        matchupID: matchup.matchup_id,
+                        players: matchup.players,
+                        playersPoints: matchup.players_points,
+                        rosterID: matchup.roster_id,
+                        starters: matchup.starters,
+                        startersPoints: matchup.starters_points,
+                    })),
+            );
             promises.push(res);
             promiseYears.push(year);
         }
@@ -213,8 +224,8 @@ export async function getLeagueMatchups(
 }
 
 /*
-** Gets all transaction info for the given league ID
-*/
+ ** Gets all transaction info for the given league ID
+ */
 export async function getLeagueTransactions(
     leagueID: string,
     leagueInfo: ByYear<LeagueInfo>,
@@ -222,7 +233,7 @@ export async function getLeagueTransactions(
 ): Promise<ByYear<Transaction[]>> {
     const info: ByYear<Transaction[]> = {};
     // store all the promises and join at the end
-    const promises: Promise<any>[] = [];  // eslint-disable-line @typescript-eslint/no-explicit-any
+    const promises: Promise<any>[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
     const promiseYears: number[] = [];
     // start from the current year and work backwards
     let id = leagueID;
@@ -235,14 +246,20 @@ export async function getLeagueTransactions(
             end = nflState.week;
         }
         for (let week = 1; week <= end; week++) {
-            const res = getNoAwait(`/league/${id}/transactions/${week}`).then((res) => res.map((transaction: any) => ({  // eslint-disable-line @typescript-eslint/no-explicit-any
-                adds: transaction.adds,
-                creator: transaction.creator,
-                rosterIDs: transaction.roster_ids,
-                status: transaction.status,
-                type: transaction.type,
-                waiverBid: transaction.settings ? transaction.settings.waiver_bid : 0,
-            })));
+            const res = getNoAwait(`/league/${id}/transactions/${week}`).then(
+                (res) =>
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    res.map((transaction: any) => ({
+                        adds: transaction.adds,
+                        creator: transaction.creator,
+                        rosterIDs: transaction.roster_ids,
+                        status: transaction.status,
+                        type: transaction.type,
+                        waiverBid: transaction.settings
+                            ? transaction.settings.waiver_bid
+                            : 0,
+                    })),
+            );
             promises.push(res);
             promiseYears.push(year);
         }

@@ -1,6 +1,6 @@
 /*
-** components/Button.tsx
-*/
+ ** components/Button.tsx
+ */
 
 interface ButtonProps {
     className?: string;

@@ -1,6 +1,6 @@
 /*
-** next.config.ts
-*/
+ ** next.config.ts
+ */
 
 import type { NextConfig } from "next";
 import path from "path";
@@ -13,9 +13,7 @@ const nextConfig: NextConfig = {
         "*.test.brault.dev",
     ],
     images: {
-        remotePatterns: [
-            new URL("https://*.githubusercontent.com/**"),
-        ],
+        remotePatterns: [new URL("https://*.githubusercontent.com/**")],
         qualities: [75, 85, 100],
     },
     logging: {

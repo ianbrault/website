@@ -1,9 +1,7 @@
 /*
-** components/Spacer.tsx
-*/
+ ** components/Spacer.tsx
+ */
 
 export default function Spacer() {
-    return (
-        <div style={{flexGrow: 1}}></div>
-    );
+    return <div style={{ flexGrow: 1 }}></div>;
 }

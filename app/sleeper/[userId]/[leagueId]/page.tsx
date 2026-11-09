@@ -1,6 +1,6 @@
 /*
-** app/sleeper/[userId]/[leagueId]/page.tsx
-*/
+ ** app/sleeper/[userId]/[leagueId]/page.tsx
+ */
 
 import { getNflState } from "../../api";
 import { getLeagueStats, userIdToName } from "../../utils";
@@ -52,8 +52,8 @@ export default async function SleeperUser({ params }: SleeperLeagueProps) {
     const leagueName = info.league[nflState.season].name;
 
     /*
-    ** win percentage
-    */
+     ** win percentage
+     */
     const winPctHeaders = ["Name", "W", "L", "Pct"];
     const winPct: WinPercentage[] = [];
     for (const [userID, stats] of Object.entries(info.matchups.users)) {
@@ -62,26 +62,31 @@ export default async function SleeperUser({ params }: SleeperLeagueProps) {
             wins: stats.wins,
             losses: stats.losses,
             winPct: (stats.wins / (stats.wins + stats.losses)) * 100,
-            pointsFor: stats.pointsFor,  // used as a tiebreaker
+            pointsFor: stats.pointsFor, // used as a tiebreaker
         });
     }
     // reverse-sort to get descending order
-    winPct.sort((a, b) => {
-        if (a.wins == b.wins) {
-            // use points_for to break ties
-            return a.pointsFor - b.pointsFor;
-        } else {
-            return a.wins - b.wins;
-        }
-    }).reverse();
+    winPct
+        .sort((a, b) => {
+            if (a.wins == b.wins) {
+                // use points_for to break ties
+                return a.pointsFor - b.pointsFor;
+            } else {
+                return a.wins - b.wins;
+            }
+        })
+        .reverse();
     // transform into the expected StatsListView format
-    const winPctEntries = winPct.map((o) => (
-        [o.name, o.wins.toString(), o.losses.toString(), `${o.winPct.toFixed(1)}%`]
-    ));
+    const winPctEntries = winPct.map((o) => [
+        o.name,
+        o.wins.toString(),
+        o.losses.toString(),
+        `${o.winPct.toFixed(1)}%`,
+    ]);
 
     /*
-    ** points scored
-    */
+     ** points scored
+     */
     const pointsScoredHeaders = ["Name", "PF"];
     const pointsScored: Points[] = [];
     for (const [userID, stats] of Object.entries(info.matchups.users)) {
@@ -92,11 +97,14 @@ export default async function SleeperUser({ params }: SleeperLeagueProps) {
     }
     // reverse-sort to get descending order
     pointsScored.sort((a, b) => a.points - b.points).reverse();
-    const pointsScoredEntries = pointsScored.map((o) => [o.name, o.points.toFixed(2)]);
+    const pointsScoredEntries = pointsScored.map((o) => [
+        o.name,
+        o.points.toFixed(2),
+    ]);
 
     /*
-    ** points against
-    */
+     ** points against
+     */
     const pointsAgainstHeaders = ["Name", "PA"];
     const pointsAgainst: Points[] = [];
     for (const [userID, stats] of Object.entries(info.matchups.users)) {
@@ -106,11 +114,14 @@ export default async function SleeperUser({ params }: SleeperLeagueProps) {
         });
     }
     pointsAgainst.sort((a, b) => a.points - b.points);
-    const pointsAgainstEntries = pointsAgainst.map((o) => [o.name, o.points.toFixed(2)]);
+    const pointsAgainstEntries = pointsAgainst.map((o) => [
+        o.name,
+        o.points.toFixed(2),
+    ]);
 
     /*
-    ** bench points
-    */
+     ** bench points
+     */
     const benchPointsHeaders = ["Name", "Pts"];
     const benchPoints: Points[] = [];
     for (const [userID, stats] of Object.entries(info.matchups.users)) {
@@ -121,11 +132,14 @@ export default async function SleeperUser({ params }: SleeperLeagueProps) {
     }
     // reverse-sort to get descending order
     benchPoints.sort((a, b) => a.points - b.points).reverse();
-    const benchPointsEntries = benchPoints.map((o) => [o.name, o.points.toFixed(2)]);
+    const benchPointsEntries = benchPoints.map((o) => [
+        o.name,
+        o.points.toFixed(2),
+    ]);
 
     /*
-    ** trades completed
-    */
+     ** trades completed
+     */
     const tradesCompletedHeaders = ["Name", "Trades"];
     const tradesCompleted: Trades[] = [];
     for (const [userID, stats] of Object.entries(info.transactions)) {
@@ -136,11 +150,14 @@ export default async function SleeperUser({ params }: SleeperLeagueProps) {
     }
     // reverse-sort to get descending order
     tradesCompleted.sort((a, b) => a.trades - b.trades).reverse();
-    const tradesCompletedEntries = tradesCompleted.map((o) => [o.name, o.trades.toString()]);
+    const tradesCompletedEntries = tradesCompleted.map((o) => [
+        o.name,
+        o.trades.toString(),
+    ]);
 
     /*
-    ** player transactions
-    */
+     ** player transactions
+     */
     const transactionsHeaders = ["Name", "Txns"];
     const transactions: Transactions[] = [];
     for (const [userID, stats] of Object.entries(info.transactions)) {
@@ -151,11 +168,14 @@ export default async function SleeperUser({ params }: SleeperLeagueProps) {
     }
     // reverse-sort to get descending order
     transactions.sort((a, b) => a.transactions - b.transactions).reverse();
-    const transactionsEntries = transactions.map((o) => [o.name, o.transactions.toString()]);
+    const transactionsEntries = transactions.map((o) => [
+        o.name,
+        o.transactions.toString(),
+    ]);
 
     /*
-    ** FAAB spent
-    */
+     ** FAAB spent
+     */
     const faabSpentHeaders = ["Name", "FAAB"];
     const faabSpent: FAAB[] = [];
     for (const [userID, stats] of Object.entries(info.transactions)) {

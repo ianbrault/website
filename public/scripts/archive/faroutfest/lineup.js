@@ -1,15 +1,28 @@
 /*
-** public/scripts/archive/faroutfest/lineup.js
-*/
+ ** public/scripts/archive/faroutfest/lineup.js
+ */
 
 const lineup_title = document.getElementById("lineup-title");
 const lineup_switch = document.getElementById("lineup-switch");
 const lineup_body = document.getElementById("lineup-text-wrapper");
 
 const lineup_2019 = [
-    "PARTY SHIRT", "HVNNIBVL", "DJ Bbddy", "Apollo Bebop", "Thom.ko", "Dark Dazey", "Adobe House",
-    "The Millenial Club", "Amir Kelly", "Chel", "Ryan Cassata", "Eva B. Ross", "Pragathi Guru",
-    "BEL", "Jherz", "Lauren Reiner"
+    "PARTY SHIRT",
+    "HVNNIBVL",
+    "DJ Bbddy",
+    "Apollo Bebop",
+    "Thom.ko",
+    "Dark Dazey",
+    "Adobe House",
+    "The Millenial Club",
+    "Amir Kelly",
+    "Chel",
+    "Ryan Cassata",
+    "Eva B. Ross",
+    "Pragathi Guru",
+    "BEL",
+    "Jherz",
+    "Lauren Reiner",
 ];
 
 const lineup_2019_links = [
@@ -32,35 +45,82 @@ const lineup_2019_links = [
 ];
 
 const lineup_2018 = [
-    "ANIMVLZ", "Blue Apples", "Dio Lewis", "My Friend Ryan", "Munir Griffin", "The Dreads",
-    "Triangle Fire", "Ascanio", "Cerulean", "Drew Karperos", "Nightswimmers", "Officer Gavin",
-    "BEL", "Cole Heramb & The Flame Train", "Miles Gibson", "Temme Scott", "Tree Down Kelton"
+    "ANIMVLZ",
+    "Blue Apples",
+    "Dio Lewis",
+    "My Friend Ryan",
+    "Munir Griffin",
+    "The Dreads",
+    "Triangle Fire",
+    "Ascanio",
+    "Cerulean",
+    "Drew Karperos",
+    "Nightswimmers",
+    "Officer Gavin",
+    "BEL",
+    "Cole Heramb & The Flame Train",
+    "Miles Gibson",
+    "Temme Scott",
+    "Tree Down Kelton",
 ];
 
 const lineup_2017_maj = [
-    "Alec Be", "Austin Gatus", "Cassie Thompson", "Colin Tandy", "Girl Friday",
-    "Global Soul Collective", "Griff Klawson", "GUP TRUP", "Miles Gibson", "Shawn Dawg",
-    "Semichrome", "Temme Scott", "Triangle Fire", "97 Caravan"
+    "Alec Be",
+    "Austin Gatus",
+    "Cassie Thompson",
+    "Colin Tandy",
+    "Girl Friday",
+    "Global Soul Collective",
+    "Griff Klawson",
+    "GUP TRUP",
+    "Miles Gibson",
+    "Shawn Dawg",
+    "Semichrome",
+    "Temme Scott",
+    "Triangle Fire",
+    "97 Caravan",
 ];
 
 const lineup_2017_min = [
-    "AVTR", "Ear Ringers", "Good Luck Club", "Griff Klawson", "Kendirck", "Laura Savage",
-    "Lost City Ratio", "Nightswimmers", "Putrifiers", "Rey Matthews", "Reyma", "The Rosewaters",
-    "Ryan Chen", "Santiago’s Trip", "Stefan Dismond and the Love Supreme", "Tharp’s Logg",
-    "Torso Twin", "Uncharted Territory", "Voodoo", "Willow and the Rain", "4kei"
+    "AVTR",
+    "Ear Ringers",
+    "Good Luck Club",
+    "Griff Klawson",
+    "Kendirck",
+    "Laura Savage",
+    "Lost City Ratio",
+    "Nightswimmers",
+    "Putrifiers",
+    "Rey Matthews",
+    "Reyma",
+    "The Rosewaters",
+    "Ryan Chen",
+    "Santiago’s Trip",
+    "Stefan Dismond and the Love Supreme",
+    "Tharp’s Logg",
+    "Torso Twin",
+    "Uncharted Territory",
+    "Voodoo",
+    "Willow and the Rain",
+    "4kei",
 ];
 
-const lineupDot = "&nbsp;<span class=\"dot\">•</span>&nbsp;";
+const lineupDot = '&nbsp;<span class="dot">•</span>&nbsp;';
 
 const zipWith = (a, b, func) => a.map((e, i) => func(e, b[i]));
-const artist_link_zip = (artist, link) => `<a target="_blank" href="${link}">${artist}</a>`;
+const artist_link_zip = (artist, link) =>
+    `<a target="_blank" href="${link}">${artist}</a>`;
 
 const join_artist_strings = (lineup) => lineup.join(lineupDot);
-const join_artist_strings_2019 = (lineup, links) => zipWith(lineup, links, artist_link_zip).join(lineupDot);
+const join_artist_strings_2019 = (lineup, links) =>
+    zipWith(lineup, links, artist_link_zip).join(lineupDot);
 
 const lineup_p_2019 = document.createElement("p");
 lineup_p_2019.id = "lineup2018";
-lineup_p_2019.innerHTML = join_artist_strings_2019(lineup_2019, lineup_2019_links);
+lineup_p_2019.innerHTML = join_artist_strings_2019(
+    lineup_2019,
+    lineup_2019_links,
+);
 
 const lineup_p_2018 = document.createElement("p");
 lineup_p_2018.id = "lineup2018";
@@ -88,8 +148,7 @@ const set_lineup = (lineup_index) => {
 
     if (year === 2017)
         lineup_switch.innerHTML = "click to see this year's lineup";
-    else
-        lineup_switch.innerHTML = "click to see past lineups";
+    else lineup_switch.innerHTML = "click to see past lineups";
 
     if (year === 2019) {
         lineup_body.appendChild(lineup_p_2019);

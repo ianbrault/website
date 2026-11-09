@@ -1,6 +1,6 @@
 /*
-** app/sleeper/[userId]/page.tsxs
-*/
+ ** app/sleeper/[userId]/page.tsxs
+ */
 
 import { League, getUserCurrentLeagues } from "../api";
 
@@ -21,7 +21,5 @@ export default async function SleeperUser({ params }: SleeperUserProps) {
         error = `${err}`;
     }
 
-    return (
-        <LeagueForm userId={userId} leagues={leagues} error={error} />
-    );
+    return <LeagueForm userId={userId} leagues={leagues} error={error} />;
 }

@@ -12,11 +12,11 @@
 
 @font-face {
     font-family: "LCD Solid";
-    src: url("/fonts/LCD_Solid.ttf") format("truetype")
+    src: url("/fonts/LCD_Solid.ttf") format("truetype");
 }
 
 body {
     overflow: hidden;
     margin: 0;
-    padding: 0
+    padding: 0;
 }

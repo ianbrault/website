@@ -1,6 +1,6 @@
 /*
-** app/archive/bbash18-teaser/layout.tsx
-*/
+ ** app/archive/bbash18-teaser/layout.tsx
+ */
 
 import type { Metadata } from "next";
 
@@ -10,13 +10,12 @@ export const metadata: Metadata = {
     title: "Bruin Bash 2018",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
+export default function RootLayout({
+    children,
+}: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en">
-            <body>
-                {children}
-            </body>
+            <body>{children}</body>
         </html>
     );
 }
-

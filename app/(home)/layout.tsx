@@ -1,6 +1,6 @@
 /*
-** app/(home)/layout.tsx
-*/
+ ** app/(home)/layout.tsx
+ */
 
 import type { Metadata } from "next";
 
@@ -12,7 +12,9 @@ export const metadata: Metadata = {
     title: "Ian Brault",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
+export default function RootLayout({
+    children,
+}: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en">
             <body>

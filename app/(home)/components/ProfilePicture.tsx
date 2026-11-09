@@ -1,6 +1,6 @@
 /*
-** app/(home)/components/ProfilePicture.tsx
-*/
+ ** app/(home)/components/ProfilePicture.tsx
+ */
 
 "use client";
 
@@ -26,17 +26,15 @@ export default function ProfilePicture() {
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
-            <div
-                className={styles.profilePictureShadow}
-                style={divStyle}
-            />
+            <div className={styles.profilePictureShadow} style={divStyle} />
             <Image
                 className={styles.profilePicture}
                 src="/images/me.jpg"
                 alt="It's me"
-                width={size} height={size}
+                width={size}
+                height={size}
                 style={imageStyle}
             />
         </div>
-    )
+    );
 }

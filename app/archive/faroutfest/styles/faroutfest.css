@@ -43,7 +43,8 @@ section {
 }
 
 @media only screen and (max-device-width: 813px) {
-    html, body {
+    html,
+    body {
         width: 100%;
         margin: 0;
         padding: 0;
@@ -92,7 +93,14 @@ section {
     left: 0;
     height: 4px;
     width: 100%;
-    background: linear-gradient(0.25turn, #C45188, #F0785E, #FBC94A, #63BDC6, #6D62D1);
+    background: linear-gradient(
+        0.25turn,
+        #c45188,
+        #f0785e,
+        #fbc94a,
+        #63bdc6,
+        #6d62d1
+    );
     border-radius: 4px;
 }
 
@@ -131,7 +139,8 @@ section {
         padding: 30px 30px;
     }
 
-    #progress, #progressbg {
+    #progress,
+    #progressbg {
         height: 8px;
     }
 
@@ -191,26 +200,31 @@ section {
     justify-content: center;
     width: 100vw;
     margin: 12px 0;
-} .date-row {
+}
+.date-row {
     margin-bottom: 2px;
-} .location-row {
+}
+.location-row {
     margin-top: 2px;
 }
 
 svg {
     font-family: "Filson Soft Medium";
-} svg.date {
+}
+svg.date {
     height: 54px;
     font-size: 40px;
-} svg.location {
+}
+svg.location {
     height: 50px;
     font-size: 36px;
 }
 
-#date, #location {
+#date,
+#location {
     text-anchor: middle;
     paint-order: stroke;
-    fill: #EADAC7;
+    fill: #eadac7;
     stroke: #3d3d3d;
     stroke-width: 4px;
     stroke-linejoin: round;
@@ -223,11 +237,11 @@ svg {
     padding: 10px 0;
     margin: 0 32px;
     font-size: 30px;
-    color: #EADAC7;
-    border: 4px solid #EADAC7;
+    color: #eadac7;
+    border: 4px solid #eadac7;
     border-radius: 12px;
     background-color: hsl(3, 74%, 60%);
-    box-shadow: -3px 3px 8px rgba(0,0,0,0.32);
+    box-shadow: -3px 3px 8px rgba(0, 0, 0, 0.32);
 }
 
 @media only screen and (max-device-width: 813px) {
@@ -244,10 +258,13 @@ svg {
     svg.date {
         height: 76px;
         font-size: 60px;
-    } svg.location {
+    }
+    svg.location {
         height: 72px;
         font-size: 56px;
-    } #date, #location {
+    }
+    #date,
+    #location {
         stroke-width: 4px;
     }
 
@@ -256,7 +273,7 @@ svg {
         padding: 12px 0;
         margin: 12px 28px;
         font-size: 40px;
-        border: 6px solid #EADAC7;
+        border: 6px solid #eadac7;
         border-radius: 12px;
     }
 }
@@ -303,14 +320,15 @@ svg {
     align-items: center;
 }
 
-#lineup-title, #lineup-switch {
+#lineup-title,
+#lineup-switch {
     cursor: pointer;
     width: 100%;
     text-align: center;
 }
 
 #lineup-title {
-    color: #6D62D1;
+    color: #6d62d1;
     font-family: "Good Dog";
     font-size: 80px;
     text-transform: uppercase;
@@ -324,7 +342,9 @@ svg {
     margin: -8px 0 20px 0;
 }
 
-#lineup2018, #lineup2017-maj, #lineup2017-min {
+#lineup2018,
+#lineup2017-maj,
+#lineup2017-min {
     color: #faf3eb;
     text-shadow: #3d3d3d 0 0 12px;
     font-family: "Filson Soft Medium";
@@ -349,7 +369,7 @@ svg {
 }
 
 .dot {
-    color: #6D62D1;
+    color: #6d62d1;
 }
 
 @media only screen and (min-width: 1000px) {
@@ -403,7 +423,9 @@ svg {
         margin: 0 0 50px 0;
     }
 
-    #lineup2018, #lineup2017-maj, #lineup2017-min {
+    #lineup2018,
+    #lineup2017-maj,
+    #lineup2017-min {
         text-shadow: #3d3d3d 0 0 16px;
     }
 
@@ -439,7 +461,7 @@ svg {
 .sponsors-title {
     font-family: "Good Dog";
     font-size: 92px;
-    color: #F3CB39;
+    color: #f3cb39;
     margin: 20px 0;
 }
 
@@ -621,11 +643,13 @@ svg {
     color: #3d3d3d;
     border: 3px solid #3d3d3d;
     border-radius: 12px;
-} .popup-button--yes {
+}
+.popup-button--yes {
     background-color: rgba(43, 222, 115, 0.7);
-} .popup-button--no {
+}
+.popup-button--no {
     cursor: pointer;
-    background-color: #EADAC780;
+    background-color: #eadac780;
 }
 
 @media only screen and (max-device-width: 813px) {

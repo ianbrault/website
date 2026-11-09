@@ -1,6 +1,6 @@
 /*
-** app/archive/bbash18-teaser/components/NTWindow.tsx
-*/
+ ** app/archive/bbash18-teaser/components/NTWindow.tsx
+ */
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -20,9 +20,11 @@ interface NTMenuBarProps {
 }
 
 function NTMenuBar({
-    icon = "/images/archive/bruinbash/xp_globe.png", backgroundColor, onClose
+    icon = "/images/archive/bruinbash/xp_globe.png",
+    backgroundColor,
+    onClose,
 }: NTMenuBarProps) {
-    const style: React.CSSProperties = {height: `${NTMenuBarHeight}px`};
+    const style: React.CSSProperties = { height: `${NTMenuBarHeight}px` };
     if (backgroundColor !== undefined) {
         style.backgroundColor = backgroundColor;
     } else {
@@ -31,10 +33,14 @@ function NTMenuBar({
 
     return (
         <div className={styles.ntMenuBar} style={style}>
-            <img className={styles.ntMenuIcon} src={icon} alt=""/>
-            <Spacer/>
+            <img className={styles.ntMenuIcon} src={icon} alt="" />
+            <Spacer />
             <div className={styles.ntMenuIconClose} onClick={onClose}>
-                <img className={styles.ntMenuIconCloseImg} src="/images/archive/bruinbash/nt_close.png" alt="Close"/>
+                <img
+                    className={styles.ntMenuIconCloseImg}
+                    src="/images/archive/bruinbash/nt_close.png"
+                    alt="Close"
+                />
             </div>
         </div>
     );
@@ -54,32 +60,50 @@ interface NTWindowProps {
     children?: React.ReactNode;
 }
 
-const NTWindow = forwardRef<HTMLDivElement, NTWindowProps>((
-    {className, icon, top, left, width, height, zIndex, menuBarColor, preventClose, onClose, children},
-    ref
-) => {
-    const classList = `${styles.ntWindow} ${className ? className : ""}`;
-    const style: React.CSSProperties = {
-        top: top,
-        left: left,
-        width: width,
-        height: height,
-        zIndex: zIndex,
-    };
+const NTWindow = forwardRef<HTMLDivElement, NTWindowProps>(
+    (
+        {
+            className,
+            icon,
+            top,
+            left,
+            width,
+            height,
+            zIndex,
+            menuBarColor,
+            preventClose,
+            onClose,
+            children,
+        },
+        ref,
+    ) => {
+        const classList = `${styles.ntWindow} ${className ? className : ""}`;
+        const style: React.CSSProperties = {
+            top: top,
+            left: left,
+            width: width,
+            height: height,
+            zIndex: zIndex,
+        };
 
-    function closeWindow() {
-        if (onClose && !preventClose) {
-            onClose();
+        function closeWindow() {
+            if (onClose && !preventClose) {
+                onClose();
+            }
         }
-    }
 
-    return (
-        <div ref={ref} className={classList} style={style}>
-            <NTMenuBar icon={icon} backgroundColor={menuBarColor} onClose={closeWindow}/>
-            {children}
-        </div>
-    );
-});
+        return (
+            <div ref={ref} className={classList} style={style}>
+                <NTMenuBar
+                    icon={icon}
+                    backgroundColor={menuBarColor}
+                    onClose={closeWindow}
+                />
+                {children}
+            </div>
+        );
+    },
+);
 
 NTWindow.displayName = "NTWindow";
 export default NTWindow;

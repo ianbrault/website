@@ -1,6 +1,6 @@
 /*
-** app/sleeper/[userId]/[leagueId]/components/StatsListView.tsx
-*/
+ ** app/sleeper/[userId]/[leagueId]/components/StatsListView.tsx
+ */
 
 import React from "react";
 
@@ -12,7 +12,11 @@ interface StatsListViewProps {
     entries: string[][];
 }
 
-export default function StatsListView({ title, headers, entries }: StatsListViewProps) {
+export default function StatsListView({
+    title,
+    headers,
+    entries,
+}: StatsListViewProps) {
     const gridLayout = {
         gridTemplateColumns: `repeat(${headers.length + 1}, auto)`,
         gridTemplateRows: `repeat(${entries.length + 1}, auto)`,
@@ -20,15 +24,31 @@ export default function StatsListView({ title, headers, entries }: StatsListView
 
     let key = 0;
     const items: React.ReactElement[] = [];
-    items.push(<p key={key++} className={styles.gridHeader}>#</p>);
+    items.push(
+        <p key={key++} className={styles.gridHeader}>
+            #
+        </p>,
+    );
     headers.forEach((header) => {
-        items.push(<p key={key++} className={styles.gridHeader}>{header}</p>);
+        items.push(
+            <p key={key++} className={styles.gridHeader}>
+                {header}
+            </p>,
+        );
     });
     entries.forEach((entry, i) => {
-        items.push(<p key={key++} className={styles.gridItemIndex}>{i + 1}</p>);
+        items.push(
+            <p key={key++} className={styles.gridItemIndex}>
+                {i + 1}
+            </p>,
+        );
         entry.forEach((field, j) => {
-            const className = (j == 0) ? styles.gridItemName : styles.gridItem;
-            items.push(<p key={key++} className={className}>{field}</p>);
+            const className = j == 0 ? styles.gridItemName : styles.gridItem;
+            items.push(
+                <p key={key++} className={className}>
+                    {field}
+                </p>,
+            );
         });
     });
 
