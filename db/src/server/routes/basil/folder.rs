@@ -90,8 +90,7 @@ async fn create_route(
         // Track the timestamp as the last ping for this device
         user.device_pinged(body.authentication.device, timestamp);
         // Store the updated user
-        // FIXME: handle result
-        let _ = state
+        state
             .database
             .replace_one(DatabaseHandle::Basil, user)
             .await?;
@@ -147,6 +146,7 @@ struct ModifyRequest {
     authentication: AuthenticationFields,
     folder_id: ObjectId,
     name: String,
+    timestamp: Option<DateTime>,
 }
 
 /// Modify folder route
@@ -169,6 +169,25 @@ async fn modify_route(
             .await?
         {
             let folder_id = folder._id;
+
+            // If a timestamp was provided, verify that it comes after the previous modification
+            // time of the folder
+            if let Some(timestamp) = body.timestamp {
+                debug!(
+                    "Timestamp: {}: Previous modification time: {}",
+                    timestamp, folder.modified
+                );
+                if timestamp < folder.modified {
+                    return Ok((
+                        StatusCode::BAD_REQUEST,
+                        format!(
+                            "Timestamp {} is earlier than the previous modification time {}",
+                            timestamp, folder.modified
+                        ),
+                    )
+                        .into_response());
+                }
+            }
 
             // Modify the folder
             folder.name = body.name;

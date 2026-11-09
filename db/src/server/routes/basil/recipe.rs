@@ -101,8 +101,7 @@ async fn create_route(
         // Track the timestamp as the last ping for this device
         user.device_pinged(body.authentication.device, timestamp);
         // Store the updated user
-        // FIXME: handle result
-        let _ = state
+        state
             .database
             .replace_one(DatabaseHandle::Basil, user)
             .await?;
@@ -160,6 +159,7 @@ struct ModifyRequest {
     title: String,
     ingredients: Vec<String>,
     instructions: Vec<String>,
+    timestamp: Option<DateTime>,
 }
 
 /// Modify recipe route
@@ -182,6 +182,25 @@ async fn modify_route(
             .await?
         {
             let recipe_id = recipe._id;
+
+            // If a timestamp was provided, verify that it comes after the previous modification
+            // time of the recipe
+            if let Some(timestamp) = body.timestamp {
+                debug!(
+                    "Timestamp: {}: Previous modification time: {}",
+                    timestamp, recipe.modified
+                );
+                if timestamp < recipe.modified {
+                    return Ok((
+                        StatusCode::BAD_REQUEST,
+                        format!(
+                            "Timestamp {} is earlier than the previous modification time {}",
+                            timestamp, recipe.modified
+                        ),
+                    )
+                        .into_response());
+                }
+            }
 
             // Modify the recipe
             recipe.title = body.title;

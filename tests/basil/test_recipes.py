@@ -1,10 +1,11 @@
 # tests/basil/test_recipes.py
 
+import datetime
 from typing import Generator
 
 import pytest
 
-from tests.common import Folder, Recipe, User
+from tests.common import DateTime, Folder, Recipe, User
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -58,6 +59,18 @@ def test_recipe_modify(recipes_user: User):
     assert dbrecipe.title == "Bar"
     assert dbrecipe.ingredients == ["123"]
     assert dbrecipe.instructions == ["456"]
+
+
+def test_recipe_modify_time_violation(recipes_user: User):
+    recipe = Recipe.create(recipes_user, "Baz", recipes_user.root, [], [])
+    assert recipe is not None
+    recipe.modify(recipes_user, "Timestamped", [], [])
+
+    timestamp = DateTime()
+    timestamp.timestamp -= datetime.timedelta(hours=1)
+    recipe.modify(
+        recipes_user, "Error", [], [], timestamp=timestamp, success=False
+    )
 
 
 def test_recipe_delete(recipes_user: User):

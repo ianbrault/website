@@ -8,10 +8,7 @@ use anyhow::{Result, bail};
 use bson::{Document, doc, oid::ObjectId};
 use futures::future;
 use log::info;
-use mongodb::{
-    Client, Collection,
-    results::{DeleteResult, InsertOneResult, UpdateResult},
-};
+use mongodb::{Client, Collection, results::InsertOneResult};
 use serde::{Serialize, de::DeserializeOwned};
 
 /// Individual databases within MongoDB
@@ -117,7 +114,7 @@ impl Connection {
         handle: DatabaseHandle,
         query: Document,
         update: Document,
-    ) -> Result<UpdateResult>
+    ) -> Result<()>
     where
         T: DatabaseCollection + Send + Sync,
     {
@@ -125,11 +122,13 @@ impl Connection {
             .collection::<T>(handle)
             .update_one(query, update)
             .await?;
-        Ok(result)
+        assert!(result.matched_count == 1);
+        assert!(result.modified_count == 1);
+        Ok(())
     }
 
     /// Replace a model in the database, using an ID match query
-    pub async fn replace_one<T>(&self, handle: DatabaseHandle, model: T) -> Result<UpdateResult>
+    pub async fn replace_one<T>(&self, handle: DatabaseHandle, model: T) -> Result<()>
     where
         T: DatabaseCollection + Send + Serialize + Sync,
     {
@@ -137,19 +136,18 @@ impl Connection {
             .collection::<T>(handle)
             .replace_one(doc! { "_id": model.id() }, model)
             .await?;
-        Ok(result)
+        assert!(result.matched_count == 1);
+        assert!(result.modified_count == 1);
+        Ok(())
     }
 
     /// Delete a model from the database
-    pub async fn delete_one<T>(
-        &self,
-        handle: DatabaseHandle,
-        query: Document,
-    ) -> Result<DeleteResult>
+    pub async fn delete_one<T>(&self, handle: DatabaseHandle, query: Document) -> Result<()>
     where
         T: DatabaseCollection + Send + Sync,
     {
         let result = self.collection::<T>(handle).delete_one(query).await?;
-        Ok(result)
+        assert!(result.deleted_count == 1);
+        Ok(())
     }
 }
