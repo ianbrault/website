@@ -10,4 +10,6 @@ npm-debug.log*
 **.pytest_cache
 *.egg-info
 
+**.gh_token_secret
+
 **.DS_Store
