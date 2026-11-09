@@ -1,6 +1,6 @@
 /*
-** components/RadioInput.tsx
-*/
+ ** components/RadioInput.tsx
+ */
 
 import React from "react";
 
@@ -11,8 +11,12 @@ interface RadioInputProps {
     onChange: (selection: string) => void;
 }
 
-export default function RadioInput({ value, label, checked, onChange }: RadioInputProps) {
-
+export default function RadioInput({
+    value,
+    label,
+    checked,
+    onChange,
+}: RadioInputProps) {
     function onSelectionChange(event: React.ChangeEvent<HTMLInputElement>) {
         onChange(event.target.value);
     }

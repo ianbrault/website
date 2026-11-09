@@ -1,6 +1,6 @@
 /*
-** app/arhcive/faroutfest/layout.tsx
-*/
+ ** app/arhcive/faroutfest/layout.tsx
+ */
 
 import type { Metadata } from "next";
 
@@ -10,14 +10,12 @@ export const metadata: Metadata = {
     title: "Far Out Fest",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
+export default function RootLayout({
+    children,
+}: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en">
-            <body>
-                {children}
-            </body>
+            <body>{children}</body>
         </html>
     );
 }
-
-

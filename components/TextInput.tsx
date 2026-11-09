@@ -1,6 +1,6 @@
 /*
-** components/TextInput.tsx
-*/
+ ** components/TextInput.tsx
+ */
 
 "use client";
 
@@ -12,7 +12,11 @@ interface TextInputProps {
     onChange: (text: string) => void;
 }
 
-export default function TextInput({ className, label, onChange }: TextInputProps) {
+export default function TextInput({
+    className,
+    label,
+    onChange,
+}: TextInputProps) {
     const [text, setText] = useState("");
 
     function onInputChange(event: React.ChangeEvent<HTMLInputElement>) {

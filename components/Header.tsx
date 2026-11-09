@@ -1,6 +1,6 @@
 /*
-** components/Header.tsx
-*/
+ ** components/Header.tsx
+ */
 
 import Link from "next/link";
 
@@ -24,11 +24,11 @@ export default function Header({ text, homeButton, className }: HeaderProps) {
     return (
         <VFlex className={className} gap={4}>
             <p style={textStyle}>{text}</p>
-            {homeButton &&
+            {homeButton && (
                 <Link href="/">
                     <p style={linkTextStyle}>Home</p>
                 </Link>
-            }
+            )}
         </VFlex>
-    )
+    );
 }

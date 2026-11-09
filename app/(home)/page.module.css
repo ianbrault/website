@@ -10,7 +10,8 @@
     padding: 0 2ch;
 }
 
-.text, .list {
+.text,
+.list {
     font-size: 18px;
     line-height: 1.5em;
 }

@@ -1,6 +1,6 @@
 /*
-** components/VFlex.tsx
-*/
+ ** components/VFlex.tsx
+ */
 
 import React from "react";
 
@@ -13,9 +13,14 @@ interface VFlexProps {
     children?: React.ReactNode;
 }
 
-export default function VFlex(
-    { className, alignItems = "normal", justifyContent = "flex-start", gap = 0, style = {}, children }: VFlexProps
-) {
+export default function VFlex({
+    className,
+    alignItems = "normal",
+    justifyContent = "flex-start",
+    gap = 0,
+    style = {},
+    children,
+}: VFlexProps) {
     const divStyle = structuredClone(style);
     divStyle.display = "flex";
     divStyle.flexDirection = "column";

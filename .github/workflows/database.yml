@@ -2,7 +2,7 @@ name: Database
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
 
 env:

@@ -1,6 +1,6 @@
 /*
-** app/sleeper/[userId]/[leagueId]/loading.tsx
-*/
+ ** app/sleeper/[userId]/[leagueId]/loading.tsx
+ */
 
 import LoadingBar from "../../components/LoadingBar";
 

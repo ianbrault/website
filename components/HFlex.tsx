@@ -1,6 +1,6 @@
 /*
-** components/HFlex.tsx
-*/
+ ** components/HFlex.tsx
+ */
 
 import React from "react";
 
@@ -12,9 +12,13 @@ interface HFlexProps {
     children?: React.ReactNode;
 }
 
-export default function HFlex(
-    {className, alignItems = "normal", justifyContent = "flex-start", gap = 0, children}: HFlexProps
-) {
+export default function HFlex({
+    className,
+    alignItems = "normal",
+    justifyContent = "flex-start",
+    gap = 0,
+    children,
+}: HFlexProps) {
     return (
         <div
             className={className}

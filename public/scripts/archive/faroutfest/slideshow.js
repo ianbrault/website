@@ -1,9 +1,9 @@
 /*
-** public/scripts/archive/faroutfest/slideshow.js
-*/
+ ** public/scripts/archive/faroutfest/slideshow.js
+ */
 
 const nImages = 8;
-let   nLoaded = 1;
+let nLoaded = 1;
 const images = new Array(nImages);
 
 const slideshow = document.getElementById("slideshow");
@@ -16,17 +16,21 @@ const loadImage = (n) => {
 
         if (nLoaded === nImages) {
             images.forEach((image) => slideshow.appendChild(image));
-            $(function() {
+            $(function () {
                 $("#slideshow img:gt(0)").hide();
-                setInterval(function() {
-                    $("#slideshow :first-child").fadeOut(600)
-                        .next("img").fadeIn(600)
-                        .end().appendTo("#slideshow");
+                setInterval(function () {
+                    $("#slideshow :first-child")
+                        .fadeOut(600)
+                        .next("img")
+                        .fadeIn(600)
+                        .end()
+                        .appendTo("#slideshow");
                 }, 4000);
             });
         }
     };
-    img.onerror = (err) => console.error(`error loading slideshow image ${n}: ${err}`);
+    img.onerror = (err) =>
+        console.error(`error loading slideshow image ${n}: ${err}`);
     img.src = `/images/archive/faroutfest/slideshow/${n}.jpg`;
 };
 

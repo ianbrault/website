@@ -10,7 +10,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    background: linear-gradient(rgb(182,242,242), rgb(228,208,116));
+    background: linear-gradient(rgb(182, 242, 242), rgb(228, 208, 116));
     font-family: "Filson Soft Medium";
 }
 
@@ -29,7 +29,7 @@ svg {
     font-size: 32px;
     text-anchor: middle;
     paint-order: stroke;
-    fill: #EADAC7;
+    fill: #eadac7;
     stroke: #3d3d3d;
     stroke-width: 2.5px;
     stroke-linejoin: round;
@@ -49,12 +49,14 @@ svg {
     margin: 12px 0;
 }
 
-.q, .a {
+.q,
+.a {
     color: #3d3d3d;
     margin: 4px 0;
     font-size: 20px;
     text-align: center;
-} .a {
+}
+.a {
     font-family: "Filson Soft Book";
 }
 
@@ -89,7 +91,8 @@ svg {
         stroke-width: 4px;
     }
 
-    .q, .a {
+    .q,
+    .a {
         font-size: 34px;
     }
 

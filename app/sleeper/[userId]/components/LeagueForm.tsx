@@ -1,6 +1,6 @@
 /*
-** app/sleeper/[userId]/components/LeagueForm.tsx
-*/
+ ** app/sleeper/[userId]/components/LeagueForm.tsx
+ */
 
 "use client";
 
@@ -20,7 +20,11 @@ interface LeagueFormProps {
     error: string;
 }
 
-export default function LeagueForm({ userId, leagues, error }: LeagueFormProps) {
+export default function LeagueForm({
+    userId,
+    leagues,
+    error,
+}: LeagueFormProps) {
     const [selection, setSelection] = useState("");
 
     function onFormSubmit() {
@@ -28,8 +32,14 @@ export default function LeagueForm({ userId, leagues, error }: LeagueFormProps) 
     }
 
     return (
-        <form id="league-input" className={styles.leagueInput} onSubmit={onFormSubmit}>
-            <label htmlFor="league-input" className={styles.leagueLabel}>Select your league:</label>
+        <form
+            id="league-input"
+            className={styles.leagueInput}
+            onSubmit={onFormSubmit}
+        >
+            <label htmlFor="league-input" className={styles.leagueLabel}>
+                Select your league:
+            </label>
             {leagues.map((league) => (
                 <RadioInput
                     key={league.id}
