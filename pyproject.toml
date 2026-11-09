@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "website"
-version = "0.2.0"
+version = "0.3.0"
 requires-python = ">=3.12"
 readme = "README.md"
 
@@ -16,11 +16,13 @@ dependencies = [
 ]
 
 [project.scripts]
-website-start = "tools.start:main"
+create-pr = "tools.create_pull_request:main"
+start = "tools.start:main"
 
 [tool.setuptools]
 packages = [
     "tests",
+    "tools",
     "tools.common",
 ]
 

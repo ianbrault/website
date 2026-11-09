@@ -6,7 +6,6 @@ import logging
 import os
 import subprocess
 import sys
-import traceback
 
 from tools import common
 
@@ -20,8 +19,15 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Start all website processes and services"
     )
-    parser.add_argument("-b", "--build", action="store_true")
-    parser.add_argument("-d", "--debug", action="store_true")
+    parser.add_argument(
+        "-b",
+        "--build",
+        action="store_true",
+        help="Re-build database and webapp",
+    )
+    parser.add_argument(
+        "-d", "--debug", action="store_true", help="Enable debug output"
+    )
     return parser.parse_args()
 
 
@@ -70,16 +76,14 @@ def start_database():
         raise NotImplementedError()
 
 
-def start_database_driver(
-    build: bool = False, debug: bool = False
-) -> subprocess.Popen:
+def start_database_driver(build: bool = False, debug: bool = False):
     LOG.info("Start database driver")
-    return common.start_database_driver(
+    common.start_database_driver(
         MONGODB_URL, DB_PORT, build=build, release=not debug, debug=debug
     )
 
 
-def start_webapp(build: bool = False, debug: bool = False) -> subprocess.Popen:
+def start_webapp(build: bool = False, debug: bool = False):
     LOG.info("Start webapp")
     os.environ.update(
         NODE_ENV="production", MONGODB_URL=MONGODB_URL, PORT=str(WEB_PORT)
@@ -92,33 +96,29 @@ def start_webapp(build: bool = False, debug: bool = False) -> subprocess.Popen:
         LOG.info("Building webapp")
         subprocess.check_call(["npm", "run", "build"], env=os.environ)
     LOG.info("Running webapp")
-    return subprocess.Popen(["npm", "start"], env=os.environ)
+    common.open_process(["npm", "start"])
 
 
+@common.script_wrapper
 def main():
+    args = parse_args()
+    configure_logger(debug=args.debug)
     procs = []
-    try:
-        args = parse_args()
-        configure_logger(debug=args.debug)
-        # Check that the database is running
-        start_database()
-        # Start the database driver
-        db_proc = start_database_driver(build=args.build, debug=args.debug)
-        procs.append(db_proc)
-        # Start the webapp process
-        app_proc = start_webapp(build=args.build, debug=args.debug)
-        procs.append(app_proc)
-        # Wait for processes to complete
-        for proc in procs:
-            proc.wait()
-    except KeyboardInterrupt:
-        LOG.info("\nCtrl+C received, exiting")
-        for proc in procs:
-            proc.kill()
-    except Exception:
-        traceback.print_exc()
-        for proc in procs:
-            proc.kill()
+
+    # Check that the database is running
+    start_database()
+
+    # Start the database driver
+    db_proc = start_database_driver(build=args.build, debug=args.debug)
+    procs.append(db_proc)
+
+    # Start the webapp process
+    app_proc = start_webapp(build=args.build, debug=args.debug)
+    procs.append(app_proc)
+
+    # Wait for processes to complete
+    for proc in procs:
+        proc.wait()
 
 
 if __name__ == "__main__":
