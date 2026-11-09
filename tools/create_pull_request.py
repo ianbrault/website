@@ -46,7 +46,7 @@ def get_input(prompt: str, multiline: bool = False) -> str:
     if not multiline:
         return input(prompt)
 
-    print(prompt + "\n")
+    print(prompt)
     contents = []
     while True:
         try:
