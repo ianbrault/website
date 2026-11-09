@@ -53,6 +53,7 @@ class Model(abc.ABC):
     def _http_handler(
         cls, response: requests.Response, success: bool, no_body: bool
     ) -> dict | None:
+        LOG.debug(f"Status code: {response.status_code}")
         if success:
             assert response.status_code == 200
             if no_body:
@@ -81,15 +82,19 @@ class Model(abc.ABC):
         cls,
         url: str,
         body: dict[str, typing.Any],
+        headers: dict = {},
         success: bool = True,
         no_body: bool = False,
     ) -> dict | None:
         url = cls._build_url(url)
         LOG.debug(f"POST: {url}")
         LOG.debug(
+            f"POST: headers: {json.dumps(headers, sort_keys=True, indent=2)}"
+        )
+        LOG.debug(
             f"POST: request: {json.dumps(body, sort_keys=True, indent=2)}"
         )
-        response = cls.SESSION.post(url, json=body)
+        response = cls.SESSION.post(url, json=body, headers=headers)
         return cls._http_handler(response, success, no_body)
 
     def serialize(self) -> typing.Any:
@@ -148,27 +153,30 @@ class ModelWithId(Model):
 
 class DateTime(Model):
 
-    def __init__(self, json_body: dict | None):
+    def __init__(self, json_body: dict | None = None):
         super().__init__()
-        assert json_body is not None
 
-        timestamp_ms = self.json_get(
-            self.json_get(json_body, "$date", dict), "$numberLong", str
-        )
-        self.timestamp = int(timestamp_ms)
-
-    @property
-    def datetime(self) -> datetime.datetime:
-        return bson.datetime_ms.DatetimeMS(self.timestamp).as_datetime()
+        if json_body is None:
+            self.timestamp = datetime.datetime.now()
+        else:
+            timestamp_ms = self.json_get(
+                self.json_get(json_body, "$date", dict), "$numberLong", str
+            )
+            self.timestamp = bson.datetime_ms.DatetimeMS(
+                int(timestamp_ms)
+            ).as_datetime()
 
     def __str__(self) -> str:
-        return self.datetime.isoformat()
+        return self.timestamp.isoformat()
 
     def __repr__(self) -> str:
-        return f"DateTime({self.datetime.isoformat()})"
+        return f"DateTime({self.timestamp.isoformat()})"
 
     def serialize(self) -> typing.Any:
-        return {"$date": {"$numberLong": self.timestamp}}
+        timestamp_ms = int(self.timestamp.timestamp() * 1_000) + (
+            self.timestamp.microsecond // 1_000
+        )
+        return {"$date": {"$numberLong": str(timestamp_ms)}}
 
 
 class ActionType(enum.StrEnum):
@@ -399,15 +407,26 @@ class Folder(ModelWithId):
         LOG.info(f"Created folder {folder.name!r} (ID: {folder.id})")
         return folder
 
-    def modify(self, user: User, name: str):
+    def modify(
+        self,
+        user: User,
+        name: str,
+        timestamp: DateTime | None = None,
+        success: bool = True,
+    ):
         request = {
             **user.authentication_fields,
             "folder_id": self.id.serialize(),
             "name": name,
         }
-        response = self.http_post("folder/modify", request, no_body=True)
-        assert response is not None
-        self.name = name
+        if timestamp is not None:
+            request["timestamp"] = timestamp.serialize()
+        response = self.http_post(
+            "folder/modify", request, success=success, no_body=True
+        )
+        if success:
+            assert response is not None
+            self.name = name
 
     def delete(self, user: User):
         LOG.info(f"Deleting folder {self.name!r} (ID: {self.id})")
@@ -474,6 +493,8 @@ class Recipe(ModelWithId):
         title: str,
         ingredients: list[str],
         instructions: list[str],
+        timestamp: DateTime | None = None,
+        success: bool = True,
     ):
         request = {
             **user.authentication_fields,
@@ -482,11 +503,16 @@ class Recipe(ModelWithId):
             "ingredients": ingredients,
             "instructions": instructions,
         }
-        response = self.http_post("recipe/modify", request, no_body=True)
-        assert response is not None
-        self.title = title
-        self.ingredients = ingredients
-        self.instructions = instructions
+        if timestamp is not None:
+            request["timestamp"] = timestamp.serialize()
+        response = self.http_post(
+            "recipe/modify", request, success=success, no_body=True
+        )
+        if success:
+            assert response is not None
+            self.title = title
+            self.ingredients = ingredients
+            self.instructions = instructions
 
     def delete(self, user: User):
         LOG.info(f"Deleting recipe {self.title!r} (ID: {self.id})")

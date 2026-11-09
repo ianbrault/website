@@ -1,10 +1,11 @@
 # tests/basil/test_folders.py
 
+import datetime
 from typing import Generator
 
 import pytest
 
-from tests.common import Folder, User
+from tests.common import DateTime, Folder, User
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -50,6 +51,16 @@ def test_folder_modify(folders_user: User):
     dbfolder = Folder.get(folder.id)
     assert dbfolder is not None
     assert dbfolder.name == "Bar"
+
+
+def test_folder_modify_time_violation(folders_user: User):
+    folder = Folder.create(folders_user, "Baz", folders_user.root)
+    assert folder is not None
+    folder.modify(folders_user, "Timestamped")
+
+    timestamp = DateTime()
+    timestamp.timestamp -= datetime.timedelta(hours=1)
+    folder.modify(folders_user, "Error", timestamp=timestamp, success=False)
 
 
 def test_folder_delete(folders_user: User):
